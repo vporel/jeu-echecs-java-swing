@@ -1,6 +1,11 @@
 com/vivianhonghoa/chess/model/BoxDataEvent.class
+com/vivianhonghoa/chess/model/Piece.class
 com/vivianhonghoa/chess/viewcontroller/Box$3.class
 com/vivianhonghoa/chess/model/BoxData$BoxState.class
+com/vivianhonghoa/chess/model/Piece$1.class
+com/vivianhonghoa/chess/model/Couleur.class
+com/vivianhonghoa/chess/model/TypePiece.class
+com/vivianhonghoa/chess/model/Plateau.class
 com/vivianhonghoa/chess/model/BoxesManagerListener.class
 com/vivianhonghoa/chess/viewcontroller/Box.class
 com/vivianhonghoa/chess/viewcontroller/AppFrame.class
