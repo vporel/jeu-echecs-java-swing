@@ -5,7 +5,7 @@ import com.vivianhonghoa.chess.model.BoxesManager;
 import javax.swing.*;
 
 public class AppFrame extends JFrame {
-    public static final String DEFAULT_TITLE = "My Application";
+    public static final String DEFAULT_TITLE = "Chess by Vivian and Hong Hoa";
     public static final int DEFAULT_WIDTH = 800;
     public static final int DEFAULT_HEIGHT = 800;
     public static final BoxesManager boxesManager = new BoxesManager();

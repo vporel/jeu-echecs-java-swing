@@ -7,7 +7,6 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
 
 public class Box extends JPanel {
     private static final int SIZE = 5; // Size of the box
@@ -53,6 +52,9 @@ public class Box extends JPanel {
                 updatePieceDisplay();
             }
         });
+        JLabel jLabel = new JLabel();
+        jLabel.setText("\u2654");
+
     }
 
     private void updatePieceDisplay() {
@@ -70,14 +72,14 @@ public class Box extends JPanel {
     }
 
     private String getUnicodeSymbol(Piece piece) {
-        boolean isWhite = piece.getCouleur() == Couleur.BLANC;
+
         switch (piece.getType()) {
-            case ROI: return isWhite ? "\u2654" : "\u265A";      // ♔ ♚
-            case DAME: return isWhite ? "\u2655" : "\u265B";     // ♕ ♛
-            case TOUR: return isWhite ? "\u2656" : "\u265C";     // ♖ ♜
-            case FOU: return isWhite ? "\u2657" : "\u265D";      // ♗ ♝
-            case CAVALIER: return isWhite ? "\u2658" : "\u265E"; // ♘ ♞
-            case PION: return isWhite ? "\u2659" : "\u265F";     // ♙ ♟
+            case ROI: return "\u265A";      // ♔ ♚
+            case DAME: return "\u265B";     // ♕ ♛
+            case TOUR: return "\u265C";     // ♖ ♜
+            case FOU: return "\u265D";      // ♗ ♝
+            case CAVALIER: return "\u265E"; // ♘ ♞
+            case PION: return "\u265F";     // ♙ ♟
             default: return "";
         }
     }
