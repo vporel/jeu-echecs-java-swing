@@ -9,17 +9,23 @@ import java.util.function.BiConsumer;
 public class BoxesManager {
     private Map<String, BoxData> boxesData = new HashMap<>();
     private List<BoxesManagerListener> listeners = new ArrayList<>();
+    private Plateau plateau;
     public static final int NUM_BOXES_PER_ROW = 8;
     public static final int NUM_BOXES_PER_COL = 8;
 
     public BoxesManager(){
+        plateau = new Plateau();
         init();
     }
 
     private void init(){
         for (int row = 1; row <= NUM_BOXES_PER_ROW; row++) {
             for (int col = 1; col <= NUM_BOXES_PER_COL; col++) {
-                boxesData.put(this.generateBoxKey(row, col), new BoxData(row, col));
+                BoxData boxData = new BoxData(row, col);
+                // Sync piece from plateau (convert 1-indexed to 0-indexed)
+                Piece piece = plateau.getPiece(row - 1, col - 1);
+                boxData.setPiece(piece);
+                boxesData.put(this.generateBoxKey(row, col), boxData);
             }
         }
     }
@@ -64,5 +70,9 @@ public class BoxesManager {
 
     public String generateBoxKey(int row, int col) {
         return row + "-" + col;
+    }
+
+    public Plateau getPlateau() {
+        return plateau;
     }
 }
