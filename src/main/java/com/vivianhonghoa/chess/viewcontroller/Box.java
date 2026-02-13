@@ -1,6 +1,9 @@
 package com.vivianhonghoa.chess.viewcontroller;
 
 import com.vivianhonghoa.chess.model.*;
+import com.vivianhonghoa.chess.model.events.GameEngineObserver;
+import com.vivianhonghoa.chess.model.events.PieceEvent;
+import com.vivianhonghoa.chess.model.pieces.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -12,22 +15,20 @@ public class Box extends JPanel {
     private static final int SIZE = 5; // Size of the box
     private final int row;
     private final int col;
-    private final BoxesManager boxesManager;
+    private final GameEngine gameEngine;
     private JLabel pieceLabel;
 
-    public Box(int row, int col, BoxesManager boxesManager) {
+    public Box(int row, int col, GameEngine gameEngine) {
         this.row = row;
         this.col = col;
-        this.boxesManager = boxesManager;
+        this.gameEngine = gameEngine;
         build();
     }
 
     private void build(){
         this.setMaximumSize(new Dimension(SIZE, SIZE));
         this.setLayout(new BorderLayout());
-        setBackground((row + col) % 2 == 0 ? Color.WHITE : Color.BLACK);
-        Border border = BorderFactory.createLineBorder(Color.BLACK);
-        this.setBorder(border);
+        setBackground((row + col) % 2 == 0 ? Color.WHITE : Color.LIGHT_GRAY);
 
         // Create label for piece display
         pieceLabel = new JLabel("", SwingConstants.CENTER);
@@ -39,16 +40,10 @@ public class Box extends JPanel {
 
         handleClick();
         //Listen the manager
-        boxesManager.addListener(new BoxesManagerListener() {
+        gameEngine.addObserver(new GameEngineObserver() {
             @Override
-            public void boxStateUpdated(BoxDataEvent event) {
-                BoxData boxData = (BoxData) event.getSource();
-                if(!boxData.checkPosition(row, col)) return;
-                switch(boxData.getState()){
-                    case CLICKED: setBackground(Color.RED); break;
-                    case HOVERED: setBackground(Color.GREEN); break;
-                    default: setBackground((row + col) % 2 == 0 ? Color.WHITE : Color.BLACK);
-                }
+            public void boxStateUpdated(PieceEvent event) {
+
                 updatePieceDisplay();
             }
         });
@@ -58,13 +53,12 @@ public class Box extends JPanel {
     }
 
     private void updatePieceDisplay() {
-        BoxData boxData = boxesManager.getBoxesData().get(boxesManager.generateBoxKey(row, col));
-        if (boxData != null && boxData.getPiece() != null) {
-            Piece piece = boxData.getPiece();
+        Piece piece = gameEngine.getBoard().getPiece(row, col);
+        if (piece != null) {
             String unicodeSymbol = getUnicodeSymbol(piece);
             pieceLabel.setIcon(null);
             pieceLabel.setText(unicodeSymbol);
-            pieceLabel.setForeground(piece.getCouleur() == Couleur.BLANC ? Color.WHITE : Color.BLACK);
+            pieceLabel.setForeground(piece.getColor() == Piece.Color.BLANC ? java.awt.Color.WHITE : java.awt.Color.BLACK);
         } else {
             pieceLabel.setIcon(null);
             pieceLabel.setText("");
@@ -73,27 +67,28 @@ public class Box extends JPanel {
 
     private String getUnicodeSymbol(Piece piece) {
 
-        switch (piece.getType()) {
-            case ROI: return "\u265A";      // ♔ ♚
-            case DAME: return "\u265B";     // ♕ ♛
-            case TOUR: return "\u265C";     // ♖ ♜
-            case FOU: return "\u265D";      // ♗ ♝
-            case CAVALIER: return "\u265E"; // ♘ ♞
-            case PION: return "\u265F";     // ♙ ♟
-            default: return "";
-        }
+        return  switch(piece) {
+            case King k -> "\u265A";
+            case Queen q -> "\u265B";
+            case Rook r -> "\u265C";
+            case Bishop b -> "\u265D";
+            case Knight k -> "\u265E";
+            case Pawn p -> "\u265F";
+            default -> "";
+        };
     }
 
     private void handleClick(){
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                boxesManager.boxClicked(row, col);
+                ;
             }
             @Override
             public void mouseEntered(MouseEvent e) {
-                boxesManager.boxHovered(row, col);
+
             }
         });
     }
 }
+
