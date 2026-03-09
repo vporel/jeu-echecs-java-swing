@@ -17,6 +17,7 @@ public class AppFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame on the screen
         JPanel contentPane = new JPanel();
+        contentPane.setBackground(Colors.BACKGROUND);
         contentPane.setLayout(new java.awt.GridLayout(Board.TAILLE, Board.TAILLE));
         addBoxes(contentPane);
         setContentPane(contentPane);
@@ -25,8 +26,8 @@ public class AppFrame extends JFrame {
     private void addBoxes(JPanel panel){
         for(int row = 0; row < Board.TAILLE; row++){
             for(int col = 0; col < Board.TAILLE; col++) {
-                Box box = new Box(row, col, gameEngine);
-                panel.add(box);
+                Square square = new Square(row, col, gameEngine);
+                panel.add(square);
             }
         }
     }

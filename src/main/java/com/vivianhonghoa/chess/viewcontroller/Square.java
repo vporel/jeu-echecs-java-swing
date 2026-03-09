@@ -4,31 +4,31 @@ import com.vivianhonghoa.chess.model.*;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.PieceEvent;
 import com.vivianhonghoa.chess.model.pieces.*;
+import com.vivianhonghoa.chess.viewcontroller.contexts.SquaresContext;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class Box extends JPanel {
+public class Square extends JPanel {
     private static final int SIZE = 5; // Size of the box
-    private final int row;
-    private final int col;
+    private final Position position;
     private final GameEngine gameEngine;
+    private final SquaresContext squaresContext;
     private JLabel pieceLabel;
 
-    public Box(int row, int col, GameEngine gameEngine) {
-        this.row = row;
-        this.col = col;
+    public Square(int row, int col, GameEngine gameEngine) {
+        this.position = new Position(row, col);
         this.gameEngine = gameEngine;
+        this.squaresContext = SquaresContext.getInstance();
         build();
     }
 
     private void build(){
         this.setMaximumSize(new Dimension(SIZE, SIZE));
         this.setLayout(new BorderLayout());
-        setBackground((row + col) % 2 == 0 ? Color.WHITE : Color.LIGHT_GRAY);
+        updateBackground(false);
 
         // Create label for piece display
         pieceLabel = new JLabel("", SwingConstants.CENTER);
@@ -47,13 +47,30 @@ public class Box extends JPanel {
                 updatePieceDisplay();
             }
         });
-        JLabel jLabel = new JLabel();
-        jLabel.setText("\u2654");
 
+        SquaresContext.getInstance().addPropertyChangeListener(SquaresContext.SELECTED_SQUARE_POS_PROPERTY, eventt -> {
+            updateBackground(false);
+        });
+    }
+
+    private boolean isSelected(){
+        Position selectedPos = squaresContext.getSelectedSquarePos();
+        return selectedPos != null && selectedPos.equals(position);
+    }
+
+    private void updateBackground(boolean isHovered) {
+        if (isSelected()) {
+            setBackground(Colors.PRIMARY_LIGHT_2);
+        } else {
+            if(isHovered)
+                setBackground(Colors.PRIMARY_LIGHT_1);
+            else
+                setBackground((position.row + position.col) % 2 == 0 ? Colors.BACKGROUND : Colors.PRIMARY);
+        }
     }
 
     private void updatePieceDisplay() {
-        Piece piece = gameEngine.getBoard().getPiece(row, col);
+        Piece piece = gameEngine.getBoard().getPiece(position.row, position.col);
         if (piece != null) {
             String unicodeSymbol = getUnicodeSymbol(piece);
             pieceLabel.setIcon(null);
@@ -82,13 +99,23 @@ public class Box extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                ;
+                squaresContext.setSelectedSquarePos(position);
             }
+
             @Override
             public void mouseEntered(MouseEvent e) {
+                updateBackground(true);
+            }
 
+            @Override
+            public void mouseExited(MouseEvent e) {
+                updateBackground(false);
             }
         });
+    }
+
+    public record Position(int row, int col) {
+
     }
 }
 
