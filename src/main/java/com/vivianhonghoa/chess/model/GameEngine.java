@@ -11,6 +11,14 @@ import java.util.function.BiConsumer;
 public final class GameEngine {
     private final List<GameEngineObserver> observers;
     private final Board board;
+    private boolean hasStarted = false;
+    private int turnCount = 0;
+    private boolean isGameOver = false;
+    private boolean isWhiteTurn = true;
+    private Player player1;
+    private Player player2;
+    private int player1TimeRemaining; // in seconds
+    private int player2TimeRemaining; // in seconds
 
     public GameEngine(){
         observers = new ArrayList<>();
@@ -22,9 +30,7 @@ public final class GameEngine {
     }
 
     public void selectCase(Case selectedCase) {
-        Piece selectedPiece = board.getSelectedPiece();
-        if(selectedPiece != null && selectedPiece.canMoveTo(selectedCase)){
-            board.movePiece(board.getSelectedCase(), selectedCase);
+        if(board.movePiece(board.getSelectedCase(), selectedCase)){
             board.setSelectedCase(null);
             return;
         }

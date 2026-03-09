@@ -75,7 +75,8 @@ public class Board {
         return getPiece(selectedCase.row(), selectedCase.col());
     }
 
-    void movePiece(Case from, Case to) {
+    boolean movePiece(Case from, Case to) {
+        if(from == null || to == null) return false;
         Piece piece = getPiece(from.row(), from.col());
         if (piece != null && piece.canMoveTo(to)) {
             // Move the piece
@@ -85,7 +86,9 @@ public class Board {
 
             // Notify observers of the move
             notifyObservers(to, BoardObserver::onPieceMoved);
+            return false;
         }
+        return false;
     }
 
     public Case getSelectedCase() {
