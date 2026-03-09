@@ -61,18 +61,42 @@ public class Board {
         placePiece(new Rook(Piece.Color.NOIR), 7, 7);
     }
 
-    public Piece getPiece(int row, int col) {
+     public Piece getPiece(int row, int col) {
         if (!Case.isValid(row, col)) {
             return null;
         }
         return pieces[row][col];
     }
 
+    public Piece getSelectedPiece() {
+        if (selectedCase == null) {
+            return null;
+        }
+        return getPiece(selectedCase.row(), selectedCase.col());
+    }
+
+    void movePiece(Case from, Case to) {
+        Piece piece = getPiece(from.row(), from.col());
+        if (piece != null && piece.canMoveTo(to)) {
+            // Move the piece
+            pieces[to.row()][to.col()] = piece;
+            pieces[from.row()][from.col()] = null;
+            piece.setPosition(this, to.row(), to.col());
+
+            // Notify observers of the move
+            notifyObservers(to, BoardObserver::onPieceMoved);
+        }
+    }
+
     public Case getSelectedCase() {
         return selectedCase;
     }
 
-    public void setSelectedCase(Case selectedCase) {
+    /**
+     * Package-private setter for selectedCase. Notifies observers of the change.
+     * @param selectedCase
+     */
+    void setSelectedCase(Case selectedCase) {
         this.selectedCase = selectedCase;
         notifyObservers(selectedCase, BoardObserver::onCaseSelected);
     }

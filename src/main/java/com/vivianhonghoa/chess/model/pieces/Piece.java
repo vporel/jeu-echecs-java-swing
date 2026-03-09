@@ -36,6 +36,10 @@ public abstract class Piece {
 
     public abstract List<Case> getAccessibleCases();
 
+    public boolean canMoveTo(Case targetCase) {
+        return getAccessibleCases().contains(targetCase);
+    }
+
     /**
      * Helper for sliding pieces (rook, bishop, queen).
      * Walks in a direction until leaving the board or hitting a piece.

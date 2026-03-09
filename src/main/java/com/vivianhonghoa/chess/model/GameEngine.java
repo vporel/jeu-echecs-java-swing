@@ -21,6 +21,16 @@ public final class GameEngine {
         return board;
     }
 
+    public void selectCase(Case selectedCase) {
+        Piece selectedPiece = board.getSelectedPiece();
+        if(selectedPiece != null && selectedPiece.canMoveTo(selectedCase)){
+            board.movePiece(board.getSelectedCase(), selectedCase);
+            board.setSelectedCase(null);
+            return;
+        }
+        board.setSelectedCase(selectedCase);
+    }
+
     public synchronized void addObserver(GameEngineObserver observer){
         observers.add(observer);
     }

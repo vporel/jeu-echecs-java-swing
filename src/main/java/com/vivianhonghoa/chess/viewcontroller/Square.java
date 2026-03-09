@@ -44,6 +44,11 @@ public class Square extends JPanel {
             public void onCaseSelected(BoardEvent event) {
                 updateBackground(false);
             }
+
+            @Override
+            public void onPieceMoved(BoardEvent event) {
+                updatePieceDisplay();
+            }
         });
     }
 
@@ -107,7 +112,7 @@ public class Square extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 Board board = gameEngine.getBoard();
                 Case newSelectedCase = new Case(position.row, position.col);
-                board.setSelectedCase(newSelectedCase.equals(board.getSelectedCase()) ? null : newSelectedCase);
+                gameEngine.selectCase(newSelectedCase.equals(board.getSelectedCase()) ? null : newSelectedCase);
             }
 
             @Override
