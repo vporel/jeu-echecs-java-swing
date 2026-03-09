@@ -2,8 +2,6 @@ package com.vivianhonghoa.chess.model;
 
 import com.vivianhonghoa.chess.model.events.BoardEvent;
 import com.vivianhonghoa.chess.model.events.BoardObserver;
-import com.vivianhonghoa.chess.model.events.GameEngineEvent;
-import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
 
 import java.util.ArrayList;
@@ -86,7 +84,7 @@ public class Board {
 
             // Notify observers of the move
             notifyObservers(to, BoardObserver::onPieceMoved);
-            return false;
+            return true;
         }
         return false;
     }

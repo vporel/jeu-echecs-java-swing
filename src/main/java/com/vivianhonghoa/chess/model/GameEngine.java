@@ -25,6 +25,15 @@ public final class GameEngine {
         board = new Board();
     }
 
+    public int getPlayerRemainingTime(int playerNumber) {
+        if (playerNumber == 1) {
+            return player1TimeRemaining;
+        } else if (playerNumber == 2) {
+            return player2TimeRemaining;
+        }
+        throw new IllegalArgumentException("Invalid player number: " + playerNumber);
+    }
+
     public Board getBoard() {
         return board;
     }

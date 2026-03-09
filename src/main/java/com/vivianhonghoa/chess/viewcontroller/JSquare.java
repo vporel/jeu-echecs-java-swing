@@ -3,8 +3,6 @@ package com.vivianhonghoa.chess.viewcontroller;
 import com.vivianhonghoa.chess.model.*;
 import com.vivianhonghoa.chess.model.events.BoardEvent;
 import com.vivianhonghoa.chess.model.events.BoardObserver;
-import com.vivianhonghoa.chess.model.events.GameEngineObserver;
-import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.*;
 
 import javax.swing.*;
@@ -12,13 +10,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class Square extends JPanel {
+public class JSquare extends JPanel {
     private static final int SIZE = 5; // Size of the box
     private final Position position;
     private final GameEngine gameEngine;
     private JLabel pieceLabel;
 
-    public Square(int row, int col, GameEngine gameEngine) {
+    public JSquare(int row, int col, GameEngine gameEngine) {
+        super();
         this.position = new Position(row, col);
         this.gameEngine = gameEngine;
         build();
@@ -76,7 +75,7 @@ public class Square extends JPanel {
         } else if (isSelected()) {
             setBackground(Colors.PRIMARY_LIGHT_2);
         } else {
-            setBackground((position.row + position.col) % 2 == 0 ? Colors.BACKGROUND : Colors.PRIMARY);
+            setBackground((position.row + position.col) % 2 == 0 ? Colors.SQUARES_CONTAINER_BACKGROUND : Colors.PRIMARY);
         }
     }
 
