@@ -4,6 +4,7 @@ import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 
+import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -20,6 +21,7 @@ public final class GameEngine {
     private Player player2;
     private int player1TimeRemaining; // in seconds
     private int player2TimeRemaining; // in seconds
+    private Timer timer;
 
     public GameEngine(){
         observers = new ArrayList<>();
@@ -36,6 +38,32 @@ public final class GameEngine {
         this.isGameOver = false;
         this.isWhiteTurn = true;
         this.turnCount = 0;
+
+        // Stop the old timer if it exists
+        if (timer != null) {
+            timer.stop();
+        }
+
+        // Create a timer that ticks every 1 second (1000 ms)
+        timer = new Timer(1000, e -> {
+            if (!hasStarted || isGameOver) {
+                return;
+            }
+
+            // Subtract 1 second from the current player's time
+            if (isWhiteTurn) {
+                player1TimeRemaining--;
+            } else {
+                player2TimeRemaining--;
+            }
+
+            // If time runs out, the game is over
+            if (player1TimeRemaining <= 0 || player2TimeRemaining <= 0) {
+                isGameOver = true;
+                timer.stop();
+            }
+        });
+        timer.start();
     }
 
     // Start the game with default time (10 minutes)

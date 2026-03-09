@@ -2,6 +2,7 @@ package com.vivianhonghoa.chess.viewcontroller;
 
 import com.vivianhonghoa.chess.model.Board;
 import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.Player;
 
 import javax.swing.*;
 
@@ -12,6 +13,7 @@ public class AppFrame extends JFrame {
     public static final GameEngine gameEngine = new GameEngine();
 
     public void build() {
+        gameEngine.start(Player.HUMAN, Player.HUMAN);
         setTitle(DEFAULT_TITLE);
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
