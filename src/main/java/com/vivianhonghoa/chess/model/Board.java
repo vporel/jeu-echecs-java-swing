@@ -86,7 +86,7 @@ public class Board {
 
             // Notify observers of the move
             notifyObservers(to, BoardObserver::onPieceMoved);
-            return false;
+            return true;
         }
         return false;
     }
