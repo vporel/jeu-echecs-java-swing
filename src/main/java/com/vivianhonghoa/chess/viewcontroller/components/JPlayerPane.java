@@ -1,6 +1,8 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.events.GameEngineEvent;
+import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
@@ -60,5 +62,14 @@ public class JPlayerPane extends JPanel {
         this.add(jRemainingTimeValueWrapper);
         this.setBackground(Colors.APP_BACKGROUND);
         this.setPreferredSize(new java.awt.Dimension(WIDTH, 0));
+
+        //Game engine events
+        gameEngine.addObserver(new GameEngineObserver() {
+            @Override
+            public void onGameTimeUpdated(GameEngineEvent event) {
+                //Update time str
+                jRemainingTimeValue.setText(getRemainingTimeStr());
+            }
+        });
     }
 }

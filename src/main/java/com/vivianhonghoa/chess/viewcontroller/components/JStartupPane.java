@@ -7,6 +7,7 @@ import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.NumberFormat;
 
 public class JStartupPane extends JPanel {
     private final GameEngine gameEngine;
@@ -87,8 +88,14 @@ public class JStartupPane extends JPanel {
         jTimeSelectionButtonsPane.add(jLimitedTimeButton);
         jTimeSelectionButtonsPane.add(jUnlimitedTimeButton);
 
-        JFormattedTextField jTimeSelectionInput = new JFormattedTextField(String.valueOf(selectedTimeLimit));
+        NumberFormat format = NumberFormat.getIntegerInstance();
+        JFormattedTextField jTimeSelectionInput = new JFormattedTextField(format);
+        jTimeSelectionInput.setValue(selectedTimeLimit);
+        jTimeSelectionInput.setHorizontalAlignment(JFormattedTextField.CENTER);
         JComponentHelper.setFixedSize(jTimeSelectionInput, 210, 40);
+        jTimeSelectionInput.addPropertyChangeListener("value", evt -> {
+            selectedTimeLimit = ((Number) jTimeSelectionInput.getValue()).intValue();
+        });
 
         jTimeSelectionPane.add(jTitleLabel);
         jTimeSelectionPane.add(Box.createVerticalStrut(10));

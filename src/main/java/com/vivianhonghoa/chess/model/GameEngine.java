@@ -4,28 +4,32 @@ import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 
-import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 public final class GameEngine {
-    private static final int DEFAULT_TIME = 600; // 10 minutes per player
-    private final List<GameEngineObserver> observers;
+    private final CopyOnWriteArrayList<GameEngineObserver> observers = new CopyOnWriteArrayList<>();
     private final Board board;
-    private boolean hasStarted = false;
-    private int turnCount = 0;
-    private boolean isGameOver = false;
+    private boolean started = false;
+    private final AtomicBoolean paused = new AtomicBoolean(false);
+    private final AtomicBoolean ended = new AtomicBoolean(false);
     private boolean isWhiteTurn = true;
     private Player player1;
     private Player player2;
     private boolean unlimitedTime = false; // If true, players have unlimited time
-    private Integer player1TimeRemaining; // in seconds
-    private Integer player2TimeRemaining; // in seconds
-    private Timer timer;
+    private AtomicInteger player1TimeRemaining = new AtomicInteger(0); // in seconds
+    private AtomicInteger player2TimeRemaining = new AtomicInteger(0); // in seconds
+    private AtomicInteger winnerPlayerNumber = new AtomicInteger(0);
+    private ScheduledExecutorService scheduler;
 
     public GameEngine(){
-        observers = new ArrayList<>();
         board = new Board();
     }
 
@@ -34,48 +38,65 @@ public final class GameEngine {
      * a time limit of null means unlimited time
      */
     public void start(Player player1, Player player2, Integer timeInSeconds) {
+        // Do nothing if the game has already started
+        if(started) return;
+
         this.player1 = player1;
         this.player2 = player2;
-        this.player1TimeRemaining = timeInSeconds;
-        this.player2TimeRemaining = timeInSeconds;
-        this.hasStarted = true;
+        this.player1TimeRemaining.set(timeInSeconds == null ? 0 : timeInSeconds);
+        this.player2TimeRemaining.set(timeInSeconds == null ? 0 : timeInSeconds);
+        this.started = true;
         this.unlimitedTime = timeInSeconds == null;
-        this.isGameOver = false;
+        this.paused.set(false);
+        this.ended.set(false);
         this.isWhiteTurn = true;
-        this.turnCount = 0;
-
-        // Stop the old timer if it exists
-        if (timer != null) {
-            timer.stop();
-        }
 
         if(!unlimitedTime) {
             // Create a timer that ticks every 1 second (1000 ms)
-            timer = new Timer(1000, e -> {
-                if (!hasStarted || isGameOver) {
+            Runnable task = () -> {
+                if (!started || paused.get() || ended.get()) {
                     return;
                 }
 
                 // Subtract 1 second from the current player's time
                 if (isWhiteTurn) {
-                    player1TimeRemaining--;
+                    player1TimeRemaining.decrementAndGet();
                 } else {
-                    player2TimeRemaining--;
+                    player2TimeRemaining.decrementAndGet();
                 }
 
                 // If time runs out, the game is over
-                if (player1TimeRemaining <= 0 || player2TimeRemaining <= 0) {
-                    isGameOver = true;
-                    timer.stop();
+                if (player1TimeRemaining.get() <= 0 || player2TimeRemaining.get() <= 0) {
+                    ended.set(true);
+                    winnerPlayerNumber.set(player1TimeRemaining.get() > 0 ? 1 : 2);
+                    scheduler.shutdown();
                 }
-            });
-            timer.start();
+
+                notifyObservers(GameEngineObserver::onGameTimeUpdated);
+            };
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+            scheduler.scheduleAtFixedRate(task, 1, 1, TimeUnit.SECONDS);
         }
+        notifyObservers(GameEngineObserver::onGameStarted);
     }
 
-    // Start the game with default time (10 minutes)
-    public void start(Player player1, Player player2) {
-        start(player1, player2, DEFAULT_TIME);
+    public void pause() {
+        if(!started || paused.get()) return;
+        paused.set(true);
+        notifyObservers(GameEngineObserver::onGamePaused);
+    }
+
+    public void resume() {
+        if(!started || !paused.get()) return;
+        paused.set(false);
+        notifyObservers(GameEngineObserver::onGameResumed);
+    }
+
+    public void stop() {
+        if(!started) return;
+        started = false;
+        scheduler.shutdown();
+        notifyObservers(GameEngineObserver::onGameStopped);
     }
 
     /**
@@ -86,16 +107,16 @@ public final class GameEngine {
             return null;
         }
         if (playerNumber == 1) {
-            return player1TimeRemaining;
+            return player1TimeRemaining.get();
         } else if (playerNumber == 2) {
-            return player2TimeRemaining;
+            return player2TimeRemaining.get();
         }
         throw new IllegalArgumentException("Invalid player number: " + playerNumber);
     }
 
     public void selectCase(Case selectedCase) {
         // Do nothing if the game has not started or is over
-        if (!hasStarted || isGameOver) {
+        if (!started || ended.get()) {
             return;
         }
 
@@ -108,7 +129,6 @@ public final class GameEngine {
             boolean moved = board.movePiece(board.getSelectedCase(), selectedCase);
             if (moved) {
                 board.setSelectedCase(null);
-                turnCount++;
                 isWhiteTurn = !isWhiteTurn;
                 return;
             }
@@ -120,42 +140,24 @@ public final class GameEngine {
         }
     }
 
-    // Getters
-
     public Board getBoard() {
         return board;
     }
 
-    public boolean isHasStarted() {
-        return hasStarted;
+    public boolean hasStarted() {
+        return started;
     }
 
-    public int getTurnCount() {
-        return turnCount;
+    public boolean isPaused() {
+        return paused.get();
     }
 
-    public boolean isGameOver() {
-        return isGameOver;
+    public boolean hasEnded() {
+        return ended.get();
     }
 
     public boolean isWhiteTurn() {
         return isWhiteTurn;
-    }
-
-    public Player getPlayer1() {
-        return player1;
-    }
-
-    public Player getPlayer2() {
-        return player2;
-    }
-
-    public int getPlayer1TimeRemaining() {
-        return player1TimeRemaining;
-    }
-
-    public int getPlayer2TimeRemaining() {
-        return player2TimeRemaining;
     }
 
     public Player getCurrentPlayer() {
@@ -172,7 +174,7 @@ public final class GameEngine {
         observers.add(observer);
     }
 
-    private void notifyObserver(Piece piece, BiConsumer<GameEngineObserver, GameEngineEvent> action){
+    private void notifyObservers(BiConsumer<GameEngineObserver, GameEngineEvent> action){
         GameEngineEvent event = new GameEngineEvent();
         synchronized(this) {
             for (GameEngineObserver listener : observers) {

@@ -25,10 +25,25 @@ public class JAppFrame extends JFrame {
             @Override
             public void onGameStarted(GameEngineEvent event) {
                 JGamePane jGamePane = new JGamePane(gameEngine);
-                setContentPane(jGamePane);
+                changeContentPane(jGamePane);
+            }
+
+            @Override
+            public void onGameStopped(GameEngineEvent event) {
+                changeContentPane(jStartupPane);
             }
         });
         setContentPane(jStartupPane);
+    }
+
+    private void changeContentPane(JPanel newPane) {
+        setContentPane(newPane);
+        // Ensure the frame updates its layout and repaints after changing the content pane
+        SwingUtilities.invokeLater(() -> {
+            // revalidate will re-run layout; repaint will refresh display
+            JAppFrame.this.revalidate();
+            JAppFrame.this.repaint();
+        });
     }
 
 }
