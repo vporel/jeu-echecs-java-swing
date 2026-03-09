@@ -1,10 +1,11 @@
 package com.vivianhonghoa.chess.viewcontroller;
 
 import com.vivianhonghoa.chess.model.*;
+import com.vivianhonghoa.chess.model.events.BoardEvent;
+import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
-import com.vivianhonghoa.chess.model.events.PieceEvent;
+import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.*;
-import com.vivianhonghoa.chess.viewcontroller.contexts.SquaresContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,13 +16,11 @@ public class Square extends JPanel {
     private static final int SIZE = 5; // Size of the box
     private final Position position;
     private final GameEngine gameEngine;
-    private final SquaresContext squaresContext;
     private JLabel pieceLabel;
 
     public Square(int row, int col, GameEngine gameEngine) {
         this.position = new Position(row, col);
         this.gameEngine = gameEngine;
-        this.squaresContext = SquaresContext.getInstance();
         build();
     }
 
@@ -40,30 +39,24 @@ public class Square extends JPanel {
 
         handleClick();
         //Listen the manager
-        gameEngine.addObserver(new GameEngineObserver() {
+        gameEngine.getBoard().addObserver(new BoardObserver() {
             @Override
-            public void boxStateUpdated(PieceEvent event) {
-
-                updatePieceDisplay();
+            public void onCaseSelected(BoardEvent event) {
+                updateBackground(false);
             }
-        });
-
-        squaresContext.addPropertyChangeListener(SquaresContext.SELECTED_SQUARE_PROPERTY, eventt -> {
-            updateBackground(false);
-        });
-
-        squaresContext.addPropertyChangeListener(SquaresContext.MARKED_ACCESSIBLE_SQUARES_PROPERTY, eventt -> {
-            updateBackground(false);
         });
     }
 
     private boolean isSelected(){
-        Position selectedPos = squaresContext.getSelectedSquare();
-        return selectedPos != null && selectedPos.equals(position);
+        Case selectedCase = gameEngine.getBoard().getSelectedCase();
+        return selectedCase != null && selectedCase.row() == position.row() && selectedCase.col() == position.col();
     }
 
     private boolean isMarkedAccessible(){
-        return squaresContext.getMarkedAccessibleSquares() != null && squaresContext.getMarkedAccessibleSquares().contains(position);
+        Case selectedCase = gameEngine.getBoard().getSelectedCase();
+        Piece selectedPiece = selectedCase != null ? gameEngine.getBoard().getPiece(selectedCase.row(), selectedCase.col()) : null;
+        if (selectedPiece == null) return false;
+        return selectedPiece.getAccessibleCases().stream().anyMatch(c -> c.row() == position.row() && c.col() == position.col);
     }
 
     private Piece getPiece(){
@@ -112,17 +105,9 @@ public class Square extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                squaresContext.setSelectedSquare(position);
-                Piece piece = getPiece();
-                if (piece != null) {
-                    squaresContext.setMarkedAccessibleSquares(
-                            piece.getAccessibleCases().stream()
-                                    .map(c -> new Position(c.row(), c.col()))
-                                    .toList()
-                    );
-                } else {
-                    squaresContext.setMarkedAccessibleSquares(null);
-                }
+                Board board = gameEngine.getBoard();
+                Case newSelectedCase = new Case(position.row, position.col);
+                board.setSelectedCase(newSelectedCase.equals(board.getSelectedCase()) ? null : newSelectedCase);
             }
 
             @Override

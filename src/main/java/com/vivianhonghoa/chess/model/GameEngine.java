@@ -1,7 +1,7 @@
 package com.vivianhonghoa.chess.model;
 
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
-import com.vivianhonghoa.chess.model.events.PieceEvent;
+import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 
 import java.util.ArrayList;
@@ -25,17 +25,12 @@ public final class GameEngine {
         observers.add(observer);
     }
 
-    private void notifyObserver(Piece piece, BiConsumer<GameEngineObserver, PieceEvent> action){
-        PieceEvent event = new PieceEvent(piece);
-        List<GameEngineObserver> snapshot;
+    private void notifyObserver(Piece piece, BiConsumer<GameEngineObserver, GameEngineEvent> action){
+        GameEngineEvent event = new GameEngineEvent();
         synchronized(this) {
             for (GameEngineObserver listener : observers) {
                 action.accept(listener, event);
             }
         }
-    }
-
-    public Board getPlateau() {
-        return board;
     }
 }

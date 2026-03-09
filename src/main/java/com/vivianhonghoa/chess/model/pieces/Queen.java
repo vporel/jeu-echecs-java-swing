@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.model.pieces;
 
 import com.vivianhonghoa.chess.model.Board;
+import com.vivianhonghoa.chess.model.Case;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,8 @@ public class Queen extends Piece{
     }
 
     @Override
-    public List<Board.Case> getAccessibleCases() {
-        List<Board.Case> cases = new ArrayList<>();
+    public List<Case> getAccessibleCases() {
+        List<Case> cases = new ArrayList<>();
 
         // Straight directions (like a rook)
         cases.addAll(getCasesInDirection(1, 0));   // up

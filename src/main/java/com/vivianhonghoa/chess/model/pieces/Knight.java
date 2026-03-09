@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.model.pieces;
 
 import com.vivianhonghoa.chess.model.Board;
+import com.vivianhonghoa.chess.model.Case;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,18 +12,18 @@ public class Knight extends Piece{
         super(color);
     }
 
-    private void addIfAccessible(List<Board.Case> cases, int r, int c) {
-        if (Board.Case.isValid(r, c)) {
+    private void addIfAccessible(List<Case> cases, int r, int c) {
+        if (Case.isValid(r, c)) {
             Piece target = board.getPiece(r, c);
             if (target == null || target.getColor() != getColor()) {
-                cases.add(new Board.Case(r, c));
+                cases.add(new Case(r, c));
             }
         }
     }
 
     @Override
-    public List<Board.Case> getAccessibleCases() {
-        List<Board.Case> cases = new ArrayList<>();
+    public List<Case> getAccessibleCases() {
+        List<Case> cases = new ArrayList<>();
 
         // The knight moves in an "L" shape: 2 squares + 1 square
         addIfAccessible(cases, row - 2, col - 1);

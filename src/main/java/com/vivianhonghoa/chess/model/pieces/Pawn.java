@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.model.pieces;
 
 import com.vivianhonghoa.chess.model.Board;
+import com.vivianhonghoa.chess.model.Case;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,8 @@ public class Pawn extends Piece{
     }
 
     @Override
-    public List<Board.Case> getAccessibleCases() {
-        List<Board.Case> cases = new ArrayList<>();
+    public List<Case> getAccessibleCases() {
+        List<Case> cases = new ArrayList<>();
 
         // White pawns move up (+1), black pawns move down (-1)
         int direction;
@@ -28,31 +29,31 @@ public class Pawn extends Piece{
 
         // One square forward
         int nextRow = row + direction;
-        if (Board.Case.isValid(nextRow, col) && board.getPiece(nextRow, col) == null) {
-            cases.add(new Board.Case(nextRow, col));
+        if (Case.isValid(nextRow, col) && board.getPiece(nextRow, col) == null) {
+            cases.add(new Case(nextRow, col));
 
             // Two squares forward (only from starting position)
             int twoAheadRow = row + 2 * direction;
             if (row == startRow && board.getPiece(twoAheadRow, col) == null) {
-                cases.add(new Board.Case(twoAheadRow, col));
+                cases.add(new Case(twoAheadRow, col));
             }
         }
 
         // Capture diagonally to the left
         int leftCol = col - 1;
-        if (Board.Case.isValid(nextRow, leftCol)) {
+        if (Case.isValid(nextRow, leftCol)) {
             Piece target = board.getPiece(nextRow, leftCol);
             if (target != null && target.getColor() != getColor()) {
-                cases.add(new Board.Case(nextRow, leftCol));
+                cases.add(new Case(nextRow, leftCol));
             }
         }
 
         // Capture diagonally to the right
         int rightCol = col + 1;
-        if (Board.Case.isValid(nextRow, rightCol)) {
+        if (Case.isValid(nextRow, rightCol)) {
             Piece target = board.getPiece(nextRow, rightCol);
             if (target != null && target.getColor() != getColor()) {
-                cases.add(new Board.Case(nextRow, rightCol));
+                cases.add(new Case(nextRow, rightCol));
             }
         }
 

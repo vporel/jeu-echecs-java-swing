@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.model.pieces;
 
 import com.vivianhonghoa.chess.model.Board;
+import com.vivianhonghoa.chess.model.Case;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,23 +34,23 @@ public abstract class Piece {
         return col;
     }
 
-    public abstract List<Board.Case> getAccessibleCases();
+    public abstract List<Case> getAccessibleCases();
 
     /**
      * Helper for sliding pieces (rook, bishop, queen).
      * Walks in a direction until leaving the board or hitting a piece.
      */
-    protected List<Board.Case> getCasesInDirection(int dRow, int dCol) {
-        List<Board.Case> cases = new ArrayList<>();
+    protected List<Case> getCasesInDirection(int dRow, int dCol) {
+        List<Case> cases = new ArrayList<>();
         int r = row + dRow;
         int c = col + dCol;
-        while (Board.Case.isValid(r, c)) {
+        while (Case.isValid(r, c)) {
             Piece target = board.getPiece(r, c);
             if (target == null) {
-                cases.add(new Board.Case(r, c));
+                cases.add(new Case(r, c));
             } else {
                 if (target.getColor() != this.color) {
-                    cases.add(new Board.Case(r, c));
+                    cases.add(new Case(r, c));
                 }
                 break;
             }

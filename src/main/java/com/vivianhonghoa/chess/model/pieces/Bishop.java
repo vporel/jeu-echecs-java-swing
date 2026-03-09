@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.model.pieces;
 
 import com.vivianhonghoa.chess.model.Board;
+import com.vivianhonghoa.chess.model.Case;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,23 +13,23 @@ public class Bishop extends Piece{
     }
 
     @Override
-    public List<Board.Case> getAccessibleCases() {
-        List<Board.Case> cases = new ArrayList<>();
+    public List<Case> getAccessibleCases() {
+        List<Case> cases = new ArrayList<>();
 
         // Move up-right
-        List<Board.Case> upRight = getCasesInDirection(1, 1);
+        List<Case> upRight = getCasesInDirection(1, 1);
         cases.addAll(upRight);
 
         // Move up-left
-        List<Board.Case> upLeft = getCasesInDirection(1, -1);
+        List<Case> upLeft = getCasesInDirection(1, -1);
         cases.addAll(upLeft);
 
         // Move down-right
-        List<Board.Case> downRight = getCasesInDirection(-1, 1);
+        List<Case> downRight = getCasesInDirection(-1, 1);
         cases.addAll(downRight);
 
         // Move down-left
-        List<Board.Case> downLeft = getCasesInDirection(-1, -1);
+        List<Case> downLeft = getCasesInDirection(-1, -1);
         cases.addAll(downLeft);
 
         return cases;

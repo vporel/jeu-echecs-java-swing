@@ -1,12 +1,25 @@
 package com.vivianhonghoa.chess.model;
 
+import com.vivianhonghoa.chess.model.events.BoardEvent;
+import com.vivianhonghoa.chess.model.events.BoardObserver;
+import com.vivianhonghoa.chess.model.events.GameEngineEvent;
+import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 public class Board {
     public static final int TAILLE = 8;
+
+    private final List<BoardObserver> observers;
+
     private Piece[][] pieces;
+    private Case selectedCase;
 
     public Board() {
+        observers = new ArrayList<>();
         pieces = new Piece[TAILLE][TAILLE];
         initPositions();
     }
@@ -55,29 +68,26 @@ public class Board {
         return pieces[row][col];
     }
 
-    public record Case(
-            int row,
-            int col
-    ){
-        boolean isValid() {
-            return Case.isValid(row, col);
-        }
+    public Case getSelectedCase() {
+        return selectedCase;
+    }
 
-        public static boolean isValid(int row, int col) {
-            return row >= 0 && row < Board.TAILLE && col >= 0 && col < Board.TAILLE;
-        }
+    public void setSelectedCase(Case selectedCase) {
+        this.selectedCase = selectedCase;
+        notifyObservers(selectedCase, BoardObserver::onCaseSelected);
+    }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Case aCase = (Case) o;
-            return row == aCase.row && col == aCase.col;
-        }
+    public synchronized void addObserver(BoardObserver observer){
+        observers.add(observer);
+    }
 
-        @Override
-        public String toString() {
-            return "Position[" + row + "," + col + "]";
+    private void notifyObservers(Case relatedCase, BiConsumer<BoardObserver, BoardEvent> action){
+        BoardEvent event = new BoardEvent(relatedCase);
+        synchronized(this) {
+            for (BoardObserver listener : observers) {
+                action.accept(listener, event);
+            }
         }
     }
+
 }
