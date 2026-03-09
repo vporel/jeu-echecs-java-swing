@@ -1,9 +1,10 @@
-package com.vivianhonghoa.chess.viewcontroller;
+package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.model.*;
 import com.vivianhonghoa.chess.model.events.BoardEvent;
 import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
+import com.vivianhonghoa.chess.viewcontroller.Colors;
 
 import javax.swing.*;
 import java.awt.*;

@@ -4,7 +4,11 @@ import java.util.EventListener;
 
 public interface BoardObserver extends EventListener {
 
-    void onCaseSelected(BoardEvent event);
+    default void onCaseSelected(BoardEvent event) {
 
-    void onPieceMoved(BoardEvent event);
+    }
+
+    default void onPieceMoved(BoardEvent event) {
+
+    }
 }

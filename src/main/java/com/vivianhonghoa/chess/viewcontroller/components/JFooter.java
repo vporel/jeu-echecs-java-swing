@@ -1,6 +1,7 @@
-package com.vivianhonghoa.chess.viewcontroller;
+package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.viewcontroller.Colors;
 
 import javax.swing.*;
 

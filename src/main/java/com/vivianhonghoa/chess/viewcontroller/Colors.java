@@ -11,4 +11,7 @@ public final class Colors {
     public static final Color PRIMARY_LIGHT_2 = new Color(147, 147, 194);
     public static final Color SECONDARY = new Color(76, 86, 31);
     public static final Color SECONDARY_LIGHT_1 = new Color(145, 146, 22);
+
+    public static final Color WHITE = new Color(255, 255, 255);
+    public static final Color BLACK = new Color(0, 0, 0);
 }

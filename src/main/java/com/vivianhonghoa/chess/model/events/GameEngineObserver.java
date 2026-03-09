@@ -4,4 +4,7 @@ import java.util.EventListener;
 
 public interface GameEngineObserver extends EventListener {
 
+    default void onGameStarted(GameEngineEvent event) {
+
+    }
 }

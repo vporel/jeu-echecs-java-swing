@@ -19,8 +19,9 @@ public final class GameEngine {
     private boolean isWhiteTurn = true;
     private Player player1;
     private Player player2;
-    private int player1TimeRemaining; // in seconds
-    private int player2TimeRemaining; // in seconds
+    private boolean unlimitedTime = false; // If true, players have unlimited time
+    private Integer player1TimeRemaining; // in seconds
+    private Integer player2TimeRemaining; // in seconds
     private Timer timer;
 
     public GameEngine(){
@@ -28,13 +29,17 @@ public final class GameEngine {
         board = new Board();
     }
 
-    // Start the game with two players and a time limit
-    public void start(Player player1, Player player2, int timeInSeconds) {
+    /*
+     * Start the game with two players and a time limit
+     * a time limit of null means unlimited time
+     */
+    public void start(Player player1, Player player2, Integer timeInSeconds) {
         this.player1 = player1;
         this.player2 = player2;
         this.player1TimeRemaining = timeInSeconds;
         this.player2TimeRemaining = timeInSeconds;
         this.hasStarted = true;
+        this.unlimitedTime = timeInSeconds == null;
         this.isGameOver = false;
         this.isWhiteTurn = true;
         this.turnCount = 0;
@@ -44,42 +49,48 @@ public final class GameEngine {
             timer.stop();
         }
 
-        // Create a timer that ticks every 1 second (1000 ms)
-        timer = new Timer(1000, e -> {
-            if (!hasStarted || isGameOver) {
-                return;
-            }
+        if(!unlimitedTime) {
+            // Create a timer that ticks every 1 second (1000 ms)
+            timer = new Timer(1000, e -> {
+                if (!hasStarted || isGameOver) {
+                    return;
+                }
 
-            // Subtract 1 second from the current player's time
-            if (isWhiteTurn) {
-                player1TimeRemaining--;
-            } else {
-                player2TimeRemaining--;
-            }
+                // Subtract 1 second from the current player's time
+                if (isWhiteTurn) {
+                    player1TimeRemaining--;
+                } else {
+                    player2TimeRemaining--;
+                }
 
-            // If time runs out, the game is over
-            if (player1TimeRemaining <= 0 || player2TimeRemaining <= 0) {
-                isGameOver = true;
-                timer.stop();
-            }
-        });
-        timer.start();
+                // If time runs out, the game is over
+                if (player1TimeRemaining <= 0 || player2TimeRemaining <= 0) {
+                    isGameOver = true;
+                    timer.stop();
+                }
+            });
+            timer.start();
+        }
     }
 
     // Start the game with default time (10 minutes)
     public void start(Player player1, Player player2) {
         start(player1, player2, DEFAULT_TIME);
-    public int getPlayerRemainingTime(int playerNumber) {
+    }
+
+    /**
+     * @return null to indicate unlimited time, or the remaining time in seconds for the specified player
+     */
+    public Integer getPlayerRemainingTime(int playerNumber) {
+        if(unlimitedTime) {
+            return null;
+        }
         if (playerNumber == 1) {
             return player1TimeRemaining;
         } else if (playerNumber == 2) {
             return player2TimeRemaining;
         }
         throw new IllegalArgumentException("Invalid player number: " + playerNumber);
-    }
-
-    public Board getBoard() {
-        return board;
     }
 
     public void selectCase(Case selectedCase) {
