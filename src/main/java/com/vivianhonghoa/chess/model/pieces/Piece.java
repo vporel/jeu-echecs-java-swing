@@ -33,7 +33,7 @@ public abstract class Piece {
         return col;
     }
 
-    public abstract List<Board.Case> getAccessibleCasses();
+    public abstract List<Board.Case> getAccessibleCases();
 
     /**
      * Helper for sliding pieces (rook, bishop, queen).
