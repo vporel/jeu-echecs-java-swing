@@ -8,4 +8,6 @@ public final class Colors {
     public static final Color PRIMARY = new Color(44, 44, 73);
     public static final Color PRIMARY_LIGHT_1 = new Color(115, 115, 156);
     public static final Color PRIMARY_LIGHT_2 = new Color(147, 147, 194);
+    public static final Color SECONDARY = new Color(76, 86, 31);
+    public static final Color SECONDARY_LIGHT_1 = new Color(145, 146, 22);
 }

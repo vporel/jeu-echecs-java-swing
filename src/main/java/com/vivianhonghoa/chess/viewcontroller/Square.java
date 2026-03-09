@@ -48,29 +48,42 @@ public class Square extends JPanel {
             }
         });
 
-        SquaresContext.getInstance().addPropertyChangeListener(SquaresContext.SELECTED_SQUARE_POS_PROPERTY, eventt -> {
+        squaresContext.addPropertyChangeListener(SquaresContext.SELECTED_SQUARE_PROPERTY, eventt -> {
+            updateBackground(false);
+        });
+
+        squaresContext.addPropertyChangeListener(SquaresContext.MARKED_ACCESSIBLE_SQUARES_PROPERTY, eventt -> {
             updateBackground(false);
         });
     }
 
     private boolean isSelected(){
-        Position selectedPos = squaresContext.getSelectedSquarePos();
+        Position selectedPos = squaresContext.getSelectedSquare();
         return selectedPos != null && selectedPos.equals(position);
     }
 
+    private boolean isMarkedAccessible(){
+        return squaresContext.getMarkedAccessibleSquares() != null && squaresContext.getMarkedAccessibleSquares().contains(position);
+    }
+
+    private Piece getPiece(){
+        return gameEngine.getBoard().getPiece(position.row, position.col);
+    }
+
     private void updateBackground(boolean isHovered) {
-        if (isSelected()) {
+        if (isHovered) {
+            setBackground(Colors.PRIMARY_LIGHT_1);
+        }else if (isMarkedAccessible()) {
+            setBackground(Colors.SECONDARY_LIGHT_1);
+        } else if (isSelected()) {
             setBackground(Colors.PRIMARY_LIGHT_2);
         } else {
-            if(isHovered)
-                setBackground(Colors.PRIMARY_LIGHT_1);
-            else
-                setBackground((position.row + position.col) % 2 == 0 ? Colors.BACKGROUND : Colors.PRIMARY);
+            setBackground((position.row + position.col) % 2 == 0 ? Colors.BACKGROUND : Colors.PRIMARY);
         }
     }
 
     private void updatePieceDisplay() {
-        Piece piece = gameEngine.getBoard().getPiece(position.row, position.col);
+        Piece piece = getPiece();
         if (piece != null) {
             String unicodeSymbol = getUnicodeSymbol(piece);
             pieceLabel.setIcon(null);
@@ -99,7 +112,17 @@ public class Square extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                squaresContext.setSelectedSquarePos(position);
+                squaresContext.setSelectedSquare(position);
+                Piece piece = getPiece();
+                if (piece != null) {
+                    squaresContext.setMarkedAccessibleSquares(
+                            piece.getAccessibleCases().stream()
+                                    .map(c -> new Position(c.row(), c.col()))
+                                    .toList()
+                    );
+                } else {
+                    squaresContext.setMarkedAccessibleSquares(null);
+                }
             }
 
             @Override
