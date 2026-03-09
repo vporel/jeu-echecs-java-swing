@@ -11,36 +11,41 @@ public class Board {
         initPositions();
     }
 
+    private void placePiece(Piece piece, int row, int col) {
+        pieces[row][col] = piece;
+        piece.setPosition(this, row, col);
+    }
+
     private void initPositions() {
-        // Pions blancs (row 2, index 1)
+        // White pawns (row 2, index 1)
         for (int col = 0; col < TAILLE; col++) {
-            pieces[1][col] = new Pawn(Piece.Color.BLANC);
+            placePiece(new Pawn(Piece.Color.BLANC), 1, col);
         }
 
-        // Pions noirs (row 7, index 6)
+        // Black pawns (row 7, index 6)
         for (int col = 0; col < TAILLE; col++) {
-            pieces[6][col] = new Pawn(Piece.Color.NOIR);
+            placePiece(new Pawn(Piece.Color.NOIR), 6, col);
         }
 
-        // Pieces blanches (row 1, index 0)
-        pieces[0][0] = new Rook(Piece.Color.BLANC);
-        pieces[0][1] = new Knight(Piece.Color.BLANC);
-        pieces[0][2] = new Bishop(Piece.Color.BLANC);
-        pieces[0][3] = new King(Piece.Color.BLANC);
-        pieces[0][4] = new Queen(Piece.Color.BLANC);
-        pieces[0][5] = new Bishop(Piece.Color.BLANC);
-        pieces[0][6] = new Knight(Piece.Color.BLANC);
-        pieces[0][7] = new Rook(Piece.Color.BLANC);
+        // White pieces (row 1, index 0)
+        placePiece(new Rook(Piece.Color.BLANC), 0, 0);
+        placePiece(new Knight(Piece.Color.BLANC), 0, 1);
+        placePiece(new Bishop(Piece.Color.BLANC), 0, 2);
+        placePiece(new King(Piece.Color.BLANC), 0, 3);
+        placePiece(new Queen(Piece.Color.BLANC), 0, 4);
+        placePiece(new Bishop(Piece.Color.BLANC), 0, 5);
+        placePiece(new Knight(Piece.Color.BLANC), 0, 6);
+        placePiece(new Rook(Piece.Color.BLANC), 0, 7);
 
-        // Pieces noires (row 8, index 7)
-        pieces[7][0] = new Rook(Piece.Color.NOIR);
-        pieces[7][1] = new Knight(Piece.Color.NOIR);
-        pieces[7][2] = new Bishop(Piece.Color.NOIR);
-        pieces[7][3] = new King(Piece.Color.NOIR);
-        pieces[7][4] = new Queen(Piece.Color.NOIR);
-        pieces[7][5] = new Bishop(Piece.Color.NOIR);
-        pieces[7][6] = new Knight(Piece.Color.NOIR);
-        pieces[7][7] = new Rook(Piece.Color.NOIR);
+        // Black pieces (row 8, index 7)
+        placePiece(new Rook(Piece.Color.NOIR), 7, 0);
+        placePiece(new Knight(Piece.Color.NOIR), 7, 1);
+        placePiece(new Bishop(Piece.Color.NOIR), 7, 2);
+        placePiece(new King(Piece.Color.NOIR), 7, 3);
+        placePiece(new Queen(Piece.Color.NOIR), 7, 4);
+        placePiece(new Bishop(Piece.Color.NOIR), 7, 5);
+        placePiece(new Knight(Piece.Color.NOIR), 7, 6);
+        placePiece(new Rook(Piece.Color.NOIR), 7, 7);
     }
 
     public Piece getPiece(int row, int col) {
