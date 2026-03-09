@@ -2,6 +2,7 @@ package com.vivianhonghoa.chess.model.pieces;
 
 import com.vivianhonghoa.chess.model.Board;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Knight extends Piece{
@@ -10,8 +11,29 @@ public class Knight extends Piece{
         super(color);
     }
 
+    private void addIfAccessible(List<Board.Case> cases, int r, int c) {
+        if (Board.Case.isValid(r, c)) {
+            Piece target = board.getPiece(r, c);
+            if (target == null || target.getColor() != getColor()) {
+                cases.add(new Board.Case(r, c));
+            }
+        }
+    }
+
     @Override
-    public List<Board.Case> getAccessibleCasses() {
-        return List.of();
+    public List<Board.Case> getAccessibleCases() {
+        List<Board.Case> cases = new ArrayList<>();
+
+        // The knight moves in an "L" shape: 2 squares + 1 square
+        addIfAccessible(cases, row - 2, col - 1);
+        addIfAccessible(cases, row - 2, col + 1);
+        addIfAccessible(cases, row - 1, col - 2);
+        addIfAccessible(cases, row - 1, col + 2);
+        addIfAccessible(cases, row + 1, col - 2);
+        addIfAccessible(cases, row + 1, col + 2);
+        addIfAccessible(cases, row + 2, col - 1);
+        addIfAccessible(cases, row + 2, col + 1);
+
+        return cases;
     }
 }
