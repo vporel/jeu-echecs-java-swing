@@ -11,6 +11,7 @@ public abstract class Piece {
     protected Board board;
     protected int row;
     protected int col;
+    protected boolean hasMoved = false;
 
     protected Piece(Color color) {
         this.color = color;
@@ -32,6 +33,14 @@ public abstract class Piece {
 
     public int getCol() {
         return col;
+    }
+
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 
     public abstract List<Case> getAccessibleCases();
