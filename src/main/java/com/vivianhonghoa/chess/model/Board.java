@@ -61,11 +61,111 @@ public class Board {
         placePiece(new Rook(Piece.Color.NOIR), 7, 7);
     }
 
-     public Piece getPiece(int row, int col) {
+    public Piece getPiece(int row, int col) {
         if (!Case.isValid(row, col)) {
             return null;
         }
         return pieces[row][col];
+    }
+
+    // ── Check detection ──────────────────────────────────────────────
+
+    public Case findKing(Piece.Color color) {
+        for (int r = 0; r < TAILLE; r++) {
+            for (int c = 0; c < TAILLE; c++) {
+                Piece p = pieces[r][c];
+                if (p instanceof King && p.getColor() == color) {
+                    return new Case(r, c);
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isSquareAttackedBy(int row, int col, Piece.Color attackerColor) {
+        for (int r = 0; r < TAILLE; r++) {
+            for (int c = 0; c < TAILLE; c++) {
+                Piece p = pieces[r][c];
+                if (p != null && p.getColor() == attackerColor && canPieceAttack(p, r, c, row, col)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean canPieceAttack(Piece piece, int fromRow, int fromCol, int toRow, int toCol) {
+        int dr = toRow - fromRow;
+        int dc = toCol - fromCol;
+        int absDr = Math.abs(dr);
+        int absDc = Math.abs(dc);
+
+        if (piece instanceof Pawn) {
+            int direction = (piece.getColor() == Piece.Color.BLANC) ? 1 : -1;
+            return dr == direction && absDc == 1;
+        } else if (piece instanceof Knight) {
+            return (absDr == 2 && absDc == 1) || (absDr == 1 && absDc == 2);
+        } else if (piece instanceof King) {
+            return absDr <= 1 && absDc <= 1 && (absDr + absDc > 0);
+        } else if (piece instanceof Rook) {
+            return (dr == 0 || dc == 0) && isPathClear(fromRow, fromCol, toRow, toCol);
+        } else if (piece instanceof Bishop) {
+            return absDr == absDc && absDr > 0 && isPathClear(fromRow, fromCol, toRow, toCol);
+        } else if (piece instanceof Queen) {
+            return ((dr == 0 || dc == 0) || (absDr == absDc && absDr > 0))
+                    && isPathClear(fromRow, fromCol, toRow, toCol);
+        }
+        return false;
+    }
+
+    private boolean isPathClear(int fromRow, int fromCol, int toRow, int toCol) {
+        int dr = Integer.signum(toRow - fromRow);
+        int dc = Integer.signum(toCol - fromCol);
+        int r = fromRow + dr;
+        int c = fromCol + dc;
+        while (r != toRow || c != toCol) {
+            if (pieces[r][c] != null) return false;
+            r += dr;
+            c += dc;
+        }
+        return true;
+    }
+
+    public boolean isKingInCheck(Piece.Color color) {
+        Case kingCase = findKing(color);
+        if (kingCase == null) return false;
+        Piece.Color opponent = (color == Piece.Color.BLANC) ? Piece.Color.NOIR : Piece.Color.BLANC;
+        return isSquareAttackedBy(kingCase.row(), kingCase.col(), opponent);
+    }
+
+    // ── Legal moves (simulation-based filtering) ─────────────────────
+
+    public List<Case> getLegalMoves(Piece piece) {
+        List<Case> legal = new ArrayList<>();
+        Case from = new Case(piece.getRow(), piece.getCol());
+        for (Case to : piece.getAccessibleCases()) {
+            if (isMoveLegal(piece, from, to)) {
+                legal.add(to);
+            }
+        }
+        return legal;
+    }
+
+    private boolean isMoveLegal(Piece piece, Case from, Case to) {
+        // Simulate the move
+        Piece captured = pieces[to.row()][to.col()];
+        pieces[to.row()][to.col()] = piece;
+        pieces[from.row()][from.col()] = null;
+        piece.setPosition(this, to.row(), to.col());
+
+        boolean inCheck = isKingInCheck(piece.getColor());
+
+        // Undo the move
+        pieces[from.row()][from.col()] = piece;
+        pieces[to.row()][to.col()] = captured;
+        piece.setPosition(this, from.row(), from.col());
+
+        return !inCheck;
     }
 
     public Piece getSelectedPiece() {
@@ -76,32 +176,54 @@ public class Board {
     }
 
     boolean movePiece(Case from, Case to) {
-        if(from == null || to == null) return false;
+        if (from == null || to == null) return false;
         Piece piece = getPiece(from.row(), from.col());
-        if (piece != null && piece.canMoveTo(to)) {
-            // Check for capture
-            Piece captured = getPiece(to.row(), to.col());
-            if (captured != null) {
-                if (piece.getColor() == Piece.Color.BLANC) {
-                    capturedByWhite.add(captured);
-                } else {
-                    capturedByBlack.add(captured);
-                }
-            }
+        if (piece == null || !piece.canMoveTo(to)) return false;
 
-            // Move the piece
-            pieces[to.row()][to.col()] = piece;
-            pieces[from.row()][from.col()] = null;
-            piece.setPosition(this, to.row(), to.col());
+        // Simulate-and-reject: ensure the move doesn't leave our King in check
+        if (!isMoveLegal(piece, from, to)) return false;
 
-            // Notify observers of the move
-            notifyObservers(to, BoardObserver::onPieceMoved);
-            if (captured != null) {
-                notifyObservers(to, BoardObserver::onPieceCaptured);
+        // Check for capture
+        Piece captured = getPiece(to.row(), to.col());
+        if (captured != null) {
+            if (piece.getColor() == Piece.Color.BLANC) {
+                capturedByWhite.add(captured);
+            } else {
+                capturedByBlack.add(captured);
             }
-            return true;
         }
-        return false;
+
+        // Move the piece
+        pieces[to.row()][to.col()] = piece;
+        pieces[from.row()][from.col()] = null;
+        piece.setPosition(this, to.row(), to.col());
+        piece.setHasMoved(true);
+
+        // Handle castling rook movement (King moved 2 columns)
+        if (piece instanceof King && Math.abs(to.col() - from.col()) == 2) {
+            int rookFromCol, rookToCol;
+            if (to.col() < from.col()) {
+                // Queenside: Rook from col 0 → col 2
+                rookFromCol = 0;
+                rookToCol = 2;
+            } else {
+                // Kingside: Rook from col 7 → col 4
+                rookFromCol = 7;
+                rookToCol = 4;
+            }
+            Piece rook = pieces[from.row()][rookFromCol];
+            pieces[from.row()][rookToCol] = rook;
+            pieces[from.row()][rookFromCol] = null;
+            rook.setPosition(this, from.row(), rookToCol);
+            rook.setHasMoved(true);
+        }
+
+        // Notify observers of the move
+        notifyObservers(to, BoardObserver::onPieceMoved);
+        if (captured != null) {
+            notifyObservers(to, BoardObserver::onPieceCaptured);
+        }
+        return true;
     }
 
     public Case getSelectedCase() {
