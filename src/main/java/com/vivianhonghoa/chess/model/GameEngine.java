@@ -101,7 +101,10 @@ public final class GameEngine {
     public void stop() {
         if(!started) return;
         started = false;
-        scheduler.shutdown();
+        if(scheduler != null) {
+            scheduler.shutdown();
+        }
+        board.reset();
         notifyObservers(GameEngineObserver::onGameStopped);
     }
 

@@ -31,6 +31,16 @@ public class Board {
         initPositions();
     }
 
+    void reset() {
+        pieces = new Piece[SIZE][SIZE];
+        selectedCase = null;
+        capturedByWhite.clear();
+        capturedByBlack.clear();
+        passingCaptureTarget = null;
+        initPositions();
+        notifyObservers(null, BoardObserver::onPieceMoved);
+    }
+
     private void placePiece(Piece piece, int row, int col) {
         pieces[row][col] = piece;
         piece.setPosition(this, row, col);
