@@ -58,4 +58,43 @@ public class JComponentHelper {
         jComponent.setFont(jComponent.getFont().deriveFont(jComponent.getFont().getStyle() | Font.BOLD));
     }
 
+    public static void changeForegroundOnMouseHover(JComponent jComponent, Color normalColor, Color hoverColor) {
+        jComponent.setForeground(normalColor);
+        jComponent.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jComponent.setForeground(hoverColor);
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jComponent.setForeground(normalColor);
+            }
+        });
+    }
+
+    public static void changeBackgroundOnMouseHover(JComponent jComponent, Color normalColor, Color hoverColor) {
+        jComponent.setBackground(normalColor);
+        jComponent.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jComponent.setBackground(hoverColor);
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jComponent.setBackground(normalColor);
+            }
+        });
+    }
+
+    public static void changeCursorOnMouseHover(JComponent jComponent, Cursor normalCursor, Cursor hoverCursor) {
+        jComponent.setCursor(normalCursor);
+        jComponent.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jComponent.setCursor(hoverCursor);
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jComponent.setCursor(normalCursor);
+            }
+        });
+    }
+
 }

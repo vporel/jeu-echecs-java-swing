@@ -1,5 +1,8 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
+import com.vivianhonghoa.chess.viewcontroller.Colors;
+import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -17,6 +20,8 @@ public class JLabelWrapper extends JPanel {
         this.label = label;
         this.fullWidth = fullWidth;
         this.setLayout(new GridBagLayout());
+        this.setBackground(Colors.APP_BACKGROUND);
+        this.setPadding(0, 0, 0, 0);
         this.add(label);
     }
 
@@ -31,7 +36,7 @@ public class JLabelWrapper extends JPanel {
         Dimension pref = label.getPreferredSize();
         int width = fullWidth ? Integer.MAX_VALUE : pref.width + left + right;
         int height = pref.height + top + bottom;
-        this.setMaximumSize(new Dimension(width, height));
+        JComponentHelper.setFixedSize(this, width, height);
     }
 
     public void setPaddingVertical(int value) {

@@ -35,15 +35,15 @@ public class JHeader extends JPanel {
             }
         });
 
-        JCustomButton jStopButton = new JCustomButton("STOP");
+        JCustomButton jStopButton = new JCustomButton("QUIT");
         JComponentHelper.setFixedHeight(jStopButton, 40);
         jStopButton.setOpaque(false);
         jStopButton.setBackground(Colors.TRANSPARENT);
         jStopButton.addActionListener(e -> {
             int response = JOptionPane.showConfirmDialog(
                     JHeader.this,
-                    "Êtes-vous sûr de vouloir arrêter la partie ?",
-                    "Confirmer l'arrêt",
+                    "Are you sure that you want to quit the game ?",
+                    "Quit Game",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE
             );

@@ -5,6 +5,7 @@ import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.viewcontroller.components.JGamePane;
 import com.vivianhonghoa.chess.viewcontroller.components.JStartupPane;
+import com.vivianhonghoa.chess.viewcontroller.components.JWinnerPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,8 +25,7 @@ public class JAppFrame extends JFrame {
         gameEngine.addObserver(new GameEngineObserver() {
             @Override
             public void onGameStarted(GameEngineEvent event) {
-                JGamePane jGamePane = new JGamePane(gameEngine);
-                changeContentPane(jGamePane);
+                changeContentPane(new JGamePane(gameEngine));
             }
 
             @Override

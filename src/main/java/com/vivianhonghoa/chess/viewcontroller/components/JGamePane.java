@@ -1,6 +1,8 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.events.GameEngineEvent;
+import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 
@@ -43,5 +45,17 @@ public class JGamePane extends JPanel {
         this.add(new JPlayerPane(1, "White", gameEngine), BorderLayout.WEST);
         this.add(new JPlayerPane(2, "Black", gameEngine), BorderLayout.EAST);
         this.setBackground(Colors.APP_BACKGROUND);
+
+        //Game engine events
+        gameEngine.addObserver(new GameEngineObserver() {
+            @Override
+            public void onGameEnded(GameEngineEvent event) {
+                BorderLayout layout = (BorderLayout) getLayout();
+                remove(layout.getLayoutComponent(BorderLayout.CENTER));
+                add(new JWinnerPane(gameEngine), BorderLayout.CENTER);
+                revalidate();
+                repaint();
+            }
+        });
     }
 }

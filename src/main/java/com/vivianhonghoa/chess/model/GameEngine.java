@@ -22,9 +22,9 @@ public final class GameEngine {
     private Player player1;
     private Player player2;
     private boolean unlimitedTime = false; // If true, players have unlimited time
-    private AtomicInteger player1TimeRemaining = new AtomicInteger(0); // in seconds
-    private AtomicInteger player2TimeRemaining = new AtomicInteger(0); // in seconds
-    private AtomicInteger winnerPlayerNumber = new AtomicInteger(0);
+    private final AtomicInteger player1TimeRemaining = new AtomicInteger(0); // in seconds
+    private final AtomicInteger player2TimeRemaining = new AtomicInteger(0); // in seconds
+    private final AtomicInteger winnerPlayerNumber = new AtomicInteger(0);
     private ScheduledExecutorService scheduler;
 
     public GameEngine(){
@@ -84,6 +84,10 @@ public final class GameEngine {
             scheduler.shutdown();
         }
         notifyObservers(GameEngineObserver::onGameEnded);
+    }
+
+    public void giveUp(int playerNumber) {
+        end(playerNumber == 1 ? 2 : 1);
     }
 
     public void pause() {
@@ -157,7 +161,7 @@ public final class GameEngine {
     }
 
     public boolean hasStarted() {
-        return started;
+        return started && !ended.get();
     }
 
     public boolean isPaused() {
@@ -178,6 +182,10 @@ public final class GameEngine {
         } else {
             return player2;
         }
+    }
+
+    public int getWinnerPlayerNumber() {
+        return winnerPlayerNumber.get();
     }
 
     public synchronized void addObserver(GameEngineObserver observer){
