@@ -83,27 +83,13 @@ public class JSquare extends JPanel {
     private void updatePieceDisplay() {
         Piece piece = getPiece();
         if (piece != null) {
-            String unicodeSymbol = getUnicodeSymbol(piece);
             pieceLabel.setIcon(null);
-            pieceLabel.setText(unicodeSymbol);
+            pieceLabel.setText(piece.getUnicodeSymbol());
             pieceLabel.setForeground(piece.getColor() == Piece.Color.BLANC ? java.awt.Color.WHITE : java.awt.Color.BLACK);
         } else {
             pieceLabel.setIcon(null);
             pieceLabel.setText("");
         }
-    }
-
-    private String getUnicodeSymbol(Piece piece) {
-
-        return  switch(piece) {
-            case King k -> "\u265A";
-            case Queen q -> "\u265B";
-            case Rook r -> "\u265C";
-            case Bishop b -> "\u265D";
-            case Knight k -> "\u265E";
-            case Pawn p -> "\u265F";
-            default -> "";
-        };
     }
 
     private void handleClick(){

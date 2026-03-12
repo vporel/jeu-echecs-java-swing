@@ -64,6 +64,18 @@ public abstract class Piece {
         return cases;
     }
 
+    public String getUnicodeSymbol() {
+        return switch (this) {
+            case King k -> "\u265A";
+            case Queen q -> "\u265B";
+            case Rook r -> "\u265C";
+            case Bishop b -> "\u265D";
+            case Knight k -> "\u265E";
+            case Pawn p -> "\u265F";
+            default -> "";
+        };
+    }
+
     public enum Color {
         BLANC,
         NOIR;

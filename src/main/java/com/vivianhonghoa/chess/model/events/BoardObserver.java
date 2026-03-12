@@ -11,4 +11,8 @@ public interface BoardObserver extends EventListener {
     default void onPieceMoved(BoardEvent event) {
 
     }
+
+    default void onPieceCaptured(BoardEvent event) {
+
+    }
 }

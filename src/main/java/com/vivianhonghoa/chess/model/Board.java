@@ -15,6 +15,8 @@ public class Board {
 
     private Piece[][] pieces;
     private Case selectedCase;
+    private final List<Piece> capturedByWhite = new ArrayList<>();
+    private final List<Piece> capturedByBlack = new ArrayList<>();
 
     public Board() {
         observers = new ArrayList<>();
@@ -77,6 +79,16 @@ public class Board {
         if(from == null || to == null) return false;
         Piece piece = getPiece(from.row(), from.col());
         if (piece != null && piece.canMoveTo(to)) {
+            // Check for capture
+            Piece captured = getPiece(to.row(), to.col());
+            if (captured != null) {
+                if (piece.getColor() == Piece.Color.BLANC) {
+                    capturedByWhite.add(captured);
+                } else {
+                    capturedByBlack.add(captured);
+                }
+            }
+
             // Move the piece
             pieces[to.row()][to.col()] = piece;
             pieces[from.row()][from.col()] = null;
@@ -84,6 +96,9 @@ public class Board {
 
             // Notify observers of the move
             notifyObservers(to, BoardObserver::onPieceMoved);
+            if (captured != null) {
+                notifyObservers(to, BoardObserver::onPieceCaptured);
+            }
             return true;
         }
         return false;
@@ -100,6 +115,14 @@ public class Board {
     void setSelectedCase(Case selectedCase) {
         this.selectedCase = selectedCase;
         notifyObservers(selectedCase, BoardObserver::onCaseSelected);
+    }
+
+    public List<Piece> getCapturedByWhite() {
+        return capturedByWhite;
+    }
+
+    public List<Piece> getCapturedByBlack() {
+        return capturedByBlack;
     }
 
     public synchronized void addObserver(BoardObserver observer){
