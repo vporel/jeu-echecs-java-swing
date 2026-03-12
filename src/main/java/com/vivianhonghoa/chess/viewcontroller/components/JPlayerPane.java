@@ -18,17 +18,19 @@ public class JPlayerPane extends JPanel {
     private static final int WIDTH = 200;
 
     private final int playerNumber;
+    private final String playerColor;
     private final GameEngine gameEngine;
 
-    public JPlayerPane(int playerNumber, GameEngine gameEngine) {
+    public JPlayerPane(int playerNumber, String playerColor, GameEngine gameEngine) {
         super();
         this.playerNumber = playerNumber;
+        this.playerColor = playerColor;
         this.gameEngine = gameEngine;
         build();
     }
 
     private String getPlayerName(){
-        return "JOUEUR " + playerNumber;
+        return "Player " + playerNumber;
     }
 
     private String getRemainingTimeStr(){
@@ -58,7 +60,14 @@ public class JPlayerPane extends JPanel {
         jPlayerNameWrapper.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Colors.PRIMARY));
         jPlayerNameWrapper.setBackground(Colors.APP_BACKGROUND);
 
-        JLabel jRemainingTimeLabel = new JLabel("Temps restant", SwingConstants.CENTER);
+        JLabel jPlayerColor = new JLabel("(" + playerColor + ")", SwingConstants.CENTER);
+        JComponentHelper.setFontSize(jPlayerColor, 16);
+        jPlayerColor.setForeground(Colors.SECONDARY);
+        JLabelWrapper jPlayerColorWrapper = new JLabelWrapper(jPlayerColor, true);
+        jPlayerColorWrapper.setPaddingVertical(5);
+        jPlayerColorWrapper.setBackground(Colors.APP_BACKGROUND);
+
+        JLabel jRemainingTimeLabel = new JLabel("Remaining time", SwingConstants.CENTER);
         JLabelWrapper jRemainingTimeLabelWrapper = new JLabelWrapper(jRemainingTimeLabel, true);
         jRemainingTimeLabelWrapper.setPaddingVertical(10);
         jRemainingTimeLabelWrapper.setBackground(Colors.APP_BACKGROUND);
@@ -83,8 +92,12 @@ public class JPlayerPane extends JPanel {
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(jPlayerNameWrapper);
+        this.add(jPlayerColorWrapper);
         this.add(jRemainingTimeLabelWrapper);
         this.add(jRemainingTimeValueWrapper);
+        this.add(Box.createVerticalStrut(10));
+        this.add(getBackForgiveButtons());
+        this.add(Box.createVerticalGlue());
         this.add(jCapturedLabelWrapper);
         this.add(capturedPiecesPanel);
         this.setBackground(Colors.APP_BACKGROUND);
@@ -118,5 +131,26 @@ public class JPlayerPane extends JPanel {
         }
         panel.revalidate();
         panel.repaint();
+    }
+
+    private JPanel getBackForgiveButtons(){
+        JLabel jBackLabelButton = new JLabel("\u27F2");
+        JComponentHelper.setFontSize(jBackLabelButton, 50);
+        jBackLabelButton.setBorder(null);
+
+        JLabel jForgiveLabelButton = new JLabel("\uD83C\uDFC1");
+        JComponentHelper.setFontSize(jForgiveLabelButton, 40);
+        jForgiveLabelButton.setBorder(null);
+
+        JPanel jBackForgiveButtonsWrapper = new JPanel();
+        jBackForgiveButtonsWrapper.setLayout(new BoxLayout(jBackForgiveButtonsWrapper, BoxLayout.X_AXIS));
+        jBackForgiveButtonsWrapper.add(Box.createHorizontalGlue());
+        jBackForgiveButtonsWrapper.add(jBackLabelButton);
+        jBackForgiveButtonsWrapper.add(Box.createHorizontalStrut(20));
+        jBackForgiveButtonsWrapper.add(jForgiveLabelButton);
+        jBackForgiveButtonsWrapper.add(Box.createHorizontalGlue());
+        jBackForgiveButtonsWrapper.setBackground(Colors.APP_BACKGROUND);
+
+        return jBackForgiveButtonsWrapper;
     }
 }

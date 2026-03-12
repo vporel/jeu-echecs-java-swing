@@ -24,8 +24,8 @@ public class JGamePane extends JPanel {
         this.add(new JHeader(gameEngine), BorderLayout.NORTH);
         this.add(new JFooter(gameEngine), BorderLayout.SOUTH);
         this.add(jSquaresContainerWrapper, BorderLayout.CENTER);
-        this.add(new JPlayerPane(1, gameEngine), BorderLayout.WEST);
-        this.add(new JPlayerPane(2, gameEngine), BorderLayout.EAST);
+        this.add(new JPlayerPane(1, "White", gameEngine), BorderLayout.WEST);
+        this.add(new JPlayerPane(2, "Black", gameEngine), BorderLayout.EAST);
         this.setBackground(Colors.APP_BACKGROUND);
     }
 }

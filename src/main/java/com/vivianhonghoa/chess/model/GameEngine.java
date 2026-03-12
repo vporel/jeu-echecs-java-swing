@@ -4,8 +4,6 @@ import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -67,9 +65,7 @@ public final class GameEngine {
 
                 // If time runs out, the game is over
                 if (player1TimeRemaining.get() <= 0 || player2TimeRemaining.get() <= 0) {
-                    ended.set(true);
-                    winnerPlayerNumber.set(player1TimeRemaining.get() > 0 ? 1 : 2);
-                    scheduler.shutdown();
+                    this.end(player1TimeRemaining.get() > 0 ? 1 : 2);
                 }
 
                 notifyObservers(GameEngineObserver::onGameTimeUpdated);
@@ -78,6 +74,16 @@ public final class GameEngine {
             scheduler.scheduleAtFixedRate(task, 1, 1, TimeUnit.SECONDS);
         }
         notifyObservers(GameEngineObserver::onGameStarted);
+    }
+
+    private void end(int winnerPlayerNumber) {
+        if(!started || ended.get()) return;
+        ended.set(true);
+        this.winnerPlayerNumber.set(winnerPlayerNumber);
+        if(scheduler != null) {
+            scheduler.shutdown();
+        }
+        notifyObservers(GameEngineObserver::onGameEnded);
     }
 
     public void pause() {
@@ -116,13 +122,13 @@ public final class GameEngine {
 
     public void selectCase(Case selectedCase) {
         // Do nothing if the game has not started or is over
-        if (!started || ended.get()) {
+        if (!started || paused.get() || ended.get()) {
             return;
         }
 
         // Check if the player is selecting their own piece
         Piece selectedPiece = board.getPiece(selectedCase.row(), selectedCase.col());
-        Piece.Color currentColor = isWhiteTurn ? Piece.Color.BLANC : Piece.Color.NOIR;
+        Piece.Color currentColor = isWhiteTurn ? Piece.Color.WHITE : Piece.Color.BLACK;
 
         // If a piece is already selected, try to move it
         if (board.getSelectedCase() != null) {
@@ -130,6 +136,7 @@ public final class GameEngine {
             if (moved) {
                 board.setSelectedCase(null);
                 isWhiteTurn = !isWhiteTurn;
+                notifyObservers(GameEngineObserver::onPlayerTurnChanged);
                 return;
             }
         }
@@ -156,8 +163,8 @@ public final class GameEngine {
         return ended.get();
     }
 
-    public boolean isWhiteTurn() {
-        return isWhiteTurn;
+    public int getCurrentPlayerNumber() {
+        return isWhiteTurn ? 1 : 2;
     }
 
     public Player getCurrentPlayer() {
@@ -167,8 +174,6 @@ public final class GameEngine {
             return player2;
         }
     }
-
-    // Observer methods
 
     public synchronized void addObserver(GameEngineObserver observer){
         observers.add(observer);

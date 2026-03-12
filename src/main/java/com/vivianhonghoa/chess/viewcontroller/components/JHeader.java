@@ -4,8 +4,10 @@ import com.vivianhonghoa.chess.model.GameEngine;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
+import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class JHeader extends JPanel {
 
@@ -21,8 +23,11 @@ public class JHeader extends JPanel {
 
 
     private void build(){
-        JCustomButton pauseResumeButton = new JCustomButton("PAUSE");
-        pauseResumeButton.addActionListener(e -> {
+        JCustomButton jPauseResumeButton = new JCustomButton("PAUSE");
+        JComponentHelper.setFixedHeight(jPauseResumeButton, 40);
+        jPauseResumeButton.setOpaque(false);
+        jPauseResumeButton.setBackground(Colors.TRANSPARENT);
+        jPauseResumeButton.addActionListener(e -> {
             if (gameEngine.isPaused()) {
                 gameEngine.resume();
             } else {
@@ -30,8 +35,11 @@ public class JHeader extends JPanel {
             }
         });
 
-        JCustomButton stopButton = new JCustomButton("ARRETER");
-        stopButton.addActionListener(e -> {
+        JCustomButton jStopButton = new JCustomButton("STOP");
+        JComponentHelper.setFixedHeight(jStopButton, 40);
+        jStopButton.setOpaque(false);
+        jStopButton.setBackground(Colors.TRANSPARENT);
+        jStopButton.addActionListener(e -> {
             int response = JOptionPane.showConfirmDialog(
                     JHeader.this,
                     "Êtes-vous sûr de vouloir arrêter la partie ?",
@@ -44,22 +52,27 @@ public class JHeader extends JPanel {
             }
         });
 
-        this.add(pauseResumeButton);
-        this.add(stopButton);
+        this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        this.add(Box.createHorizontalGlue());
+        this.add(jPauseResumeButton);
+        this.add(Box.createHorizontalStrut(5));
+        this.add(jStopButton);
+        this.add(Box.createHorizontalStrut(5));
         this.setBackground(Colors.PRIMARY);
-        this.setPreferredSize(new java.awt.Dimension(0, HEIGHT));
+        this.setPreferredSize(new Dimension(0, HEIGHT));
 
         //Game engine events
         gameEngine.addObserver(new GameEngineObserver() {
             @Override
             public void onGamePaused(GameEngineEvent event) {
-                pauseResumeButton.setText("REPRENDRE");
+                jPauseResumeButton.setText("RESUME");
             }
 
             @Override
             public void onGameResumed(GameEngineEvent event) {
-                pauseResumeButton.setText("PAUSE");
+                jPauseResumeButton.setText("PAUSE");
             }
         });
     }
+
 }

@@ -86,7 +86,7 @@ public abstract class Piece {
     }
 
     public enum Color {
-        BLANC,
-        NOIR;
+        WHITE,
+        BLACK;
     }
 }

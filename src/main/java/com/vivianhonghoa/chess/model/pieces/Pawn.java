@@ -1,6 +1,5 @@
 package com.vivianhonghoa.chess.model.pieces;
 
-import com.vivianhonghoa.chess.model.Board;
 import com.vivianhonghoa.chess.model.Case;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class Pawn extends Piece{
         // White pawns move up (+1), black pawns move down (-1)
         int direction;
         int startRow;
-        if (getColor() == Color.BLANC) {
+        if (getColor() == Color.WHITE) {
             direction = 1;
             startRow = 1;
         } else {

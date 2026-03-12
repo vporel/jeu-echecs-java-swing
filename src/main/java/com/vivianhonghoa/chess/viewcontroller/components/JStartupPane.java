@@ -53,7 +53,7 @@ public class JStartupPane extends JPanel {
         jTimeSelectionPane.setLayout(new BoxLayout(jTimeSelectionPane, BoxLayout.Y_AXIS));
         jTimeSelectionPane.setBackground(Colors.PRIMARY);
 
-        JLabel jTitleLabel = new JLabel("Temps de jeu");
+        JLabel jTitleLabel = new JLabel("Game time limit");
         jTitleLabel.setForeground(Colors.SECONDARY_LIGHT_1);
         jTitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         JComponentHelper.setFontSize(jTitleLabel, 20);
@@ -63,11 +63,11 @@ public class JStartupPane extends JPanel {
         jTimeSelectionButtonsPane.setBackground(Colors.PRIMARY);
         jTimeSelectionButtonsPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
 
-        JCustomButton jLimitedTimeButton = new JCustomButton("Temps limité");
+        JCustomButton jLimitedTimeButton = new JCustomButton("Limited time");
         jLimitedTimeButton.setBackground(Colors.SECONDARY);
         jLimitedTimeButton.setForeground(Colors.WHITE);
         jLimitedTimeButton.setBorder(BorderFactory.createLineBorder(Colors.SECONDARY, 2));
-        JCustomButton jUnlimitedTimeButton = new JCustomButton("Temps illimité");
+        JCustomButton jUnlimitedTimeButton = new JCustomButton("Unlimited time");
         jUnlimitedTimeButton.setBorder(BorderFactory.createLineBorder(Colors.SECONDARY, 2));
         jLimitedTimeButton.addActionListener(e -> {
             isLimitedTimeSelected = true;
@@ -109,16 +109,20 @@ public class JStartupPane extends JPanel {
         JPanel jStartButtonsPane = new JPanel();
         jStartButtonsPane.setBackground(Colors.PRIMARY);
 
-        JCustomButton jPlayerVsPlayerButton = new JCustomButton("Joueur vs Joueur");
+        JCustomButton jPlayerVsPlayerButton = new JCustomButton("Player vs Player");
         JComponentHelper.setPreferredSize(jPlayerVsPlayerButton, 200, 60);
         JComponentHelper.setFontSize(jPlayerVsPlayerButton, 20);
+        jPlayerVsPlayerButton.setOpaque(false);
+        jPlayerVsPlayerButton.setBackground(Colors.TRANSPARENT);
         jPlayerVsPlayerButton.addActionListener(e -> {
             gameEngine.start(Player.HUMAN, Player.HUMAN, isLimitedTimeSelected ? selectedTimeLimit * 60 : null);
         });
 
-        JCustomButton jPlayerVsComputerButton = new JCustomButton("Joueur vs Ordinateur");
+        JCustomButton jPlayerVsComputerButton = new JCustomButton("Player vs Computer");
         JComponentHelper.setPreferredSize(jPlayerVsComputerButton, 200, 60);
         JComponentHelper.setFontSize(jPlayerVsComputerButton, 20);
+        jPlayerVsComputerButton.setOpaque(false);
+        jPlayerVsComputerButton.setBackground(Colors.TRANSPARENT);
         jPlayerVsComputerButton.addActionListener(e -> {
             gameEngine.start(Player.HUMAN, Player.COMPUTER, isLimitedTimeSelected ? selectedTimeLimit * 60 : null);
         });

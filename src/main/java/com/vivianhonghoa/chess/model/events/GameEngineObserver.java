@@ -27,4 +27,8 @@ public interface GameEngineObserver extends EventListener {
     default void onGameTimeUpdated(GameEngineEvent event) {
 
     }
+
+    default void onPlayerTurnChanged(GameEngineEvent event) {
+
+    }
 }
