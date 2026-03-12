@@ -1,12 +1,11 @@
 package com.vivianhonghoa.chess.model.pieces;
 
-import com.vivianhonghoa.chess.model.Board;
 import com.vivianhonghoa.chess.model.Case;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class King extends Piece{
+public class King extends Piece {
 
     public King(Color color) {
         super(color);
@@ -26,15 +25,53 @@ public class King extends Piece{
         List<Case> cases = new ArrayList<>();
 
         // The king can move 1 square in any direction
-        addIfAccessible(cases, row - 1, col - 1); // down-left
-        addIfAccessible(cases, row - 1, col);      // down
-        addIfAccessible(cases, row - 1, col + 1);  // down-right
-        addIfAccessible(cases, row, col - 1);      // left
-        addIfAccessible(cases, row, col + 1);      // right
-        addIfAccessible(cases, row + 1, col - 1);  // up-left
-        addIfAccessible(cases, row + 1, col);      // up
-        addIfAccessible(cases, row + 1, col + 1);  // up-right
+        addIfAccessible(cases, row - 1, col - 1);
+        addIfAccessible(cases, row - 1, col);
+        addIfAccessible(cases, row - 1, col + 1);
+        addIfAccessible(cases, row, col - 1);
+        addIfAccessible(cases, row, col + 1);
+        addIfAccessible(cases, row + 1, col - 1);
+        addIfAccessible(cases, row + 1, col);
+        addIfAccessible(cases, row + 1, col + 1);
+
+        addCastlingMoves(cases);
 
         return cases;
+    }
+
+    private void addCastlingMoves(List<Case> cases) {
+        if (hasMoved) return;
+
+        Color opponent = (getColor() == Color.BLANC) ? Color.NOIR : Color.BLANC;
+
+        // King must not be in check
+        if (board.isSquareAttackedBy(row, col, opponent)) return;
+
+        // Queenside castling: King at col 3 → col 1, Rook(0) → col 2
+        Piece qRook = board.getPiece(row, 0);
+        if (qRook instanceof Rook && qRook.getColor() == getColor() && !qRook.hasMoved()) {
+            // Path must be clear: cols 1, 2
+            if (board.getPiece(row, 1) == null && board.getPiece(row, 2) == null) {
+                // King must not pass through or land on attacked square: cols 1, 2
+                if (!board.isSquareAttackedBy(row, 1, opponent)
+                        && !board.isSquareAttackedBy(row, 2, opponent)) {
+                    cases.add(new Case(row, 1));
+                }
+            }
+        }
+
+        // Kingside castling: King at col 3 → col 5, Rook(7) → col 4
+        Piece kRook = board.getPiece(row, 7);
+        if (kRook instanceof Rook && kRook.getColor() == getColor() && !kRook.hasMoved()) {
+            // Path must be clear: cols 4, 5, 6
+            if (board.getPiece(row, 4) == null && board.getPiece(row, 5) == null
+                    && board.getPiece(row, 6) == null) {
+                // King must not pass through or land on attacked square: cols 4, 5
+                if (!board.isSquareAttackedBy(row, 4, opponent)
+                        && !board.isSquareAttackedBy(row, 5, opponent)) {
+                    cases.add(new Case(row, 5));
+                }
+            }
+        }
     }
 }
