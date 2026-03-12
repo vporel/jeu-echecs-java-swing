@@ -48,6 +48,7 @@ public class JSquare extends JPanel {
             @Override
             public void onPieceMoved(BoardEvent event) {
                 updatePieceDisplay();
+                updateBackground(false);
             }
         });
     }
@@ -68,13 +69,23 @@ public class JSquare extends JPanel {
         return gameEngine.getBoard().getPiece(position.row, position.col);
     }
 
+    private boolean isKingInCheck() {
+        Piece piece = getPiece();
+        if (piece instanceof King) {
+            return gameEngine.getBoard().isKingInCheck(piece.getColor());
+        }
+        return false;
+    }
+
     private void updateBackground(boolean isHovered) {
         if (isHovered) {
             setBackground(Colors.PRIMARY_LIGHT_1);
-        }else if (isMarkedAccessible()) {
+        } else if (isMarkedAccessible()) {
             setBackground(Colors.SECONDARY_LIGHT_1);
         } else if (isSelected()) {
             setBackground(Colors.PRIMARY_LIGHT_2);
+        } else if (isKingInCheck()) {
+            setBackground(Colors.DANGER);
         } else {
             setBackground((position.row + position.col) % 2 == 0 ? Colors.SQUARES_CONTAINER_BACKGROUND : Colors.PRIMARY);
         }
