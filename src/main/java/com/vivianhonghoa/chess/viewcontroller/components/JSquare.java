@@ -61,7 +61,7 @@ public class JSquare extends JPanel {
         Case selectedCase = gameEngine.getBoard().getSelectedCase();
         Piece selectedPiece = selectedCase != null ? gameEngine.getBoard().getPiece(selectedCase.row(), selectedCase.col()) : null;
         if (selectedPiece == null) return false;
-        return selectedPiece.getAccessibleCases().stream().anyMatch(c -> c.row() == position.row() && c.col() == position.col);
+        return gameEngine.getBoard().getLegalMoves(selectedPiece).stream().anyMatch(c -> c.row() == position.row() && c.col() == position.col());
     }
 
     private Piece getPiece(){
