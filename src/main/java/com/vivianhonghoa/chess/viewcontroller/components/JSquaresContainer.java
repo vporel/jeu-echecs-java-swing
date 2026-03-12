@@ -25,8 +25,8 @@ public class JSquaresContainer extends JPanel {
         JPanel leftPanel = new JPanel();
         leftPanel.setPreferredSize(new Dimension(EDGE_BANDS_SIZE, 0));
         //Add the numbers
-        leftPanel.setLayout(new GridLayout(Board.TAILLE, 1));
-        for(int i = Board.TAILLE; i > 0; i--){
+        leftPanel.setLayout(new GridLayout(Board.SIZE, 1));
+        for(int i = Board.SIZE; i > 0; i--){
             JLabel label = new JLabel(String.valueOf(i), SwingConstants.CENTER);
             label.setFont(new Font("Serif", Font.PLAIN, 17));
             leftPanel.add(label);
@@ -41,8 +41,8 @@ public class JSquaresContainer extends JPanel {
         emptyLabel.setPreferredSize(new Dimension(EDGE_BANDS_SIZE, 0));
         topPanel.add(emptyLabel, BorderLayout.WEST);
         // Center letters in a GridLayout
-        JPanel topCenter = new JPanel(new GridLayout(1, Board.TAILLE));
-        for(char c = 'A'; c < 'A' + Board.TAILLE; c++){
+        JPanel topCenter = new JPanel(new GridLayout(1, Board.SIZE));
+        for(char c = 'A'; c < 'A' + Board.SIZE; c++){
             JLabel label = new JLabel(String.valueOf(c), SwingConstants.CENTER);
             label.setFont(new Font("Serif", Font.PLAIN, 17));
             topCenter.add(label);
@@ -56,9 +56,9 @@ public class JSquaresContainer extends JPanel {
         //Right panel
         JPanel rightPanel = new JPanel();
         rightPanel.setPreferredSize(new Dimension(EDGE_BANDS_SIZE, 0));
-        rightPanel.setLayout(new GridLayout(Board.TAILLE, 1));
+        rightPanel.setLayout(new GridLayout(Board.SIZE, 1));
         //Add the numbers
-        for(int i = Board.TAILLE; i > 0; i--){
+        for(int i = Board.SIZE; i > 0; i--){
             JLabel label = new JLabel(String.valueOf(i), SwingConstants.CENTER);
             label.setFont(new Font("Serif", Font.PLAIN, 17));
             rightPanel.add(label);
@@ -73,8 +73,8 @@ public class JSquaresContainer extends JPanel {
         emptyLabel3.setPreferredSize(new Dimension(EDGE_BANDS_SIZE, 0));
         bottomPanel.add(emptyLabel3, BorderLayout.WEST);
         // Center letters in a GridLayout
-        JPanel bottomCenter = new JPanel(new GridLayout(1, Board.TAILLE));
-        for(char c = 'A'; c < 'A' + Board.TAILLE; c++){
+        JPanel bottomCenter = new JPanel(new GridLayout(1, Board.SIZE));
+        for(char c = 'A'; c < 'A' + Board.SIZE; c++){
             JLabel label = new JLabel(String.valueOf(c), SwingConstants.CENTER);
             label.setFont(new Font("Serif", Font.PLAIN, 17));
             bottomCenter.add(label);
@@ -87,9 +87,9 @@ public class JSquaresContainer extends JPanel {
 
         //Center panel
         JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new GridLayout(Board.TAILLE, Board.TAILLE));
-        for(int row = 0; row < Board.TAILLE; row++){
-            for(int col = 0; col < Board.TAILLE; col++) {
+        centerPanel.setLayout(new GridLayout(Board.SIZE, Board.SIZE));
+        for(int row = 0; row < Board.SIZE; row++){
+            for(int col = 0; col < Board.SIZE; col++) {
                 JSquare jSquare = new JSquare(row, col, gameEngine);
                 centerPanel.add(jSquare);
             }

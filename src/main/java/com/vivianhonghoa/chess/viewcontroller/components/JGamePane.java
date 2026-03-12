@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.pieces.*;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 
 import javax.swing.*;
@@ -17,6 +18,21 @@ public class JGamePane extends JPanel {
 
     private void build(){
         this.setLayout(new BorderLayout());
+
+        gameEngine.getBoard().setPromotionHandler(color -> {
+            String[] options = {"\u265B Queen", "\u265C Rook", "\u265D Bishop", "\u265E Knight"};
+            int choice = JOptionPane.showOptionDialog(
+                    this, "Choose promotion piece:", "Pawn Promotion",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null, options, options[0]);
+            return switch (choice) {
+                case 1 -> new Rook(color);
+                case 2 -> new Bishop(color);
+                case 3 -> new Knight(color);
+                default -> new Queen(color);
+            };
+        });
+
         JPanel jSquaresContainerWrapper = new JPanel();
         jSquaresContainerWrapper.setLayout(new GridBagLayout());
         jSquaresContainerWrapper.add(new JSquaresContainer(gameEngine));

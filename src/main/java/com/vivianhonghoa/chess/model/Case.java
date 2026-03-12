@@ -8,7 +8,7 @@ public record Case(int row,
     }
 
     public static boolean isValid(int row, int col) {
-        return row >= 0 && row < Board.TAILLE && col >= 0 && col < Board.TAILLE;
+        return row >= 0 && row < Board.SIZE && col >= 0 && col < Board.SIZE;
     }
 
     @Override

@@ -38,21 +38,19 @@ public class Pawn extends Piece{
             }
         }
 
-        // Capture diagonally to the left
-        int leftCol = col - 1;
-        if (Case.isValid(nextRow, leftCol)) {
-            Piece target = board.getPiece(nextRow, leftCol);
-            if (target != null && target.getColor() != getColor()) {
-                cases.add(new Case(nextRow, leftCol));
-            }
-        }
-
-        // Capture diagonally to the right
-        int rightCol = col + 1;
-        if (Case.isValid(nextRow, rightCol)) {
-            Piece target = board.getPiece(nextRow, rightCol);
-            if (target != null && target.getColor() != getColor()) {
-                cases.add(new Case(nextRow, rightCol));
+        // Capture diagonally (normal + passing capture)
+        Case passingCaptureTarget = board.getPassingCaptureTarget();
+        for (int dc = -1; dc <= 1; dc += 2) {
+            int targetCol = col + dc;
+            if (Case.isValid(nextRow, targetCol)) {
+                Piece target = board.getPiece(nextRow, targetCol);
+                if (target != null && target.getColor() != getColor()) {
+                    cases.add(new Case(nextRow, targetCol));
+                } else if (passingCaptureTarget != null
+                        && passingCaptureTarget.row() == nextRow
+                        && passingCaptureTarget.col() == targetCol) {
+                    cases.add(new Case(nextRow, targetCol));
+                }
             }
         }
 
