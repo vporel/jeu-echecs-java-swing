@@ -42,7 +42,7 @@ public class King extends Piece {
     private void addCastlingMoves(List<Case> cases) {
         if (hasMoved) return;
 
-        Color opponent = (getColor() == Color.BLANC) ? Color.NOIR : Color.BLANC;
+        Color opponent = (getColor() == Color.WHITE) ? Color.BLACK : Color.WHITE;
 
         // King must not be in check
         if (board.isSquareAttackedBy(row, col, opponent)) return;

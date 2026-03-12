@@ -126,7 +126,7 @@ public class JPlayerPane extends JPanel {
             JLabel label = new JLabel(piece.getUnicodeSymbol());
             label.setFont(new Font("Serif", Font.PLAIN, 28));
             // Use contrasting colors so pieces are visible on the white background
-            label.setForeground(piece.getColor() == Piece.Color.BLANC ? Colors.PRIMARY_LIGHT_1 : Color.BLACK);
+            label.setForeground(piece.getColor() == Piece.Color.WHITE ? Colors.PRIMARY_LIGHT_1 : Color.BLACK);
             panel.add(label);
         }
         panel.revalidate();

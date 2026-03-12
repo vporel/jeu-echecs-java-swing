@@ -101,7 +101,7 @@ public class Board {
         int absDc = Math.abs(dc);
 
         if (piece instanceof Pawn) {
-            int direction = (piece.getColor() == Piece.Color.BLANC) ? 1 : -1;
+            int direction = (piece.getColor() == Piece.Color.WHITE) ? 1 : -1;
             return dr == direction && absDc == 1;
         } else if (piece instanceof Knight) {
             return (absDr == 2 && absDc == 1) || (absDr == 1 && absDc == 2);
@@ -134,7 +134,7 @@ public class Board {
     public boolean isKingInCheck(Piece.Color color) {
         Case kingCase = findKing(color);
         if (kingCase == null) return false;
-        Piece.Color opponent = (color == Piece.Color.BLANC) ? Piece.Color.NOIR : Piece.Color.BLANC;
+        Piece.Color opponent = (color == Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
         return isSquareAttackedBy(kingCase.row(), kingCase.col(), opponent);
     }
 
@@ -186,7 +186,7 @@ public class Board {
         // Check for capture
         Piece captured = getPiece(to.row(), to.col());
         if (captured != null) {
-            if (piece.getColor() == Piece.Color.BLANC) {
+            if (piece.getColor() == Piece.Color.WHITE) {
                 capturedByWhite.add(captured);
             } else {
                 capturedByBlack.add(captured);

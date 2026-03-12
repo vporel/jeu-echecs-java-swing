@@ -126,6 +126,11 @@ public final class GameEngine {
             return;
         }
 
+        if(selectedCase == null) {
+            board.setSelectedCase(null);
+            return;
+        }
+
         // Check if the player is selecting their own piece
         Piece selectedPiece = board.getPiece(selectedCase.row(), selectedCase.col());
         Piece.Color currentColor = isWhiteTurn ? Piece.Color.WHITE : Piece.Color.BLACK;
