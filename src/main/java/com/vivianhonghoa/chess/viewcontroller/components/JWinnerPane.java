@@ -21,7 +21,8 @@ public class JWinnerPane extends JPanel {
     private void build(){
         int winnerPlayerNumber = gameEngine.getWinnerPlayerNumber();
 
-        JLabel jLabel = new JLabel("Player " + winnerPlayerNumber + " won !", SwingConstants.CENTER);
+        String message = winnerPlayerNumber == 0 ? "Draw ! (Stalemate)" : "Player " + winnerPlayerNumber + " won !";
+        JLabel jLabel = new JLabel(message, SwingConstants.CENTER);
         jLabel.setForeground(Colors.WHITE);
         JComponentHelper.setFontSize(jLabel, 30);
         JLabelWrapper jLabelWrapper = new JLabelWrapper(jLabel, true);

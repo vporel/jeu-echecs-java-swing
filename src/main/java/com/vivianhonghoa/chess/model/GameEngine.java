@@ -180,6 +180,7 @@ public final class GameEngine {
                 isWhiteTurn = !isWhiteTurn;
                 if(board.isKingInCheckmate(Piece.Color.WHITE)) end(2);
                 else if(board.isKingInCheckmate(Piece.Color.BLACK)) end(1);
+                else if(board.isStalemate(Piece.Color.WHITE) || board.isStalemate(Piece.Color.BLACK)) end(0);
                 else notifyObservers(GameEngineObserver::onPlayerTurnChanged);
                 return;
             }

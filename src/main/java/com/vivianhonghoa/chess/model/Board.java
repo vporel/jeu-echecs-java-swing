@@ -202,6 +202,23 @@ public class Board {
         return true; // No escape, it's checkmate
     }
 
+    public boolean isStalemate(Piece.Color color) {
+        if (isKingInCheck(color)) return false;
+        for (int r = 0; r < SIZE; r++) {
+            for (int c = 0; c < SIZE; c++) {
+                Piece p = pieces[r][c];
+                if (p != null && p.getColor() == color) {
+                    for (Case move : p.getAccessibleCases()) {
+                        if (isMoveLegal(p, new Case(r, c), move)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     // ── Legal moves (simulation-based filtering) ─────────────────────
 
     public List<Case> getLegalMoves(Piece piece) {

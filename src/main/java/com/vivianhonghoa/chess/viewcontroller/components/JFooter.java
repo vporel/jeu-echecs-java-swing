@@ -42,7 +42,8 @@ public class JFooter extends JPanel {
 
             @Override
             public void onGameEnded(GameEngineEvent event) {
-                jCurrentPlayerLabel.setText("Game Over. Winner : " + getPlayerName(gameEngine.getWinnerPlayerNumber()));
+                int winner = gameEngine.getWinnerPlayerNumber();
+                jCurrentPlayerLabel.setText(winner == 0 ? "Game Over. Draw ! (Stalemate)" : "Game Over. Winner : " + getPlayerName(winner));
             }
         });
     }
