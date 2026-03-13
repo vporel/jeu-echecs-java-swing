@@ -6,7 +6,7 @@ import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 import javax.swing.*;
 import java.awt.*;
 
-public class JLabelWrapper extends JPanel {
+public class JLabelWrapper extends JCustomPanel {
 
     private final JLabel label;
     private final boolean fullWidth;
@@ -34,9 +34,15 @@ public class JLabelWrapper extends JPanel {
      */
     public void setPadding(int left, int top, int right, int bottom) {
         Dimension pref = label.getPreferredSize();
-        int width = fullWidth ? Integer.MAX_VALUE : pref.width + left + right;
+        int naturalWidth = pref.width + left + right;
         int height = pref.height + top + bottom;
-        JComponentHelper.setFixedSize(this, width, height);
+        if (fullWidth) {
+            this.setPreferredSize(new Dimension(naturalWidth, height));
+            this.setMinimumSize(new Dimension(naturalWidth, height));
+            this.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
+        } else {
+            JComponentHelper.setFixedSize(this, naturalWidth, height);
+        }
     }
 
     public void setPaddingVertical(int value) {
@@ -46,4 +52,5 @@ public class JLabelWrapper extends JPanel {
     public void setPaddingHorizontal(int value) {
         setPadding(value, 0, value, 0);
     }
+
 }

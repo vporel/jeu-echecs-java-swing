@@ -23,10 +23,13 @@ public class JHeader extends JPanel {
 
 
     private void build(){
+        JLabel jTitleLabel = new JLabel("Chess");
+        JComponentHelper.setFontSize(jTitleLabel, 25);
+        JComponentHelper.setBold(jTitleLabel);
+        jTitleLabel.setForeground(Colors.SECONDARY_LIGHT_1);
+
         JCustomButton jPauseResumeButton = new JCustomButton("PAUSE");
         JComponentHelper.setFixedHeight(jPauseResumeButton, 40);
-        jPauseResumeButton.setOpaque(false);
-        jPauseResumeButton.setBackground(Colors.TRANSPARENT);
         jPauseResumeButton.addActionListener(e -> {
             if (gameEngine.isPaused()) {
                 gameEngine.resume();
@@ -37,8 +40,6 @@ public class JHeader extends JPanel {
 
         JCustomButton jStopButton = new JCustomButton("QUIT");
         JComponentHelper.setFixedHeight(jStopButton, 40);
-        jStopButton.setOpaque(false);
-        jStopButton.setBackground(Colors.TRANSPARENT);
         jStopButton.addActionListener(e -> {
             int response = JOptionPane.showConfirmDialog(
                     JHeader.this,
@@ -53,6 +54,8 @@ public class JHeader extends JPanel {
         });
 
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        this.add(Box.createHorizontalStrut(10));
+        this.add(jTitleLabel);
         this.add(Box.createHorizontalGlue());
         this.add(jPauseResumeButton);
         this.add(Box.createHorizontalStrut(5));

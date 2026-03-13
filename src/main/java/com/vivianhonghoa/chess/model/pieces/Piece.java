@@ -21,8 +21,12 @@ public abstract class Piece {
         return color;
     }
 
-    public void setPosition(Board board, int row, int col) {
+    public Piece setBoard(Board board) {
         this.board = board;
+        return this;
+    }
+
+    public void setPosition(int row, int col) {
         this.row = row;
         this.col = col;
     }

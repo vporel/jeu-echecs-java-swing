@@ -1,5 +1,6 @@
 package com.vivianhonghoa.chess.model;
 
+import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
@@ -35,9 +36,14 @@ public final class GameEngine {
      * Start the game with two players and a time limit
      * a time limit of null means unlimited time
      */
-    public void start(Player player1, Player player2, Integer timeInSeconds) {
+    public void start(Player player1, Player player2, Integer timeInSeconds, Piece[][] presetPieces) {
         // Do nothing if the game has already started
         if(started) return;
+
+        board.reset();
+        if(presetPieces != null) {
+            board.setPieces(presetPieces);
+        }
 
         this.player1 = player1;
         this.player2 = player2;
@@ -108,7 +114,6 @@ public final class GameEngine {
         if(scheduler != null) {
             scheduler.shutdown();
         }
-        board.reset();
         notifyObservers(GameEngineObserver::onGameStopped);
     }
 
@@ -148,7 +153,10 @@ public final class GameEngine {
             if (moved) {
                 board.setSelectedCase(null);
                 isWhiteTurn = !isWhiteTurn;
-                notifyObservers(GameEngineObserver::onPlayerTurnChanged);
+                //Check for checkmate after the move
+                if(board.isKingInCheckmate(Piece.Color.WHITE)) end(2);
+                else if(board.isKingInCheckmate(Piece.Color.BLACK)) end(1);
+                else notifyObservers(GameEngineObserver::onPlayerTurnChanged);
                 return;
             }
         }

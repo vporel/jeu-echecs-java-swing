@@ -18,7 +18,7 @@ public class Board {
     private final List<Piece> capturedByWhite = new ArrayList<>();
     private final List<Piece> capturedByBlack = new ArrayList<>();
     private Case passingCaptureTarget = null;
-    private PromotionHandler promotionHandler = color -> new Queen(color);
+    private PromotionHandler promotionHandler = Queen::new;
 
     @FunctionalInterface
     public interface PromotionHandler {
@@ -31,6 +31,20 @@ public class Board {
         initPositions();
     }
 
+    void setPieces(Piece[][] pieces) {
+        Piece[][] copy = new Piece[pieces.length][];
+        for (int i = 0; i < pieces.length; i++) {
+            copy[i] = pieces[i].clone();
+            //Set the board reference for each piece
+            for (int j = 0; j < copy[i].length; j++) {
+                if (copy[i][j] != null) {
+                    copy[i][j].setBoard(this);
+                }
+            }
+        }
+        this.pieces = copy;
+    }
+
     void reset() {
         pieces = new Piece[SIZE][SIZE];
         selectedCase = null;
@@ -41,41 +55,41 @@ public class Board {
         notifyObservers(null, BoardObserver::onPieceMoved);
     }
 
-    private void placePiece(Piece piece, int row, int col) {
+    void placePiece(Piece piece, int row, int col) {
         pieces[row][col] = piece;
-        piece.setPosition(this, row, col);
+        piece.setPosition(row, col);
     }
 
     private void initPositions() {
         // White pawns (row 2, index 1)
         for (int col = 0; col < SIZE; col++) {
-            placePiece(new Pawn(Piece.Color.WHITE), 1, col);
+            placePiece(new Pawn(Piece.Color.WHITE).setBoard(this), 1, col);
         }
 
         // Black pawns (row 7, index 6)
         for (int col = 0; col < SIZE; col++) {
-            placePiece(new Pawn(Piece.Color.BLACK), 6, col);
+            placePiece(new Pawn(Piece.Color.BLACK).setBoard(this), 6, col);
         }
 
         // White pieces (row 1, index 0)
-        placePiece(new Rook(Piece.Color.WHITE), 0, 0);
-        placePiece(new Knight(Piece.Color.WHITE), 0, 1);
-        placePiece(new Bishop(Piece.Color.WHITE), 0, 2);
-        placePiece(new King(Piece.Color.WHITE), 0, 3);
-        placePiece(new Queen(Piece.Color.WHITE), 0, 4);
-        placePiece(new Bishop(Piece.Color.WHITE), 0, 5);
-        placePiece(new Knight(Piece.Color.WHITE), 0, 6);
-        placePiece(new Rook(Piece.Color.WHITE), 0, 7);
+        placePiece(new Rook(Piece.Color.WHITE).setBoard(this), 0, 0);
+        placePiece(new Knight(Piece.Color.WHITE).setBoard(this), 0, 1);
+        placePiece(new Bishop(Piece.Color.WHITE).setBoard(this), 0, 2);
+        placePiece(new King(Piece.Color.WHITE).setBoard(this), 0, 3);
+        placePiece(new Queen(Piece.Color.WHITE).setBoard(this), 0, 4);
+        placePiece(new Bishop(Piece.Color.WHITE).setBoard(this), 0, 5);
+        placePiece(new Knight(Piece.Color.WHITE).setBoard(this), 0, 6);
+        placePiece(new Rook(Piece.Color.WHITE).setBoard(this), 0, 7);
 
         // Black pieces (row 8, index 7)
-        placePiece(new Rook(Piece.Color.BLACK), 7, 0);
-        placePiece(new Knight(Piece.Color.BLACK), 7, 1);
-        placePiece(new Bishop(Piece.Color.BLACK), 7, 2);
-        placePiece(new King(Piece.Color.BLACK), 7, 3);
-        placePiece(new Queen(Piece.Color.BLACK), 7, 4);
-        placePiece(new Bishop(Piece.Color.BLACK), 7, 5);
-        placePiece(new Knight(Piece.Color.BLACK), 7, 6);
-        placePiece(new Rook(Piece.Color.BLACK), 7, 7);
+        placePiece(new Rook(Piece.Color.BLACK).setBoard(this), 7, 0);
+        placePiece(new Knight(Piece.Color.BLACK).setBoard(this), 7, 1);
+        placePiece(new Bishop(Piece.Color.BLACK).setBoard(this), 7, 2);
+        placePiece(new King(Piece.Color.BLACK).setBoard(this), 7, 3);
+        placePiece(new Queen(Piece.Color.BLACK).setBoard(this), 7, 4);
+        placePiece(new Bishop(Piece.Color.BLACK).setBoard(this), 7, 5);
+        placePiece(new Knight(Piece.Color.BLACK).setBoard(this), 7, 6);
+        placePiece(new Rook(Piece.Color.BLACK).setBoard(this), 7, 7);
     }
 
     public Piece getPiece(int row, int col) {
@@ -163,6 +177,33 @@ public class Board {
         return isSquareAttackedBy(kingCase.row(), kingCase.col(), opponent);
     }
 
+    public boolean isKingInCheckmate(Piece.Color color) {
+        if (!isKingInCheck(color)) return false;
+        Case kingCase = findKing(color);
+        if (kingCase == null) return false;
+        Piece king = pieces[kingCase.row()][kingCase.col()];
+        for (Case move : king.getAccessibleCases()) {
+            if (isMoveLegal(king, kingCase, move)) {
+                return false; // King can escape
+            }
+        }
+        // Check if any piece can block or capture the attacker
+        Piece.Color opponent = (color == Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
+        for (int r = 0; r < SIZE; r++) {
+            for (int c = 0; c < SIZE; c++) {
+                Piece p = pieces[r][c];
+                if (p != null && p.getColor() == color) {
+                    for (Case move : p.getAccessibleCases()) {
+                        if (isMoveLegal(p, new Case(r, c), move)) {
+                            return false; // A piece can block or capture
+                        }
+                    }
+                }
+            }
+        }
+        return true; // No escape, it's checkmate
+    }
+
     // ── Legal moves (simulation-based filtering) ─────────────────────
 
     public List<Case> getLegalMoves(Piece piece) {
@@ -181,7 +222,7 @@ public class Board {
         Piece captured = pieces[to.row()][to.col()];
         pieces[to.row()][to.col()] = piece;
         pieces[from.row()][from.col()] = null;
-        piece.setPosition(this, to.row(), to.col());
+        piece.setPosition(to.row(), to.col());
 
         // Simulate passing capture (pawn moves diagonally to empty square)
         Piece passingCapture = null;
@@ -195,7 +236,7 @@ public class Board {
         // Undo the move
         pieces[from.row()][from.col()] = piece;
         pieces[to.row()][to.col()] = captured;
-        piece.setPosition(this, from.row(), from.col());
+        piece.setPosition(from.row(), from.col());
         if (passingCapture != null) {
             pieces[from.row()][to.col()] = passingCapture;
         }
@@ -238,7 +279,7 @@ public class Board {
         // Move the piece
         pieces[to.row()][to.col()] = piece;
         pieces[from.row()][from.col()] = null;
-        piece.setPosition(this, to.row(), to.col());
+        piece.setPosition(to.row(), to.col());
         piece.setHasMoved(true);
 
         // Set passing target if pawn moved 2 squares
@@ -262,7 +303,7 @@ public class Board {
             Piece rook = pieces[from.row()][rookFromCol];
             pieces[from.row()][rookToCol] = rook;
             pieces[from.row()][rookFromCol] = null;
-            rook.setPosition(this, from.row(), rookToCol);
+            rook.setPosition(from.row(), rookToCol);
             rook.setHasMoved(true);
         }
 
@@ -272,7 +313,7 @@ public class Board {
             if (to.row() == promotionRow) {
                 Piece promoted = promotionHandler.choosePiece(piece.getColor());
                 pieces[to.row()][to.col()] = promoted;
-                promoted.setPosition(this, to.row(), to.col());
+                promoted.setPosition(to.row(), to.col());
                 promoted.setHasMoved(true);
             }
         }

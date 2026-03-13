@@ -5,6 +5,7 @@ import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
+import com.vivianhonghoa.chess.viewcontroller.helpers.JBorderLayoutHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,12 +51,12 @@ public class JGamePane extends JPanel {
         gameEngine.addObserver(new GameEngineObserver() {
             @Override
             public void onGameEnded(GameEngineEvent event) {
-                BorderLayout layout = (BorderLayout) getLayout();
-                remove(layout.getLayoutComponent(BorderLayout.CENTER));
-                add(new JWinnerPane(gameEngine), BorderLayout.CENTER);
-                revalidate();
-                repaint();
+                JWinnerPane jWinnerPane = new JWinnerPane(gameEngine, () -> {
+                    JBorderLayoutHelper.changeComponent(JGamePane.this, BorderLayout.CENTER, jSquaresContainerWrapper);
+                });
+                JBorderLayoutHelper.changeComponent(JGamePane.this, BorderLayout.CENTER, jWinnerPane);
             }
         });
     }
+
 }
