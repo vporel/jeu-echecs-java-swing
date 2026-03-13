@@ -68,10 +68,18 @@ public class JStartupPane extends JPanel {
         JSection jPlaySection = new JSection("Play");
         JCustomPanel jPlayContentPane = jPlaySection.getContentPane();
 
-        jPlayContentPane.add(Box.createVerticalStrut(15));
-        jPlayContentPane.add(getTimeSelectionPane());
-        jPlayContentPane.add(Box.createVerticalStrut(15));
-        jPlayContentPane.add(getStartButtonsPane());
+        JCustomPanel jWrapper = new JCustomPanel();
+
+        jWrapper.setLayout(new BoxLayout(jWrapper, BoxLayout.X_AXIS));
+        jWrapper.add(Box.createHorizontalStrut(20));
+        jWrapper.add(getTimeSelectionPane());
+        jWrapper.add(Box.createHorizontalGlue());
+        jWrapper.add(new JDivider(JDivider.Orientation.VERTICAL).setPadding(20));
+        jWrapper.add(Box.createHorizontalGlue());
+        jWrapper.add(getStartButtonsPane());
+        jWrapper.add(Box.createHorizontalStrut(20));
+
+        jPlayContentPane.add(jWrapper);
 
         return jPlaySection;
     }
@@ -111,6 +119,7 @@ public class JStartupPane extends JPanel {
 
 
         JPanel jTimeSelectionButtonsPane = new JPanel();
+        jTimeSelectionButtonsPane.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
         jTimeSelectionButtonsPane.setBackground(SECTION_BACKGROUND);
         jTimeSelectionButtonsPane.setOpaque(false);
         jTimeSelectionButtonsPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
@@ -135,44 +144,52 @@ public class JStartupPane extends JPanel {
         jTimeInputRow.setRadius(20);
         jTimeInputRow.setLayout(new FlowLayout(FlowLayout.CENTER, 8, 0));
         jTimeInputRow.setBackground(Colors.WHITE);
-        JComponentHelper.setFixedSize(jTimeInputRow, 260, 40);
+        JComponentHelper.setFixedSize(jTimeInputRow, 270, 40);
         jTimeInputRow.add(jTimeSelectionInput);
         jTimeInputRow.add(jMinLabel);
 
-        JPanel jWrapper = new JPanel();
+        JCustomPanel jWrapper = new JCustomPanel();
         jWrapper.setLayout(new BoxLayout(jWrapper, BoxLayout.Y_AXIS));
         jWrapper.setBackground(SECTION_BACKGROUND);
         jWrapper.setOpaque(false);
+        jWrapper.add(Box.createVerticalGlue());
         jWrapper.add(jTitleLabel);
-        jWrapper.add(Box.createVerticalStrut(10));
+        jWrapper.add(Box.createVerticalStrut(20));
         jWrapper.add(jTimeSelectionButtonsPane);
         jWrapper.add(Box.createVerticalStrut(10));
         jWrapper.add(jTimeInputRow);
+        jWrapper.add(Box.createVerticalGlue());
+        JComponentHelper.setFixedSize(jWrapper, 400, 200);
+
         return jWrapper;
     }
 
     private JPanel getStartButtonsPane() {
-        JPanel jStartButtonsPane = new JPanel();
-        jStartButtonsPane.setBackground(Colors.PRIMARY);
-        jStartButtonsPane.setOpaque(false);
-
         JCustomButton jPlayerVsPlayerButton = new JCustomButton("Player vs Player");
-        JComponentHelper.setPreferredSize(jPlayerVsPlayerButton, 200, 60);
-        JComponentHelper.setFontSize(jPlayerVsPlayerButton, 20);
+        JComponentHelper.setFixedSize(jPlayerVsPlayerButton, 220, 60);
+        JComponentHelper.setFontSize(jPlayerVsPlayerButton, 18);
         jPlayerVsPlayerButton.addActionListener(e -> {
             gameEngine.start(Player.HUMAN, Player.HUMAN, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         JCustomButton jPlayerVsComputerButton = new JCustomButton("Player vs Computer");
-        JComponentHelper.setPreferredSize(jPlayerVsComputerButton, 200, 60);
-        JComponentHelper.setFontSize(jPlayerVsComputerButton, 20);
+        JComponentHelper.setFixedSize(jPlayerVsComputerButton, 220, 60);
+        JComponentHelper.setFontSize(jPlayerVsComputerButton, 18);
         jPlayerVsComputerButton.addActionListener(e -> {
             gameEngine.start(Player.HUMAN, Player.COMPUTER, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
-        jStartButtonsPane.add(jPlayerVsPlayerButton);
-        jStartButtonsPane.add(jPlayerVsComputerButton);
-        return jStartButtonsPane;
+
+        JCustomPanel jWrapper = new JCustomPanel();
+        jWrapper.setLayout(new BoxLayout(jWrapper, BoxLayout.Y_AXIS));
+        jWrapper.add(Box.createVerticalGlue());
+        jWrapper.add(jPlayerVsPlayerButton);
+        jWrapper.add(Box.createVerticalStrut(15));
+        jWrapper.add(jPlayerVsComputerButton);
+        jWrapper.add(Box.createVerticalGlue());
+        JComponentHelper.setFixedHeight(jWrapper, 200);
+
+        return jWrapper;
     }
 
     private JPanel getPresetBoardsConfigurationsPane(){

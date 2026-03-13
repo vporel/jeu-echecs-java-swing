@@ -1,10 +1,8 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.model.GameEngine;
-import com.vivianhonghoa.chess.model.events.BoardEvent;
-import com.vivianhonghoa.chess.model.events.BoardObserver;
-import com.vivianhonghoa.chess.model.events.GameEngineEvent;
-import com.vivianhonghoa.chess.model.events.GameEngineObserver;
+import com.vivianhonghoa.chess.model.History;
+import com.vivianhonghoa.chess.model.events.*;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
@@ -155,7 +153,7 @@ public class JPlayerPane extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(!gameEngine.hasStarted()) return;
-
+                gameEngine.undo(playerNumber);
             }
         });
 
@@ -210,12 +208,32 @@ public class JPlayerPane extends JPanel {
         JPanel jHistoryContentPanel = new JPanel();
         jHistoryContentPanel.setBackground(Colors.APP_BACKGROUND);
         JComponentHelper.setMinimumHeight(jHistoryContentPanel, 100);
+        jHistoryContentPanel.setLayout(new BoxLayout(jHistoryContentPanel, BoxLayout.Y_AXIS));
+
+        //History events
+        History history = gameEngine.getPlayerHistory(playerNumber);
+        history.addObserver(new HistoryObserver() {
+            @Override
+            public void onChange(HistoryEvent event) {
+                jHistoryContentPanel.removeAll();
+                List<String> moves = history.getFormattedList();
+                for(int i = 0; i < moves.size(); i++){
+                    String move = (i + 1) + ". " + moves.get(i);
+                    JLabel jMoveLabel = new JLabel(move);
+                    jMoveLabel.setForeground(Colors.SECONDARY);
+
+                    JLabelWrapper jMoveLabelWrapper = new JLabelWrapper(jMoveLabel, true);
+                    jHistoryContentPanel.add(jMoveLabelWrapper);
+                }
+            }
+        });
 
         JPanel jHistoryPanel = new JPanel();
         jHistoryPanel.setBackground(Colors.APP_BACKGROUND);
         jHistoryPanel.setLayout(new BoxLayout(jHistoryPanel, BoxLayout.Y_AXIS));
         jHistoryPanel.add(jHistoryLabelWrapper);
         jHistoryPanel.add(new JDivider());
+        jHistoryPanel.add(Box.createVerticalStrut(5));
         jHistoryPanel.add(jHistoryContentPanel);
         return jHistoryPanel;
     }

@@ -11,37 +11,71 @@ public class JDivider extends JPanel {
     public static final int DEFAULT_LINE_HEIGHT = 1;
 
     private final Color lineColor;
-    private final int lineHeight;
+    private final int lineSize;
+    private final Orientation orientation;
+    private int padding = 5;
 
     public JDivider() {
-        this(DEFAULT_LINE_COLOR, DEFAULT_LINE_HEIGHT);
+        this(DEFAULT_LINE_COLOR, DEFAULT_LINE_HEIGHT, Orientation.HORIZONTAL);
     }
 
     public JDivider(Color lineColor) {
-        this(lineColor, DEFAULT_LINE_HEIGHT);
+        this(lineColor, DEFAULT_LINE_HEIGHT, Orientation.HORIZONTAL);
     }
 
-    public JDivider(int lineHeight) {
-        this(DEFAULT_LINE_COLOR, lineHeight);
+    public JDivider(int lineSize) {
+        this(DEFAULT_LINE_COLOR, lineSize, Orientation.HORIZONTAL);
     }
 
-    public JDivider(Color lineColor, int lineHeight) {
+    public JDivider(Orientation orientation) {
+        this(DEFAULT_LINE_COLOR, DEFAULT_LINE_HEIGHT, orientation);
+    }
+
+    public JDivider(Color lineColor, int lineSize) {
+        this(lineColor, lineSize, Orientation.HORIZONTAL);
+    }
+
+    public JDivider(Color lineColor, int lineSize, Orientation orientation) {
         super();
         this.lineColor = lineColor;
-        this.lineHeight = lineHeight;
+        this.lineSize = lineSize;
+        this.orientation = orientation;
         build();
     }
 
     private void build(){
         JPanel line = new JPanel();
         line.setBackground(lineColor);
-        JComponentHelper.setFixedHeight(line, lineHeight);
+        this.setOpaque(false);
 
-        this.setBackground(Colors.APP_BACKGROUND);
-        this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        this.add(Box.createHorizontalStrut(5));
-        this.add(line);
-        this.add(Box.createHorizontalStrut(5));
-        JComponentHelper.setFixedHeight(this, lineHeight);
+        if (orientation == Orientation.VERTICAL) {
+            JComponentHelper.setFixedWidth(line, lineSize);
+            this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            this.add(Box.createVerticalStrut(padding));
+            this.add(line);
+            this.add(Box.createVerticalStrut(padding));
+            JComponentHelper.setFixedWidth(this, lineSize);
+        } else {
+            JComponentHelper.setFixedHeight(line, lineSize);
+            this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+            this.add(Box.createHorizontalStrut(padding));
+            this.add(line);
+            this.add(Box.createHorizontalStrut(padding));
+            JComponentHelper.setFixedHeight(this, lineSize);
+        }
+    }
+
+    public JDivider setPadding(int padding) {
+        this.padding = padding;
+        this.removeAll();
+        build();
+        this.revalidate();
+        this.repaint();
+        return this;
+    }
+
+    public enum Orientation {
+        HORIZONTAL,
+        VERTICAL
     }
 }

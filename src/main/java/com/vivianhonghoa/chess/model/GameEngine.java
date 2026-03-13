@@ -1,6 +1,5 @@
 package com.vivianhonghoa.chess.model;
 
-import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
@@ -22,11 +21,13 @@ public final class GameEngine {
     private boolean isWhiteTurn = true;
     private Player player1;
     private Player player2;
-    private boolean unlimitedTime = false; // If true, players have unlimited time
-    private final AtomicInteger player1TimeRemaining = new AtomicInteger(0); // in seconds
-    private final AtomicInteger player2TimeRemaining = new AtomicInteger(0); // in seconds
+    private boolean unlimitedTime = false;
+    private final AtomicInteger player1TimeRemaining = new AtomicInteger(0);
+    private final AtomicInteger player2TimeRemaining = new AtomicInteger(0);
     private final AtomicInteger winnerPlayerNumber = new AtomicInteger(0);
     private ScheduledExecutorService scheduler;
+    private final History player1History = new History(); // white
+    private final History player2History = new History(); // black
 
     public GameEngine(){
         board = new Board();
@@ -54,6 +55,8 @@ public final class GameEngine {
         this.paused.set(false);
         this.ended.set(false);
         this.isWhiteTurn = true;
+        player1History.clear();
+        player2History.clear();
 
         if(!unlimitedTime) {
             // Create a timer that ticks every 1 second (1000 ms)
@@ -90,6 +93,23 @@ public final class GameEngine {
             scheduler.shutdown();
         }
         notifyObservers(GameEngineObserver::onGameEnded);
+    }
+
+    public void undo(int playerNumber) {
+        if(!started || paused.get() || ended.get()) return;
+        if(isPlayerTurn(playerNumber)) {
+            return; // Can't undo on your own turn
+        }
+
+        History currentHistory = getPlayerHistory(playerNumber);
+        if (currentHistory.isEmpty()) {
+            return; // No moves to undo
+        }
+
+        History.Entry lastEntry = currentHistory.removeLast();
+        board.undoMove(lastEntry.from(), lastEntry.to(), lastEntry.captured());
+        isWhiteTurn = (playerNumber == 1); // Set turn back to the player who undid
+        notifyObservers(GameEngineObserver::onPlayerTurnChanged);
     }
 
     public void giveUp(int playerNumber) {
@@ -149,11 +169,15 @@ public final class GameEngine {
 
         // If a piece is already selected, try to move it
         if (board.getSelectedCase() != null) {
-            boolean moved = board.movePiece(board.getSelectedCase(), selectedCase);
+            Case from = board.getSelectedCase();
+            Piece movingPiece = board.getPiece(from.row(), from.col());
+            Piece capturedPiece = board.getPiece(selectedCase.row(), selectedCase.col());
+            boolean moved = board.movePiece(from, selectedCase);
             if (moved) {
+                History currentHistory = isWhiteTurn ? player1History : player2History;
+                currentHistory.add(new History.Entry(movingPiece, from, selectedCase, capturedPiece));
                 board.setSelectedCase(null);
                 isWhiteTurn = !isWhiteTurn;
-                //Check for checkmate after the move
                 if(board.isKingInCheckmate(Piece.Color.WHITE)) end(2);
                 else if(board.isKingInCheckmate(Piece.Color.BLACK)) end(1);
                 else notifyObservers(GameEngineObserver::onPlayerTurnChanged);
@@ -187,6 +211,10 @@ public final class GameEngine {
         return isWhiteTurn ? 1 : 2;
     }
 
+    public boolean isPlayerTurn(int playerNumber) {
+        return getCurrentPlayerNumber() == playerNumber;
+    }
+
     public Player getCurrentPlayer() {
         if (isWhiteTurn) {
             return player1;
@@ -199,16 +227,23 @@ public final class GameEngine {
         return winnerPlayerNumber.get();
     }
 
-    public synchronized void addObserver(GameEngineObserver observer){
+    public History getPlayerHistory(int playerNumber) {
+        if (playerNumber == 1) {
+            return player1History;
+        } else if (playerNumber == 2) {
+            return player2History;
+        }
+        throw new IllegalArgumentException("Invalid player number: " + playerNumber);
+    }
+
+    public void addObserver(GameEngineObserver observer){
         observers.add(observer);
     }
 
     private void notifyObservers(BiConsumer<GameEngineObserver, GameEngineEvent> action){
         GameEngineEvent event = new GameEngineEvent();
-        synchronized(this) {
-            for (GameEngineObserver listener : observers) {
-                action.accept(listener, event);
-            }
+        for (GameEngineObserver listener : observers) {
+            action.accept(listener, event);
         }
     }
 }

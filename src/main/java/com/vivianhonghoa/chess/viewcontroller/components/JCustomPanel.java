@@ -1,8 +1,5 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
-import com.vivianhonghoa.chess.viewcontroller.Colors;
-import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -10,10 +7,22 @@ import java.awt.geom.RoundRectangle2D;
 public class JCustomPanel extends JPanel {
 
     private int radius = 0;
+
+    public JCustomPanel() {
+        super();
+        this.setOpaque(false);
+    }
+
     public void setRadius(int radius) {
         this.radius = radius;
         setOpaque(false);
         repaint();
+    }
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+        this.setOpaque(true);
     }
 
     @Override

@@ -6,12 +6,13 @@ import com.vivianhonghoa.chess.model.pieces.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 
 public class Board {
     public static final int SIZE = 8;
 
-    private final List<BoardObserver> observers;
+    private final CopyOnWriteArrayList<BoardObserver> observers = new CopyOnWriteArrayList<>();
 
     private Piece[][] pieces;
     private Case selectedCase;
@@ -26,7 +27,6 @@ public class Board {
     }
 
     public Board() {
-        observers = new ArrayList<>();
         pieces = new Piece[SIZE][SIZE];
         initPositions();
     }
@@ -187,8 +187,6 @@ public class Board {
                 return false; // King can escape
             }
         }
-        // Check if any piece can block or capture the attacker
-        Piece.Color opponent = (color == Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
         for (int r = 0; r < SIZE; r++) {
             for (int c = 0; c < SIZE; c++) {
                 Piece p = pieces[r][c];
@@ -312,6 +310,7 @@ public class Board {
             int promotionRow = (piece.getColor() == Piece.Color.WHITE) ? 7 : 0;
             if (to.row() == promotionRow) {
                 Piece promoted = promotionHandler.choosePiece(piece.getColor());
+                promoted.setBoard(this);
                 pieces[to.row()][to.col()] = promoted;
                 promoted.setPosition(to.row(), to.col());
                 promoted.setHasMoved(true);
@@ -324,6 +323,60 @@ public class Board {
             notifyObservers(to, BoardObserver::onPieceCaptured);
         }
         return true;
+    }
+
+    public void undoMove(Case from, Case to, Piece captured) {
+        Piece piece = getPiece(to.row(), to.col());
+        if (piece == null) return;
+
+        // Move the piece back
+        pieces[from.row()][from.col()] = piece;
+        pieces[to.row()][to.col()] = captured;
+        piece.setPosition(from.row(), from.col());
+
+        // Handle undoing passing capture
+        if (piece instanceof Pawn && captured == null && from.col() != to.col()) {
+            Piece passingCaptured = pieces[from.row()][to.col()];
+            pieces[from.row()][to.col()] = passingCaptured;
+            if (passingCaptured != null) {
+                if (piece.getColor() == Piece.Color.WHITE) {
+                    capturedByWhite.remove(passingCaptured);
+                } else {
+                    capturedByBlack.remove(passingCaptured);
+                }
+            }
+        }
+
+        // Handle undoing castling rook movement
+        if (piece instanceof King && Math.abs(to.col() - from.col()) == 2) {
+            int rookFromCol, rookToCol;
+            if (to.col() < from.col()) {
+                rookFromCol = 0;
+                rookToCol = 2;
+            } else {
+                rookFromCol = 7;
+                rookToCol = 4;
+            }
+            Piece rook = pieces[from.row()][rookToCol];
+            pieces[from.row()][rookFromCol] = rook;
+            pieces[from.row()][rookToCol] = null;
+            if (rook != null) {
+                rook.setPosition(from.row(), rookFromCol);
+            }
+        }
+
+        // Handle undoing pawn promotion
+        if (piece instanceof Pawn) {
+            int promotionRow = (piece.getColor() == Piece.Color.WHITE) ? 7 : 0;
+            if (to.row() == promotionRow) {
+                Piece originalPawn = new Pawn(piece.getColor()).setBoard(this);
+                pieces[to.row()][to.col()] = originalPawn;
+                originalPawn.setPosition(to.row(), to.col());
+            }
+        }
+
+        // Notify observers of the undo
+        notifyObservers(from, BoardObserver::onPieceMoved);
     }
 
     public Case getSelectedCase() {
@@ -347,16 +400,14 @@ public class Board {
         return capturedByBlack;
     }
 
-    public synchronized void addObserver(BoardObserver observer){
+    public void addObserver(BoardObserver observer){
         observers.add(observer);
     }
 
     private void notifyObservers(Case relatedCase, BiConsumer<BoardObserver, BoardEvent> action){
         BoardEvent event = new BoardEvent(relatedCase);
-        synchronized(this) {
-            for (BoardObserver listener : observers) {
-                action.accept(listener, event);
-            }
+        for (BoardObserver listener : observers) {
+            action.accept(listener, event);
         }
     }
 
