@@ -70,7 +70,7 @@ class GameEngine {
     - player1History : History
     - player2History : History
     --
-    + start(player1, player2, time, preset)
+    + start(player1Type, player2Type, time, preset)
     + stop()
     + pause() / resume()
     + selectCase(c : Case)

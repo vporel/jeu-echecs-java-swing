@@ -33,6 +33,10 @@ public class JComponentHelper {
         jComponent.setMaximumSize(new Dimension(jComponent.getMaximumSize().width, height));
     }
 
+    public static void setMaximumSize(JComponent jComponent, int width, int height) {
+        jComponent.setMaximumSize(new Dimension(width, height));
+    }
+
     public static void setFixedWidth(JComponent jComponent, int width) {
         jComponent.setPreferredSize(new Dimension(width, jComponent.getPreferredSize().height));
         jComponent.setMaximumSize(new Dimension(width, jComponent.getMaximumSize().height));

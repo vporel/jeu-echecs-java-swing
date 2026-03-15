@@ -1,7 +1,7 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.model.GameEngine;
-import com.vivianhonghoa.chess.model.Player;
+import com.vivianhonghoa.chess.model.PlayerType;
 import com.vivianhonghoa.chess.model.PresetBoardConfig;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
@@ -169,14 +169,14 @@ public class JStartupPane extends JPanel {
         JComponentHelper.setFixedSize(jPlayerVsPlayerButton, 220, 60);
         JComponentHelper.setFontSize(jPlayerVsPlayerButton, 18);
         jPlayerVsPlayerButton.addActionListener(e -> {
-            gameEngine.start(Player.HUMAN, Player.HUMAN, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            gameEngine.start(PlayerType.HUMAN, PlayerType.HUMAN, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         JCustomButton jPlayerVsComputerButton = new JCustomButton("Player vs Computer");
         JComponentHelper.setFixedSize(jPlayerVsComputerButton, 220, 60);
         JComponentHelper.setFontSize(jPlayerVsComputerButton, 18);
         jPlayerVsComputerButton.addActionListener(e -> {
-            gameEngine.start(Player.HUMAN, Player.COMPUTER, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            gameEngine.start(PlayerType.HUMAN, PlayerType.COMPUTER, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
 
@@ -213,7 +213,7 @@ public class JStartupPane extends JPanel {
             JCustomButton jPresetBoardButton = new JCustomButton(entry.getKey());
             jPresetBoardButton.setWidth(180);
             jPresetBoardButton.addActionListener(e -> {
-                gameEngine.start(Player.HUMAN, Player.HUMAN, null, entry.getValue());
+                gameEngine.start(PlayerType.HUMAN, PlayerType.HUMAN, null, entry.getValue());
             });
             jButtonsPane.add(jPresetBoardButton);
         }
@@ -246,9 +246,9 @@ public class JStartupPane extends JPanel {
 
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
             this.setBackground(STARTUP_BACKGROUND);
-            this.add(Box.createHorizontalStrut(20));
+            this.add(Box.createHorizontalStrut(100));
             this.add(jContentPane);
-            this.add(Box.createHorizontalStrut(20));
+            this.add(Box.createHorizontalStrut(100));
         }
 
         public JCustomPanel getContentPane() {

@@ -19,8 +19,8 @@ public final class GameEngine {
     private final AtomicBoolean paused = new AtomicBoolean(false);
     private final AtomicBoolean ended = new AtomicBoolean(false);
     private boolean isWhiteTurn = true;
-    private Player player1;
-    private Player player2;
+    private PlayerType player1Type;
+    private PlayerType player2Type;
     private boolean unlimitedTime = false;
     private final AtomicInteger player1TimeRemaining = new AtomicInteger(0);
     private final AtomicInteger player2TimeRemaining = new AtomicInteger(0);
@@ -37,7 +37,7 @@ public final class GameEngine {
      * Start the game with two players and a time limit
      * a time limit of null means unlimited time
      */
-    public void start(Player player1, Player player2, Integer timeInSeconds, Piece[][] presetPieces) {
+    public void start(PlayerType player1Type, PlayerType player2Type, Integer timeInSeconds, Piece[][] presetPieces) {
         // Do nothing if the game has already started
         if(started) return;
 
@@ -46,8 +46,8 @@ public final class GameEngine {
             board.setPieces(presetPieces);
         }
 
-        this.player1 = player1;
-        this.player2 = player2;
+        this.player1Type = player1Type;
+        this.player2Type = player2Type;
         this.player1TimeRemaining.set(timeInSeconds == null ? 0 : timeInSeconds);
         this.player2TimeRemaining.set(timeInSeconds == null ? 0 : timeInSeconds);
         this.started = true;
@@ -216,11 +216,11 @@ public final class GameEngine {
         return getCurrentPlayerNumber() == playerNumber;
     }
 
-    public Player getCurrentPlayer() {
+    public PlayerType getCurrentPlayer() {
         if (isWhiteTurn) {
-            return player1;
+            return player1Type;
         } else {
-            return player2;
+            return player2Type;
         }
     }
 

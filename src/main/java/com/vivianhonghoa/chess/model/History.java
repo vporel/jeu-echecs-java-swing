@@ -105,7 +105,7 @@ public class History {
 
         /** Converts 0-based row index to chess rank number (0 → 1, 7 → 8). */
         private int rowToRank(int row) {
-            return Board.SIZE - row;
+            return row + 1;
         }
 
         private String getPiecePrefix(Piece piece) {

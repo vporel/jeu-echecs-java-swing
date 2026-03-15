@@ -1,6 +1,6 @@
 package com.vivianhonghoa.chess.model;
 
-public enum Player {
+public enum PlayerType {
     HUMAN,
     COMPUTER
 }
