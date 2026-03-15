@@ -3,7 +3,7 @@ package com.vivianhonghoa.chess.viewcontroller;
 import com.vivianhonghoa.chess.model.GameEngine;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
-import com.vivianhonghoa.chess.viewcontroller.components.JGamePane;
+import com.vivianhonghoa.chess.viewcontroller.components.game.JGamePane;
 import com.vivianhonghoa.chess.viewcontroller.components.startup.JStartup;
 
 import javax.swing.*;

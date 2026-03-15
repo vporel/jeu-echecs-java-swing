@@ -14,7 +14,7 @@ public class History {
     private final List<Entry> entries = new ArrayList<>();
     private final CopyOnWriteArrayList<HistoryObserver> observers = new CopyOnWriteArrayList<>();
 
-    public void add(Entry entry) {
+    void add(Entry entry) {
         entries.add(entry);
         notifyObservers();
     }
@@ -23,14 +23,14 @@ public class History {
         return entries.isEmpty();
     }
 
-    public Entry removeLast() {
+    Entry removeLast() {
         if (entries.isEmpty()) return null;
         Entry last = entries.removeLast();
         notifyObservers();
         return last;
     }
 
-    public void clear() {
+    void clear() {
         entries.clear();
         notifyObservers();
     }

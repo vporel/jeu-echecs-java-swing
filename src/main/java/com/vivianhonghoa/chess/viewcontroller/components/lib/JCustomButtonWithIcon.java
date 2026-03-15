@@ -1,4 +1,4 @@
-package com.vivianhonghoa.chess.viewcontroller.components;
+package com.vivianhonghoa.chess.viewcontroller.components.lib;
 
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 import com.vivianhonghoa.chess.viewcontroller.utils.Orientation;
@@ -59,6 +59,12 @@ public class JCustomButtonWithIcon extends JCustomPanel {
                 actionListener.actionPerformed(null);
             }
         });
+    }
+
+    public void setText(String text) {
+        if (jTextLabel != null) {
+            jTextLabel.setText(text);
+        }
     }
 
     public void setWidth(int width) {

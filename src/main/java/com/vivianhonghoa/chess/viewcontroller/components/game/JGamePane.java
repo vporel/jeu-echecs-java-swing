@@ -1,10 +1,12 @@
-package com.vivianhonghoa.chess.viewcontroller.components;
+package com.vivianhonghoa.chess.viewcontroller.components.game;
 
 import com.vivianhonghoa.chess.model.GameEngine;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
+import com.vivianhonghoa.chess.viewcontroller.components.game.playerpane.JPlayerPane;
+import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomPanel;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JBorderLayoutHelper;
 
 import javax.swing.*;
@@ -21,6 +23,20 @@ public class JGamePane extends JPanel {
 
     private void build(){
         this.setLayout(new BorderLayout());
+        this.setBackground(Colors.PRIMARY_DARK_1);
+
+        JCustomPanel jSquaresContainerWrapper = new JCustomPanel();
+        jSquaresContainerWrapper.setLayout(new GridBagLayout());
+        jSquaresContainerWrapper.add(new JSquaresContainer(gameEngine));
+        jSquaresContainerWrapper.setBackground(Colors.PRIMARY_DARK_1);
+
+
+        this.add(new JHeader(gameEngine), BorderLayout.NORTH);
+        this.add(new JFooter(gameEngine), BorderLayout.SOUTH);
+        this.add(jSquaresContainerWrapper, BorderLayout.CENTER);
+        this.add(new JPlayerPane(1, "White", gameEngine), BorderLayout.WEST);
+        this.add(new JPlayerPane(2, "Black", gameEngine), BorderLayout.EAST);
+        this.setBackground(Colors.APP_BACKGROUND);
 
         gameEngine.getBoard().setPromotionHandler(color -> {
             String[] options = {"\u265B Queen", "\u265C Rook", "\u265D Bishop", "\u265E Knight"};
@@ -36,18 +52,6 @@ public class JGamePane extends JPanel {
             };
         });
 
-        JPanel jSquaresContainerWrapper = new JPanel();
-        jSquaresContainerWrapper.setLayout(new GridBagLayout());
-        jSquaresContainerWrapper.add(new JSquaresContainer(gameEngine));
-
-        this.add(new JHeader(gameEngine), BorderLayout.NORTH);
-        this.add(new JFooter(gameEngine), BorderLayout.SOUTH);
-        this.add(jSquaresContainerWrapper, BorderLayout.CENTER);
-        this.add(new JPlayerPane(1, "White", gameEngine), BorderLayout.WEST);
-        this.add(new JPlayerPane(2, "Black", gameEngine), BorderLayout.EAST);
-        this.setBackground(Colors.APP_BACKGROUND);
-
-        //Game engine events
         gameEngine.addObserver(new GameEngineObserver() {
             @Override
             public void onGameEnded(GameEngineEvent event) {

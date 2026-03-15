@@ -1,10 +1,9 @@
 package com.vivianhonghoa.chess.viewcontroller.components.startup;
 
 
-import com.vivianhonghoa.chess.viewcontroller.components.JCustomPanel;
+import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomPanel;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class JSection extends JCustomPanel {
 
@@ -25,3 +24,4 @@ public class JSection extends JCustomPanel {
         this.add(Box.createHorizontalStrut(100));
     }
 }
+

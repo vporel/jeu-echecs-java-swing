@@ -1,4 +1,4 @@
-package com.vivianhonghoa.chess.viewcontroller.components;
+package com.vivianhonghoa.chess.viewcontroller.components.lib;
 
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;

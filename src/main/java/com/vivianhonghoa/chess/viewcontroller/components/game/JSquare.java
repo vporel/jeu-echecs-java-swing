@@ -1,10 +1,11 @@
-package com.vivianhonghoa.chess.viewcontroller.components;
+package com.vivianhonghoa.chess.viewcontroller.components.game;
 
 import com.vivianhonghoa.chess.model.*;
 import com.vivianhonghoa.chess.model.events.BoardEvent;
 import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
+import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomLabel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class JSquare extends JPanel {
     private static final int SIZE = 5; // Size of the box
     private final Position position;
     private final GameEngine gameEngine;
-    private JLabel pieceLabel;
+    private JCustomLabel jPieceLabel;
 
     public JSquare(int row, int col, GameEngine gameEngine) {
         super();
@@ -30,9 +31,9 @@ public class JSquare extends JPanel {
         updateBackground(false);
 
         // Create label for piece display
-        pieceLabel = new JLabel("", SwingConstants.CENTER);
-        pieceLabel.setFont(new Font("Serif", Font.PLAIN, 50));
-        this.add(pieceLabel, BorderLayout.CENTER);
+        jPieceLabel = new JCustomLabel("", SwingConstants.CENTER);
+        jPieceLabel.setFont(new Font("Serif", Font.PLAIN, 50));
+        this.add(jPieceLabel, BorderLayout.CENTER);
 
         // Initialize piece display
         updatePieceDisplay();
@@ -85,7 +86,7 @@ public class JSquare extends JPanel {
         } else if (isKingInCheck()) {
             setBackground(Colors.DANGER);
         } else {
-            setBackground((position.row + position.col) % 2 == 0 ? Colors.SQUARES_CONTAINER_BACKGROUND : Colors.PRIMARY);
+            setBackground((position.row + position.col) % 2 == 0 ? Colors.SQUARE_DEFAULT_BACKGROUND : Colors.PRIMARY);
         }
     }
 
@@ -93,10 +94,11 @@ public class JSquare extends JPanel {
         Piece piece = getPiece();
         if (piece != null) {
             String unicodeSymbol = getUnicodeSymbol(piece);
-            pieceLabel.setText(unicodeSymbol);
-            pieceLabel.setForeground(piece.getColor() == Piece.Color.WHITE ? java.awt.Color.WHITE : java.awt.Color.BLACK);
+            jPieceLabel.setText(unicodeSymbol);
+            jPieceLabel.setForeground(piece.getColor() == Piece.Color.WHITE ? java.awt.Color.WHITE : java.awt.Color.BLACK);
+            jPieceLabel.setShadow(piece.getColor() == Piece.Color.WHITE ? 1 : 0);
         } else {
-            pieceLabel.setText("");
+            jPieceLabel.setText("");
         }
     }
 

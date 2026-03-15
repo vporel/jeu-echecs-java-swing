@@ -26,7 +26,7 @@ public class Board {
         Piece choosePiece(Piece.Color color);
     }
 
-    public Board() {
+    Board() {
         pieces = new Piece[SIZE][SIZE];
         initPositions();
     }

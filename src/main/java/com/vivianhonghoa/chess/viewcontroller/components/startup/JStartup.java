@@ -2,14 +2,14 @@ package com.vivianhonghoa.chess.viewcontroller.components.startup;
 
 import com.vivianhonghoa.chess.model.GameEngine;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
-import com.vivianhonghoa.chess.viewcontroller.components.*;
+import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomPanel;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Point2D;
+import java.util.List;
 
-public class JStartup extends JPanel {
+public class JStartup extends JCustomPanel {
     public final static Color STARTUP_BACKGROUND_1 = new Color(30, 30, 30);
     public final static Color STARTUP_BACKGROUND_2 = Colors.PRIMARY;
 
@@ -22,31 +22,16 @@ public class JStartup extends JPanel {
     }
 
     private void build(){
+        this.setLinearGradientBackground(List.of(STARTUP_BACKGROUND_1, STARTUP_BACKGROUND_2), 45);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setOpaque(false);
         this.add(Box.createVerticalGlue());
         this.add(getAppNameAndAuthorsPane());
-        this.add(Box.createVerticalStrut(40));
-        this.add(new JGameSetup(gameEngine));
         this.add(Box.createVerticalStrut(20));
+        this.add(new JGameSetup(gameEngine));
+        this.add(Box.createVerticalStrut(10));
         this.add(new JSpecialPositions(gameEngine));
         this.add(Box.createVerticalGlue());
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        // 45° gradient: top-left → bottom-right
-        float cx = getWidth() / 2f;
-        float cy = getHeight() / 2f;
-        float half = (float) (Math.max(getWidth(), getHeight()) / Math.sqrt(2));
-        Point2D start = new Point2D.Float(cx - half / 2, cy - half / 2);
-        Point2D end   = new Point2D.Float(cx + half / 2, cy + half / 2);
-        g2.setPaint(new GradientPaint(start, STARTUP_BACKGROUND_1, end, STARTUP_BACKGROUND_2));
-        g2.fillRect(0, 0, getWidth(), getHeight());
-        g2.dispose();
     }
 
     private JPanel getAppNameAndAuthorsPane(){

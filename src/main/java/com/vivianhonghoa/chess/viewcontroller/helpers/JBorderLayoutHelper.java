@@ -1,7 +1,5 @@
 package com.vivianhonghoa.chess.viewcontroller.helpers;
 
-import com.vivianhonghoa.chess.viewcontroller.components.JWinnerPane;
-
 import javax.swing.*;
 import java.awt.*;
 

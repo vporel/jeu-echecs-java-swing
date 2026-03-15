@@ -38,8 +38,7 @@ public class RoundedBorder implements Border {
 
     @Override
     public Insets getBorderInsets(Component c) {
-        int inset = thickness + radius / 4;
-        return new Insets(inset, inset, inset, inset);
+        return new Insets(thickness, thickness, thickness, thickness);
     }
 
     @Override

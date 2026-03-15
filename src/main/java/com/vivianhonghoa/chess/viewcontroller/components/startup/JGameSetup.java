@@ -3,7 +3,7 @@ package com.vivianhonghoa.chess.viewcontroller.components.startup;
 import com.vivianhonghoa.chess.model.GameEngine;
 import com.vivianhonghoa.chess.model.PlayerType;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
-import com.vivianhonghoa.chess.viewcontroller.components.*;
+import com.vivianhonghoa.chess.viewcontroller.components.lib.*;
 import com.vivianhonghoa.chess.viewcontroller.helpers.FontHelper;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 import com.vivianhonghoa.chess.viewcontroller.border.RoundedBorder;
@@ -33,16 +33,18 @@ public class JGameSetup extends JSection {
     private void build(){
         jContentPane.setBackground(Colors.PRIMARY_DARK_2);
         jContentPane.setBorder(new RoundedBorder(Colors.SECONDARY, 2, 20));
+        jContentPane.setShadow(5);
+
         jContentPane.add(getTitlePane());
         jContentPane.add(Box.createVerticalStrut(20));
         jContentPane.add(getSectionTitlePane("WHO IS PLAYING?"));
-        jContentPane.add(Box.createVerticalStrut(10));
         jContentPane.add(getStartButtonsPane());
         jContentPane.add(Box.createVerticalStrut(10));
         jContentPane.add(getSectionTitlePane("TIME FORMAT"));
         jContentPane.add(Box.createVerticalStrut(10));
         jContentPane.add(getTimeSelectionPane());
         jContentPane.add(Box.createVerticalStrut(20));
+
     }
 
     private JPanel getTitlePane(){
@@ -52,7 +54,7 @@ public class JGameSetup extends JSection {
         jTitleLabel.setForeground(Colors.SECONDARY);
         JLabelWrapper jTitleLabelWrapper = new JLabelWrapper(jTitleLabel, true);
         jTitleLabelWrapper.setBackground(Colors.PRIMARY_DARK_1);
-        jTitleLabelWrapper.setRadius(10);
+        jTitleLabelWrapper.setRadius(20);
         jTitleLabelWrapper.setPaddingVertical(10);
 
         return jTitleLabelWrapper;
@@ -86,6 +88,7 @@ public class JGameSetup extends JSection {
             jButton.setRadius(20);
             jButton.setBackground(Colors.SECONDARY_LIGHT_1);
             jButton.setForeground(Colors.shadeOfGray(20));
+            JComponentHelper.changeBackgroundOnMouseHover(jButton, Colors.SECONDARY_LIGHT_1, Colors.SECONDARY);
             JComponentHelper.setFixedSize(jButton, 240, 50);
             JComponentHelper.setFontSize(jButton, 20);
         }
@@ -97,6 +100,7 @@ public class JGameSetup extends JSection {
         jWrapper.add(Box.createHorizontalStrut(20));
         jWrapper.add(jPlayerVsComputerButton);
         jWrapper.add(Box.createHorizontalStrut(20));
+        JComponentHelper.setFixedHeight(jWrapper, 100);
 
         return jWrapper;
     }
