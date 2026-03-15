@@ -1,4 +1,4 @@
-package com.vivianhonghoa.chess.viewcontroller.misc;
+package com.vivianhonghoa.chess.viewcontroller.border;
 
 import javax.swing.border.Border;
 import java.awt.*;

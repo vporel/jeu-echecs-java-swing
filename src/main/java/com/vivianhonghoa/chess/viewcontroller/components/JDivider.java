@@ -2,6 +2,7 @@ package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
+import com.vivianhonghoa.chess.viewcontroller.utils.Orientation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -72,10 +73,5 @@ public class JDivider extends JPanel {
         this.revalidate();
         this.repaint();
         return this;
-    }
-
-    public enum Orientation {
-        HORIZONTAL,
-        VERTICAL
     }
 }

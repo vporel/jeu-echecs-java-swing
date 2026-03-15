@@ -1,6 +1,6 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
-import com.vivianhonghoa.chess.viewcontroller.misc.RoundedBorder;
+import com.vivianhonghoa.chess.viewcontroller.border.RoundedBorder;
 
 import javax.swing.*;
 import javax.swing.border.Border;

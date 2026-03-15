@@ -1,6 +1,9 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
+import com.vivianhonghoa.chess.viewcontroller.border.RoundedBorder;
+
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
@@ -23,6 +26,14 @@ public class JCustomPanel extends JPanel {
     public void setBackground(Color bg) {
         super.setBackground(bg);
         this.setOpaque(true);
+    }
+
+    @Override
+    public void setBorder(Border border) {
+        super.setBorder(border);
+        if(border instanceof RoundedBorder roundedBorder) {
+            setRadius(roundedBorder.getRadius());
+        }
     }
 
     @Override

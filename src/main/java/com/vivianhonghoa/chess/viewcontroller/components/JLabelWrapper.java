@@ -1,6 +1,5 @@
 package com.vivianhonghoa.chess.viewcontroller.components;
 
-import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
 import javax.swing.*;
@@ -20,7 +19,6 @@ public class JLabelWrapper extends JCustomPanel {
         this.label = label;
         this.fullWidth = fullWidth;
         this.setLayout(new GridBagLayout());
-        this.setBackground(Colors.APP_BACKGROUND);
         this.setPadding(0, 0, 0, 0);
         this.add(label);
     }

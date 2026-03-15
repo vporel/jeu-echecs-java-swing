@@ -72,7 +72,7 @@ public class JPlayerPane extends JPanel {
     private JPanel getPlayerNameAndColorPane(){
         JLabel jPlayerName = new JLabel(getPlayerName(), SwingConstants.CENTER);
         JComponentHelper.setFontSize(jPlayerName, 20);
-        JComponentHelper.setBold(jPlayerName);
+        JComponentHelper.setFontWeightBold(jPlayerName);
         JLabelWrapper jPlayerNameWrapper = new JLabelWrapper(jPlayerName, true);
         jPlayerNameWrapper.setPaddingVertical(5);
         jPlayerNameWrapper.setBackground(Colors.APP_BACKGROUND);
@@ -201,7 +201,7 @@ public class JPlayerPane extends JPanel {
 
     private JPanel getHistoryPane(){
         JLabel jHistoryLabel = new JLabel("History");
-        JComponentHelper.setBold(jHistoryLabel);
+        JComponentHelper.setFontWeightBold(jHistoryLabel);
         JLabelWrapper jHistoryLabelWrapper = new JLabelWrapper(jHistoryLabel, true);
         jHistoryLabelWrapper.setPaddingVertical(10);
 
@@ -240,7 +240,7 @@ public class JPlayerPane extends JPanel {
 
     private JPanel getCapturedPiecesPane() {
         JLabel jCapturedLabel = new JLabel("Captured pieces", SwingConstants.CENTER);
-        JComponentHelper.setBold(jCapturedLabel);
+        JComponentHelper.setFontWeightBold(jCapturedLabel);
         JLabelWrapper jCapturedLabelWrapper = new JLabelWrapper(jCapturedLabel, true);
         jCapturedLabelWrapper.setPaddingVertical(10);
 

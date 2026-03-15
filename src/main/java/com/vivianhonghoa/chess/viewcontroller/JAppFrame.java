@@ -4,8 +4,7 @@ import com.vivianhonghoa.chess.model.GameEngine;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.viewcontroller.components.JGamePane;
-import com.vivianhonghoa.chess.viewcontroller.components.JStartupPane;
-import com.vivianhonghoa.chess.viewcontroller.components.JWinnerPane;
+import com.vivianhonghoa.chess.viewcontroller.components.startup.JStartup;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,9 +20,9 @@ public class JAppFrame extends JFrame {
         setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame on the screen
-        JStartupPane jStartupPane = new JStartupPane(gameEngine);
-        setContentPane(jStartupPane);
-        
+        JStartup jStartup = new JStartup(gameEngine);
+        setContentPane(jStartup);
+
         gameEngine.addObserver(new GameEngineObserver() {
             @Override
             public void onGameStarted(GameEngineEvent event) {
@@ -32,7 +31,7 @@ public class JAppFrame extends JFrame {
 
             @Override
             public void onGameStopped(GameEngineEvent event) {
-                changeContentPane(jStartupPane);
+                changeContentPane(jStartup);
             }
         });
     }

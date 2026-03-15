@@ -60,12 +60,16 @@ public class JComponentHelper {
         jComponent.setFont(jComponent.getFont().deriveFont(size));
     }
 
-    public static void setItalic(JLabel jComponent) {
+    public static void setItalic(JComponent jComponent) {
         jComponent.setFont(jComponent.getFont().deriveFont(jComponent.getFont().getStyle() | Font.ITALIC));
     }
 
-    public static void setBold(JLabel jComponent) {
+    public static void setFontWeightBold(JComponent jComponent) {
         jComponent.setFont(jComponent.getFont().deriveFont(jComponent.getFont().getStyle() | Font.BOLD));
+    }
+
+    public static void setFontWeightNormal(JComponent jComponent) {
+        jComponent.setFont(jComponent.getFont().deriveFont(jComponent.getFont().getStyle() & ~Font.BOLD));
     }
 
     public static void changeForegroundOnMouseHover(JComponent jComponent, Color normalColor, Color hoverColor) {

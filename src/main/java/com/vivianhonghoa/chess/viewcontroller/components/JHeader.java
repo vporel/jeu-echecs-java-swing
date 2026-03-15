@@ -25,7 +25,7 @@ public class JHeader extends JPanel {
     private void build(){
         JLabel jTitleLabel = new JLabel("Chess");
         JComponentHelper.setFontSize(jTitleLabel, 25);
-        JComponentHelper.setBold(jTitleLabel);
+        JComponentHelper.setFontWeightBold(jTitleLabel);
         jTitleLabel.setForeground(Colors.SECONDARY_LIGHT_1);
 
         JCustomButton jPauseResumeButton = new JCustomButton("PAUSE");

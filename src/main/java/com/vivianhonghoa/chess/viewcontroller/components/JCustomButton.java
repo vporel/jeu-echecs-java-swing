@@ -2,7 +2,7 @@ package com.vivianhonghoa.chess.viewcontroller.components;
 
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
-import com.vivianhonghoa.chess.viewcontroller.misc.RoundedBorder;
+import com.vivianhonghoa.chess.viewcontroller.border.RoundedBorder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,5 +53,10 @@ public class JCustomButton extends JButton {
 
     public void setHeight(int height) {
         JComponentHelper.setFixedHeight(this, height);
+    }
+
+    @Override
+    public void setSize(int width, int height) {
+        JComponentHelper.setFixedSize(this, width, height);
     }
 }
