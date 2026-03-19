@@ -1,6 +1,6 @@
 package com.vivianhonghoa.chess.viewcontroller.components.game;
 
-import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.viewcontroller.Colors;

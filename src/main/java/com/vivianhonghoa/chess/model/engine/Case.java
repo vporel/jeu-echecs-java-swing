@@ -1,4 +1,4 @@
-package com.vivianhonghoa.chess.model;
+package com.vivianhonghoa.chess.model.engine;
 
 public record Case(int row,
                    int col

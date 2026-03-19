@@ -1,9 +1,9 @@
 package com.vivianhonghoa.chess.viewcontroller.components.startup;
 
-import com.vivianhonghoa.chess.model.GameEngine;
-import com.vivianhonghoa.chess.model.PlayerType;
-import com.vivianhonghoa.chess.model.PresetBoardConfig;
+import com.vivianhonghoa.chess.model.engine.GameEngine;
+import com.vivianhonghoa.chess.model.engine.PresetBoardConfig;
 import com.vivianhonghoa.chess.model.pieces.Piece;
+import com.vivianhonghoa.chess.players.GraphicalPlayer;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.border.RoundedBorder;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomButtonWithIcon;
@@ -80,7 +80,12 @@ public class JSpecialPositions extends JSection {
             JComponentHelper.changeBackgroundOnMouseHover(jButton, Colors.PRIMARY_DARK_2, Colors.PRIMARY);
             JComponentHelper.setFixedSize(jButton, 120, 70);
             jButton.addActionListener(e -> {
-                gameEngine.start(PlayerType.HUMAN, PlayerType.HUMAN, null, entry.getValue());
+                gameEngine.start(
+                        new GraphicalPlayer(Piece.Color.WHITE),
+                        new GraphicalPlayer(Piece.Color.BLACK),
+                        null,
+                        entry.getValue()
+                );
             });
             jButtonsPane.add(jButton);
         }

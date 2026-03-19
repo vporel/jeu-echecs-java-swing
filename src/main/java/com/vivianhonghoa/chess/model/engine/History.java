@@ -1,4 +1,4 @@
-package com.vivianhonghoa.chess.model;
+package com.vivianhonghoa.chess.model.engine;
 
 import com.vivianhonghoa.chess.model.events.HistoryEvent;
 import com.vivianhonghoa.chess.model.events.HistoryObserver;

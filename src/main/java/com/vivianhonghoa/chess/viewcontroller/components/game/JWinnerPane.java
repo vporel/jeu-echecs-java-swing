@@ -1,6 +1,6 @@
 package com.vivianhonghoa.chess.viewcontroller.components.game;
 
-import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomButton;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.JLabelWrapper;

@@ -1,7 +1,9 @@
 package com.vivianhonghoa.chess.viewcontroller.components.startup;
 
-import com.vivianhonghoa.chess.model.GameEngine;
-import com.vivianhonghoa.chess.model.PlayerType;
+import com.vivianhonghoa.chess.model.engine.GameEngine;
+import com.vivianhonghoa.chess.model.pieces.Piece;
+import com.vivianhonghoa.chess.players.ComputerPlayer;
+import com.vivianhonghoa.chess.players.GraphicalPlayer;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.*;
 import com.vivianhonghoa.chess.viewcontroller.helpers.FontHelper;
@@ -72,12 +74,12 @@ public class JGameSetup extends JSection {
     private JPanel getStartButtonsPane() {
         JCustomButtonWithIcon jPlayerVsPlayerButton = new JCustomButtonWithIcon("Player vs Player", new JLabel("\uf0c0"));
         jPlayerVsPlayerButton.addActionListener(e -> {
-            gameEngine.start(PlayerType.HUMAN, PlayerType.HUMAN, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            gameEngine.start(new GraphicalPlayer(Piece.Color.WHITE), new GraphicalPlayer(Piece.Color.BLACK), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         JCustomButtonWithIcon jPlayerVsComputerButton = new JCustomButtonWithIcon("Player vs Computer", new JLabel("\uf2db"));
         jPlayerVsComputerButton.addActionListener(e -> {
-            gameEngine.start(PlayerType.HUMAN, PlayerType.COMPUTER, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            gameEngine.start(new GraphicalPlayer(Piece.Color.WHITE), new ComputerPlayer(Piece.Color.BLACK), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         List<JCustomButtonWithIcon> buttons = List.of(jPlayerVsPlayerButton, jPlayerVsComputerButton);

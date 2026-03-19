@@ -1,7 +1,7 @@
 package com.vivianhonghoa.chess.viewcontroller.components.game;
 
-import com.vivianhonghoa.chess.model.Board;
-import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.engine.Board;
+import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.ImagePath;
 import com.vivianhonghoa.chess.viewcontroller.border.RoundedBorder;

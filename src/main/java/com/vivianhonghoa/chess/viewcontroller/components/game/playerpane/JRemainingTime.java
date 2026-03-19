@@ -1,6 +1,6 @@
 package com.vivianhonghoa.chess.viewcontroller.components.game.playerpane;
 
-import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
@@ -9,7 +9,6 @@ import com.vivianhonghoa.chess.viewcontroller.components.lib.JLabelWrapper;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class JRemainingTime extends JCustomPanel {
     private final int playerNumber;
@@ -49,7 +48,7 @@ public class JRemainingTime extends JCustomPanel {
     }
 
     private String getRemainingTimeStr(){
-        Integer remainingTime = gameEngine.getPlayerRemainingTime(playerNumber);
+        Integer remainingTime = gameEngine.getPlayerContext(playerNumber).remainingTime().get();
         if(remainingTime == null){
             return "∞";
         }

@@ -1,6 +1,6 @@
 package com.vivianhonghoa.chess.viewcontroller.components.game.playerpane;
 
-import com.vivianhonghoa.chess.model.GameEngine;
+import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.events.BoardEvent;
 import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.pieces.Piece;

@@ -1,8 +1,9 @@
-package com.vivianhonghoa.chess.model;
+package com.vivianhonghoa.chess.model.engine;
 
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
+import com.vivianhonghoa.chess.model.players.Player;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
@@ -18,16 +19,11 @@ public final class GameEngine {
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean paused = new AtomicBoolean(false);
     private final AtomicBoolean ended = new AtomicBoolean(false);
-    private boolean isWhiteTurn = true;
-    private PlayerType player1Type;
-    private PlayerType player2Type;
-    private boolean unlimitedTime = false;
-    private final AtomicInteger player1TimeRemaining = new AtomicInteger(0);
-    private final AtomicInteger player2TimeRemaining = new AtomicInteger(0);
+    private final AtomicInteger currentPlayerNumber = new AtomicInteger(1); // 1 for white, 2 for black
+    private PlayerContext player1Context;
+    private PlayerContext player2Context;
     private final AtomicInteger winnerPlayerNumber = new AtomicInteger(0);
     private ScheduledExecutorService scheduler;
-    private final History player1History = new History(); // white
-    private final History player2History = new History(); // black
 
     public GameEngine(){
         board = new Board();
@@ -37,26 +33,37 @@ public final class GameEngine {
      * Start the game with two players and a time limit
      * a time limit of null means unlimited time
      */
-    public void start(PlayerType player1Type, PlayerType player2Type, Integer timeInSeconds, Piece[][] presetPieces) {
+    public void start(Player player1, Player player2, Integer timeInSeconds, Piece[][] presetPieces) {
         // Do nothing if the game has already started
         if(running.get()) return;
+
+        if(player1.getColor() == player2.getColor()) {
+            throw new IllegalArgumentException("Both players cannot have the same color");
+        }
+
+        this.player1Context = new PlayerContext(
+            player1.setGameEngine(this),
+            new AtomicInteger(timeInSeconds == null ? 0 : timeInSeconds),
+            new History()
+        );
+
+        this.player2Context = new PlayerContext(
+                player2.setGameEngine(this),
+                new AtomicInteger(timeInSeconds == null ? 0 : timeInSeconds),
+                new History()
+        );
+        this.winnerPlayerNumber.set(0);
+        this.currentPlayerNumber.set(player1.getColor() == Piece.Color.WHITE ? 1 : 2);
+        this.running.set(true);
+        this.paused.set(false);
+        this.ended.set(false);
 
         board.reset();
         if(presetPieces != null) {
             board.setPieces(presetPieces);
         }
 
-        this.player1Type = player1Type;
-        this.player2Type = player2Type;
-        this.player1TimeRemaining.set(timeInSeconds == null ? 0 : timeInSeconds);
-        this.player2TimeRemaining.set(timeInSeconds == null ? 0 : timeInSeconds);
-        this.running.set(true);
-        this.unlimitedTime = timeInSeconds == null;
-        this.paused.set(false);
-        this.ended.set(false);
-        this.isWhiteTurn = true;
-        player1History.clear();
-        player2History.clear();
+        boolean unlimitedTime = timeInSeconds == null;
 
         if(!unlimitedTime) {
             // Create a timer that ticks every 1 second (1000 ms)
@@ -64,17 +71,12 @@ public final class GameEngine {
                 if (!running.get() || paused.get() || ended.get()) {
                     return;
                 }
-
-                // Subtract 1 second from the current player's time
-                if (isWhiteTurn) {
-                    player1TimeRemaining.decrementAndGet();
-                } else {
-                    player2TimeRemaining.decrementAndGet();
-                }
+                int snapshotCurrentPlayerNumber = getCurrentPlayerNumber();
+                PlayerContext snapshotCurrentPlayerContext = getPlayerContext(snapshotCurrentPlayerNumber);
 
                 // If time runs out, the game is over
-                if (player1TimeRemaining.get() <= 0 || player2TimeRemaining.get() <= 0) {
-                    this.end(player1TimeRemaining.get() > 0 ? 1 : 2);
+                if (snapshotCurrentPlayerContext.remainingTime().decrementAndGet() <= 0) {
+                    this.end(snapshotCurrentPlayerNumber);
                 }
 
                 notifyObservers(GameEngineObserver::onGameTimeUpdated);
@@ -101,14 +103,14 @@ public final class GameEngine {
             return; // Can't undo on your own turn
         }
 
-        History currentHistory = getPlayerHistory(playerNumber);
+        History currentHistory = getPlayerContext(playerNumber).history();
         if (currentHistory.isEmpty()) {
             return; // No moves to undo
         }
 
         History.Entry lastEntry = currentHistory.removeLast();
         board.undoMove(lastEntry.from(), lastEntry.to(), lastEntry.captured());
-        isWhiteTurn = (playerNumber == 1); // Set turn back to the player who undid
+        nextPlayer();
         notifyObservers(GameEngineObserver::onPlayerTurnChanged);
     }
 
@@ -137,19 +139,12 @@ public final class GameEngine {
         notifyObservers(GameEngineObserver::onGameStopped);
     }
 
-    /**
-     * @return null to indicate unlimited time, or the remaining time in seconds for the specified player
-     */
-    public Integer getPlayerRemainingTime(int playerNumber) {
-        if(unlimitedTime) {
-            return null;
-        }
-        if (playerNumber == 1) {
-            return player1TimeRemaining.get();
-        } else if (playerNumber == 2) {
-            return player2TimeRemaining.get();
-        }
-        throw new IllegalArgumentException("Invalid player number: " + playerNumber);
+    public void nextPlayer() {
+        if(!running.get() || paused.get() || ended.get()) return;
+        int newPlayerNumber = getCurrentPlayerNumber() == 1 ? 2 : 1;
+        currentPlayerNumber.set(newPlayerNumber);
+        getPlayerContext(newPlayerNumber).player().onTurnStart();
+        notifyObservers(GameEngineObserver::onPlayerTurnChanged);
     }
 
     public void selectCase(Case selectedCase) {
@@ -164,7 +159,7 @@ public final class GameEngine {
 
         // Check if the player is selecting their own piece
         Piece selectedPiece = board.getPiece(selectedCase.row(), selectedCase.col());
-        Piece.Color currentColor = isWhiteTurn ? Piece.Color.WHITE : Piece.Color.BLACK;
+        Piece.Color currentColor = getCurrentPlayerContext().player().getColor();
 
         // If a piece is already selected, try to move it
         if (board.getSelectedCase() != null) {
@@ -173,18 +168,16 @@ public final class GameEngine {
             Piece capturedPiece = board.getPiece(selectedCase.row(), selectedCase.col());
             boolean moved = board.movePiece(from, selectedCase);
             if (moved) {
-                History currentHistory = isWhiteTurn ? player1History : player2History;
+                History currentHistory = getCurrentPlayerContext().history();
                 currentHistory.add(new History.Entry(movingPiece, from, selectedCase, capturedPiece));
                 board.setSelectedCase(null);
-                isWhiteTurn = !isWhiteTurn;
                 if(board.isKingInCheckmate(Piece.Color.WHITE)) end(2);
                 else if(board.isKingInCheckmate(Piece.Color.BLACK)) end(1);
                 else if(board.isStalemate(Piece.Color.WHITE) || board.isStalemate(Piece.Color.BLACK)) end(0);
-                else notifyObservers(GameEngineObserver::onPlayerTurnChanged);
+                nextPlayer();
                 return;
             }
         }
-
         // Select a new piece (only if it belongs to the current player)
         if (selectedPiece != null && selectedPiece.getColor() == currentColor) {
             board.setSelectedCase(selectedCase);
@@ -207,8 +200,21 @@ public final class GameEngine {
         return ended.get();
     }
 
+    public PlayerContext getPlayerContext(int playerNumber) {
+        if (playerNumber == 1) {
+            return player1Context;
+        } else if (playerNumber == 2) {
+            return player2Context;
+        }
+        throw new IllegalArgumentException("Invalid player number: " + playerNumber);
+    }
+
+    public PlayerContext getCurrentPlayerContext() {
+        return getPlayerContext(getCurrentPlayerNumber());
+    }
+
     public int getCurrentPlayerNumber() {
-        return isWhiteTurn ? 1 : 2;
+        return currentPlayerNumber.get();
     }
 
     public boolean isPlayerTurn(int playerNumber) {
@@ -217,15 +223,6 @@ public final class GameEngine {
 
     public int getWinnerPlayerNumber() {
         return winnerPlayerNumber.get();
-    }
-
-    public History getPlayerHistory(int playerNumber) {
-        if (playerNumber == 1) {
-            return player1History;
-        } else if (playerNumber == 2) {
-            return player2History;
-        }
-        throw new IllegalArgumentException("Invalid player number: " + playerNumber);
     }
 
     public void addObserver(GameEngineObserver observer){

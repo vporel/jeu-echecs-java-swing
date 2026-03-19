@@ -1,7 +1,7 @@
 package com.vivianhonghoa.chess.model.pieces;
 
-import com.vivianhonghoa.chess.model.Board;
-import com.vivianhonghoa.chess.model.Case;
+import com.vivianhonghoa.chess.model.engine.Board;
+import com.vivianhonghoa.chess.model.engine.Case;
 
 import java.util.ArrayList;
 import java.util.List;

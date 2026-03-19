@@ -1,7 +1,7 @@
 package com.vivianhonghoa.chess.viewcontroller.components.game.playerpane;
 
-import com.vivianhonghoa.chess.model.GameEngine;
-import com.vivianhonghoa.chess.model.History;
+import com.vivianhonghoa.chess.model.engine.GameEngine;
+import com.vivianhonghoa.chess.model.engine.History;
 import com.vivianhonghoa.chess.model.events.*;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomPanel;
@@ -11,7 +11,6 @@ import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import java.awt.*;
 import java.util.List;
 
 public class JHistory extends JCustomPanel {
@@ -69,7 +68,7 @@ public class JHistory extends JCustomPanel {
         this.add(jHistoryContentScrollPane);
 
         //History events
-        History history = gameEngine.getPlayerHistory(playerNumber);
+        History history = gameEngine.getPlayerContext(playerNumber).history();
         history.addObserver(new HistoryObserver() {
             @Override
             public void onChange(HistoryEvent event) {
