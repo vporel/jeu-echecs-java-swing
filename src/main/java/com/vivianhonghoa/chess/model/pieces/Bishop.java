@@ -12,6 +12,11 @@ public class Bishop extends Piece{
     }
 
     @Override
+    public char getLetter() {
+        return 'B';
+    }
+
+    @Override
     public List<Case> getAccessibleCases() {
         List<Case> cases = new ArrayList<>();
 

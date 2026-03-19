@@ -15,9 +15,9 @@ import java.awt.*;
 public class JGamePane extends JPanel {
     private final GameEngine gameEngine;
 
-    public JGamePane(GameEngine gameEngine) {
+    public JGamePane() {
         super();
-        this.gameEngine = gameEngine;
+        this.gameEngine = GameEngine.getInstance();
         build();
     }
 
@@ -27,12 +27,12 @@ public class JGamePane extends JPanel {
 
         JCustomPanel jSquaresContainerWrapper = new JCustomPanel();
         jSquaresContainerWrapper.setLayout(new GridBagLayout());
-        jSquaresContainerWrapper.add(new JSquaresContainer(gameEngine));
+        jSquaresContainerWrapper.add(new JSquaresContainer());
         jSquaresContainerWrapper.setBackground(Colors.PRIMARY_DARK_1);
 
 
-        this.add(new JHeader(gameEngine), BorderLayout.NORTH);
-        this.add(new JFooter(gameEngine), BorderLayout.SOUTH);
+        this.add(new JHeader(), BorderLayout.NORTH);
+        this.add(new JFooter(), BorderLayout.SOUTH);
         this.add(jSquaresContainerWrapper, BorderLayout.CENTER);
         this.add(new JPlayerPane(1, "White", gameEngine), BorderLayout.WEST);
         this.add(new JPlayerPane(2, "Black", gameEngine), BorderLayout.EAST);
@@ -55,7 +55,7 @@ public class JGamePane extends JPanel {
         gameEngine.addObserver(new GameEngineObserver() {
             @Override
             public void onGameEnded(GameEngineEvent event) {
-                JWinnerPane jWinnerPane = new JWinnerPane(gameEngine, () -> {
+                JWinnerPane jWinnerPane = new JWinnerPane(() -> {
                     JBorderLayoutHelper.changeComponent(JGamePane.this, BorderLayout.CENTER, jSquaresContainerWrapper);
                 });
                 JBorderLayoutHelper.changeComponent(JGamePane.this, BorderLayout.CENTER, jWinnerPane);

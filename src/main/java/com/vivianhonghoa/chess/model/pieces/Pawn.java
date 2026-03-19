@@ -12,6 +12,11 @@ public class Pawn extends Piece{
     }
 
     @Override
+    public char getLetter() {
+        return 'P';
+    }
+
+    @Override
     public List<Case> getAccessibleCases() {
         List<Case> cases = new ArrayList<>();
 
@@ -28,12 +33,12 @@ public class Pawn extends Piece{
 
         // One square forward
         int nextRow = row + direction;
-        if (Case.isValid(nextRow, col) && board.getPiece(nextRow, col) == null) {
+        if (Case.isValid(nextRow, col) && board.getPieceAt(nextRow, col) == null) {
             cases.add(new Case(nextRow, col));
 
             // Two squares forward (only from starting position)
             int twoAheadRow = row + 2 * direction;
-            if (row == startRow && board.getPiece(twoAheadRow, col) == null) {
+            if (row == startRow && board.getPieceAt(twoAheadRow, col) == null) {
                 cases.add(new Case(twoAheadRow, col));
             }
         }
@@ -43,7 +48,7 @@ public class Pawn extends Piece{
         for (int dc = -1; dc <= 1; dc += 2) {
             int targetCol = col + dc;
             if (Case.isValid(nextRow, targetCol)) {
-                Piece target = board.getPiece(nextRow, targetCol);
+                Piece target = board.getPieceAt(nextRow, targetCol);
                 if (target != null && target.getColor() != getColor()) {
                     cases.add(new Case(nextRow, targetCol));
                 } else if (passingCaptureTarget != null

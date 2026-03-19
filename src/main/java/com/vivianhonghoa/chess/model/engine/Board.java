@@ -32,6 +32,10 @@ public class Board {
         initPositions();
     }
 
+    public Piece[][] getPieces() {
+        return pieces;
+    }
+
     void setPieces(Piece[][] pieces) {
         Piece[][] copy = new Piece[pieces.length][];
         for (int i = 0; i < pieces.length; i++) {
@@ -93,7 +97,7 @@ public class Board {
         placePiece(new Rook(Piece.Color.BLACK).setBoard(this), 7, 7);
     }
 
-    public Piece getPiece(int row, int col) {
+    public Piece getPieceAt(int row, int col) {
         if (!Case.isValid(row, col)) {
             return null;
         }
@@ -214,7 +218,7 @@ public class Board {
         if (kingCase == null) return false;
         Piece king = pieces[kingCase.row()][kingCase.col()];
         for (Case move : king.getAccessibleCases()) {
-            if (isMoveLegal(king, kingCase, move)) {
+            if (isMoveLegal(kingCase, move)) {
                 return false; // King can escape
             }
         }
@@ -223,7 +227,7 @@ public class Board {
                 Piece p = pieces[r][c];
                 if (p != null && p.getColor() == color) {
                     for (Case move : p.getAccessibleCases()) {
-                        if (isMoveLegal(p, new Case(r, c), move)) {
+                        if (isMoveLegal(new Case(r, c), move)) {
                             return false; // A piece can block or capture
                         }
                     }
@@ -240,7 +244,7 @@ public class Board {
                 Piece p = pieces[r][c];
                 if (p != null && p.getColor() == color) {
                     for (Case move : p.getAccessibleCases()) {
-                        if (isMoveLegal(p, new Case(r, c), move)) {
+                        if (isMoveLegal(new Case(r, c), move)) {
                             return false;
                         }
                     }
@@ -256,14 +260,17 @@ public class Board {
         List<Case> legal = new ArrayList<>();
         Case from = new Case(piece.getRow(), piece.getCol());
         for (Case to : piece.getAccessibleCases()) {
-            if (isMoveLegal(piece, from, to)) {
+            if (isMoveLegal(from, to)) {
                 legal.add(to);
             }
         }
         return legal;
     }
 
-    private boolean isMoveLegal(Piece piece, Case from, Case to) {
+    boolean isMoveLegal(Case from, Case to) {
+        if (from == null || to == null) return false;
+        Piece piece = getPieceAt(from.row(), from.col());
+        if(piece == null) return false;
         // Simulate the move
         Piece captured = pieces[to.row()][to.col()];
         pieces[to.row()][to.col()] = piece;
@@ -294,19 +301,16 @@ public class Board {
         if (selectedCase == null) {
             return null;
         }
-        return getPiece(selectedCase.row(), selectedCase.col());
+        return getPieceAt(selectedCase.row(), selectedCase.col());
     }
 
     boolean movePiece(Case from, Case to) {
         if (from == null || to == null) return false;
-        Piece piece = getPiece(from.row(), from.col());
-        if (piece == null || !piece.canMoveTo(to)) return false;
-
-        // Simulate-and-reject: ensure the move doesn't leave our King in check
-        if (!isMoveLegal(piece, from, to)) return false;
+        Piece piece = getPieceAt(from.row(), from.col());
+        if(piece == null || !piece.canMoveTo(to)) return false;
 
         // Check for capture
-        Piece captured = getPiece(to.row(), to.col());
+        Piece captured = getPieceAt(to.row(), to.col());
 
         // Handle passing capture
         if (piece instanceof Pawn && captured == null && from.col() != to.col()) {
@@ -374,7 +378,7 @@ public class Board {
     }
 
     public void undoMove(Case from, Case to, Piece captured) {
-        Piece piece = getPiece(to.row(), to.col());
+        Piece piece = getPieceAt(to.row(), to.col());
         if (piece == null) return;
 
         // Move the piece back

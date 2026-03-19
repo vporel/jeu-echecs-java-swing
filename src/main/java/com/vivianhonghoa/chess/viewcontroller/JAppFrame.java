@@ -13,20 +13,19 @@ public class JAppFrame extends JFrame {
     public static final String DEFAULT_TITLE = "Chess by Vivian and Hong Hoa";
     public static final int DEFAULT_WIDTH = 1000;
     public static final int DEFAULT_HEIGHT = 800;
-    public static final GameEngine gameEngine = new GameEngine();
 
     public void build() {
         setTitle(DEFAULT_TITLE);
         setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame on the screen
-        JStartup jStartup = new JStartup(gameEngine);
+        JStartup jStartup = new JStartup();
         setContentPane(jStartup);
 
-        gameEngine.addObserver(new GameEngineObserver() {
+        GameEngine.getInstance().addObserver(new GameEngineObserver() {
             @Override
             public void onGameStarted(GameEngineEvent event) {
-                changeContentPane(new JGamePane(gameEngine));
+                changeContentPane(new JGamePane());
             }
 
             @Override

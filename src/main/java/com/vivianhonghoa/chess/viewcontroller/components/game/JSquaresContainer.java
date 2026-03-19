@@ -17,9 +17,9 @@ public class JSquaresContainer extends JCustomPanel {
 
     private final GameEngine gameEngine;
 
-    public JSquaresContainer(GameEngine gameEngine) {
+    public JSquaresContainer() {
         super();
-        this.gameEngine = gameEngine;
+        this.gameEngine = GameEngine.getInstance();
         build();
     }
 

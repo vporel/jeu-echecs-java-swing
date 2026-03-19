@@ -11,9 +11,14 @@ public class King extends Piece {
         super(color);
     }
 
+    @Override
+    public char getLetter() {
+        return 'K';
+    }
+
     private void addIfAccessible(List<Case> cases, int r, int c) {
         if (Case.isValid(r, c)) {
-            Piece target = board.getPiece(r, c);
+            Piece target = board.getPieceAt(r, c);
             if (target == null || target.getColor() != getColor()) {
                 cases.add(new Case(r, c));
             }
@@ -48,10 +53,10 @@ public class King extends Piece {
         if (board.isSquareAttackedBy(row, col, opponent)) return;
 
         // Queenside castling: King at col 3 → col 1, Rook(0) → col 2
-        Piece qRook = board.getPiece(row, 0);
+        Piece qRook = board.getPieceAt(row, 0);
         if (qRook instanceof Rook && qRook.getColor() == getColor() && !qRook.hasMoved()) {
             // Path must be clear: cols 1, 2
-            if (board.getPiece(row, 1) == null && board.getPiece(row, 2) == null) {
+            if (board.getPieceAt(row, 1) == null && board.getPieceAt(row, 2) == null) {
                 // King must not pass through or land on attacked square: cols 1, 2
                 if (!board.isSquareAttackedBy(row, 1, opponent)
                         && !board.isSquareAttackedBy(row, 2, opponent)) {
@@ -61,11 +66,11 @@ public class King extends Piece {
         }
 
         // Kingside castling: King at col 3 → col 5, Rook(7) → col 4
-        Piece kRook = board.getPiece(row, 7);
+        Piece kRook = board.getPieceAt(row, 7);
         if (kRook instanceof Rook && kRook.getColor() == getColor() && !kRook.hasMoved()) {
             // Path must be clear: cols 4, 5, 6
-            if (board.getPiece(row, 4) == null && board.getPiece(row, 5) == null
-                    && board.getPiece(row, 6) == null) {
+            if (board.getPieceAt(row, 4) == null && board.getPieceAt(row, 5) == null
+                    && board.getPieceAt(row, 6) == null) {
                 // King must not pass through or land on attacked square: cols 4, 5
                 if (!board.isSquareAttackedBy(row, 4, opponent)
                         && !board.isSquareAttackedBy(row, 5, opponent)) {

@@ -47,6 +47,8 @@ public abstract class Piece {
         this.hasMoved = hasMoved;
     }
 
+    public abstract char getLetter();
+
     public abstract List<Case> getAccessibleCases();
 
     public boolean canMoveTo(Case targetCase) {
@@ -62,7 +64,7 @@ public abstract class Piece {
         int r = row + dRow;
         int c = col + dCol;
         while (Case.isValid(r, c)) {
-            Piece target = board.getPiece(r, c);
+            Piece target = board.getPieceAt(r, c);
             if (target == null) {
                 cases.add(new Case(r, c));
             } else {

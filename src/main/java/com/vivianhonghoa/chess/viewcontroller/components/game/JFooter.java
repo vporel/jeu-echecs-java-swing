@@ -15,9 +15,9 @@ public class JFooter extends JCustomPanel {
 
     private final GameEngine gameEngine;
 
-    public JFooter(GameEngine gameEngine) {
+    public JFooter() {
         super();
-        this.gameEngine = gameEngine;
+        this.gameEngine = GameEngine.getInstance();
         build();
     }
 

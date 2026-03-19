@@ -15,9 +15,9 @@ public class JStartup extends JCustomPanel {
 
     private final GameEngine gameEngine;
 
-    public JStartup(GameEngine gameEngine) {
+    public JStartup() {
         super();
-        this.gameEngine = gameEngine;
+        this.gameEngine = GameEngine.getInstance();
         build();
     }
 
@@ -28,9 +28,9 @@ public class JStartup extends JCustomPanel {
         this.add(Box.createVerticalGlue());
         this.add(getAppNameAndAuthorsPane());
         this.add(Box.createVerticalStrut(20));
-        this.add(new JGameSetup(gameEngine));
+        this.add(new JGameSetup());
         this.add(Box.createVerticalStrut(10));
-        this.add(new JSpecialPositions(gameEngine));
+        this.add(new JSpecialPositions());
         this.add(Box.createVerticalGlue());
     }
 

@@ -28,9 +28,9 @@ public class JSpecialPositions extends JSection {
 
     private final GameEngine gameEngine;
 
-    public JSpecialPositions(GameEngine gameEngine) {
+    public JSpecialPositions() {
         super();
-        this.gameEngine = gameEngine;
+        this.gameEngine = GameEngine.getInstance();
         build();
     }
 
