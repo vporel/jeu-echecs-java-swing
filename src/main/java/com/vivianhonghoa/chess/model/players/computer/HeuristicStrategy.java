@@ -19,7 +19,7 @@ public class HeuristicStrategy implements ComputerStrategy {
 
         for (int r = 0; r < Board.SIZE; r++) {
             for (int c = 0; c < Board.SIZE; c++) {
-                Piece piece = board.getPiece(r, c);
+                Piece piece = board.getPieceAt(r, c);
                 if (piece == null || piece.getColor() != color) continue;
 
                 Case from = new Case(r, c);
@@ -39,7 +39,7 @@ public class HeuristicStrategy implements ComputerStrategy {
         int score = 0;
 
         // Captures: MVV-LVA (Most Valuable Victim - Least Valuable Attacker)
-        Piece victim = board.getPiece(to.row(), to.col());
+        Piece victim = board.getPieceAt(to.row(), to.col());
         if (victim != null) {
             score += pieceValue(victim) * 10 - pieceValue(piece);
         }

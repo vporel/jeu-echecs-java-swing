@@ -144,7 +144,7 @@ public class MinimaxStrategy implements ComputerStrategy {
 
         for (int r = 0; r < Board.SIZE; r++) {
             for (int c = 0; c < Board.SIZE; c++) {
-                Piece piece = board.getPiece(r, c);
+                Piece piece = board.getPieceAt(r, c);
                 if (piece == null) continue;
 
                 int value = pieceValue(piece) + getPieceSquareValue(piece, r, c);
@@ -191,8 +191,8 @@ public class MinimaxStrategy implements ComputerStrategy {
 
     private void orderMoves(List<ComputerMove> moves, Board board) {
         moves.sort((a, b) -> {
-            Piece victimA = board.getPiece(a.to().row(), a.to().col());
-            Piece victimB = board.getPiece(b.to().row(), b.to().col());
+            Piece victimA = board.getPieceAt(a.to().row(), a.to().col());
+            Piece victimB = board.getPieceAt(b.to().row(), b.to().col());
             int scoreA = victimA != null ? pieceValue(victimA) : 0;
             int scoreB = victimB != null ? pieceValue(victimB) : 0;
             return scoreB - scoreA;
@@ -203,7 +203,7 @@ public class MinimaxStrategy implements ComputerStrategy {
         List<ComputerMove> moves = new ArrayList<>();
         for (int r = 0; r < Board.SIZE; r++) {
             for (int c = 0; c < Board.SIZE; c++) {
-                Piece piece = board.getPiece(r, c);
+                Piece piece = board.getPieceAt(r, c);
                 if (piece != null && piece.getColor() == color) {
                     Case from = new Case(r, c);
                     for (Case to : board.getLegalMoves(piece)) {

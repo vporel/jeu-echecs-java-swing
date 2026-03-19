@@ -19,7 +19,7 @@ public class RandomStrategy implements ComputerStrategy {
 
         for (int r = 0; r < Board.SIZE; r++) {
             for (int c = 0; c < Board.SIZE; c++) {
-                Piece piece = board.getPiece(r, c);
+                Piece piece = board.getPieceAt(r, c);
                 if (piece != null && piece.getColor() == color) {
                     Case from = new Case(r, c);
                     for (Case to : board.getLegalMoves(piece)) {
