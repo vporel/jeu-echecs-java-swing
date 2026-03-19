@@ -23,7 +23,7 @@ public abstract class Player {
         return gameEngine.getPlayerNumberByColor(color);
     }
 
-    public final Player setGameEngine(GameEngine gameEngine) {
+    public Player setGameEngine(GameEngine gameEngine) {
         this.gameEngine = gameEngine;
         return this;
     }

@@ -170,23 +170,25 @@ public class MinimaxStrategy implements ComputerStrategy {
     }
 
     private static int[][] getPieceTable(Piece piece) {
-        if (piece instanceof Pawn) return PAWN_TABLE;
-        if (piece instanceof Knight) return KNIGHT_TABLE;
-        if (piece instanceof Bishop) return BISHOP_TABLE;
-        if (piece instanceof Rook) return ROOK_TABLE;
-        if (piece instanceof Queen) return QUEEN_TABLE;
-        if (piece instanceof King) return KING_TABLE;
-        return null;
+        return switch (piece.getType()) {
+            case PAWN -> PAWN_TABLE;
+            case KNIGHT -> KNIGHT_TABLE;
+            case BISHOP -> BISHOP_TABLE;
+            case ROOK -> ROOK_TABLE;
+            case QUEEN -> QUEEN_TABLE;
+            case KING -> KING_TABLE;
+        };
     }
 
     private static int pieceValue(Piece piece) {
-        if (piece instanceof Pawn) return 100;
-        if (piece instanceof Knight) return 320;
-        if (piece instanceof Bishop) return 330;
-        if (piece instanceof Rook) return 500;
-        if (piece instanceof Queen) return 900;
-        if (piece instanceof King) return 20000;
-        return 0;
+        return switch (piece.getType()) {
+            case PAWN -> 100;
+            case KNIGHT -> 320;
+            case BISHOP -> 330;
+            case ROOK -> 500;
+            case QUEEN -> 900;
+            case KING -> 20000;
+        };
     }
 
     private void orderMoves(List<ComputerMove> moves, Board board) {

@@ -74,7 +74,7 @@ public class JSquare extends JPanel {
 
     private boolean isKingInCheck() {
         Piece piece = getPiece();
-        if(!(piece instanceof King)) return false;
+        if (piece == null || piece.getType() != Piece.PieceType.KING) return false;
         return gameEngine.getBoard().isKingInCheck(piece.getColor());
     }
 
@@ -105,16 +105,7 @@ public class JSquare extends JPanel {
     }
 
     private String getUnicodeSymbol(Piece piece) {
-
-        return  switch(piece) {
-            case King k -> "\u265A";
-            case Queen q -> "\u265B";
-            case Rook r -> "\u265C";
-            case Bishop b -> "\u265D";
-            case Knight k -> "\u265E";
-            case Pawn p -> "\u265F";
-            default -> "";
-        };
+        return piece.getUnicodeSymbol();
     }
 
     private void handleClick(){

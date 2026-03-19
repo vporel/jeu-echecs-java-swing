@@ -3,7 +3,10 @@ package com.vivianhonghoa.chess.players;
 import com.vivianhonghoa.chess.model.engine.Board;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.model.pieces.Queen;
-import com.vivianhonghoa.chess.model.players.*;
+import com.vivianhonghoa.chess.model.players.ComputerDifficulty;
+import com.vivianhonghoa.chess.model.players.ComputerMove;
+import com.vivianhonghoa.chess.model.players.ComputerStrategy;
+import com.vivianhonghoa.chess.model.players.Player;
 import com.vivianhonghoa.chess.model.players.computer.*;
 
 import javax.swing.SwingWorker;
@@ -14,11 +17,12 @@ public class ComputerPlayer extends Player {
 
     public ComputerPlayer(Piece.Color color, ComputerDifficulty difficulty) {
         super(color);
-        this.strategy = switch (difficulty) {
+        ComputerStrategy baseStrategy = switch (difficulty) {
             case EASY -> new RandomStrategy();
             case MEDIUM -> new HeuristicStrategy();
             case HARD -> new MinimaxStrategy();
         };
+        this.strategy = new LoggingStrategy(new TimeLimitedStrategy(baseStrategy, 3000));
     }
 
     @Override

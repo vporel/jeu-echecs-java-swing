@@ -124,7 +124,7 @@ public class Board {
         piece.setPosition(to.row(), to.col());
 
         Piece passingCapture = null;
-        if (piece instanceof Pawn && captured == null && from.col() != to.col()) {
+        if (piece.getType() == Piece.PieceType.PAWN && captured == null && from.col() != to.col()) {
             passingCapture = pieces[from.row()][to.col()];
             pieces[from.row()][to.col()] = null;
         }
@@ -148,7 +148,7 @@ public class Board {
         for (int r = 0; r < SIZE; r++) {
             for (int c = 0; c < SIZE; c++) {
                 Piece p = pieces[r][c];
-                if (p instanceof King && p.getColor() == color) {
+                if (p != null && p.getType() == Piece.PieceType.KING && p.getColor() == color) {
                     return new Case(r, c);
                 }
             }
@@ -174,22 +174,18 @@ public class Board {
         int absDr = Math.abs(dr);
         int absDc = Math.abs(dc);
 
-        if (piece instanceof Pawn) {
-            int direction = (piece.getColor() == Piece.Color.WHITE) ? 1 : -1;
-            return dr == direction && absDc == 1;
-        } else if (piece instanceof Knight) {
-            return (absDr == 2 && absDc == 1) || (absDr == 1 && absDc == 2);
-        } else if (piece instanceof King) {
-            return absDr <= 1 && absDc <= 1 && (absDr + absDc > 0);
-        } else if (piece instanceof Rook) {
-            return (dr == 0 || dc == 0) && isPathClear(fromRow, fromCol, toRow, toCol);
-        } else if (piece instanceof Bishop) {
-            return absDr == absDc && absDr > 0 && isPathClear(fromRow, fromCol, toRow, toCol);
-        } else if (piece instanceof Queen) {
-            return ((dr == 0 || dc == 0) || (absDr == absDc && absDr > 0))
+        return switch (piece.getType()) {
+            case PAWN -> {
+                int direction = (piece.getColor() == Piece.Color.WHITE) ? 1 : -1;
+                yield dr == direction && absDc == 1;
+            }
+            case KNIGHT -> (absDr == 2 && absDc == 1) || (absDr == 1 && absDc == 2);
+            case KING -> absDr <= 1 && absDc <= 1 && (absDr + absDc > 0);
+            case ROOK -> (dr == 0 || dc == 0) && isPathClear(fromRow, fromCol, toRow, toCol);
+            case BISHOP -> absDr == absDc && absDr > 0 && isPathClear(fromRow, fromCol, toRow, toCol);
+            case QUEEN -> ((dr == 0 || dc == 0) || (absDr == absDc && absDr > 0))
                     && isPathClear(fromRow, fromCol, toRow, toCol);
-        }
-        return false;
+        };
     }
 
     private boolean isPathClear(int fromRow, int fromCol, int toRow, int toCol) {
@@ -279,7 +275,7 @@ public class Board {
 
         // Simulate passing capture (pawn moves diagonally to empty square)
         Piece passingCapture = null;
-        if (piece instanceof Pawn && captured == null && from.col() != to.col()) {
+        if (piece.getType() == Piece.PieceType.PAWN && captured == null && from.col() != to.col()) {
             passingCapture = pieces[from.row()][to.col()];
             pieces[from.row()][to.col()] = null;
         }
@@ -308,12 +304,13 @@ public class Board {
         if (from == null || to == null) return false;
         Piece piece = getPieceAt(from.row(), from.col());
         if(piece == null || !piece.canMoveTo(to)) return false;
+        if(!isMoveLegal(from, to)) return false;
 
         // Check for capture
         Piece captured = getPieceAt(to.row(), to.col());
 
         // Handle passing capture
-        if (piece instanceof Pawn && captured == null && from.col() != to.col()) {
+        if (piece.getType() == Piece.PieceType.PAWN && captured == null && from.col() != to.col()) {
             captured = pieces[from.row()][to.col()];
             pieces[from.row()][to.col()] = null;
         }
@@ -333,7 +330,7 @@ public class Board {
         piece.setHasMoved(true);
 
         // Set passing target if pawn moved 2 squares
-        if (piece instanceof Pawn && Math.abs(to.row() - from.row()) == 2) {
+        if (piece.getType() == Piece.PieceType.PAWN && Math.abs(to.row() - from.row()) == 2) {
             int epRow = (from.row() + to.row()) / 2;
             passingCaptureTarget = new Case(epRow, to.col());
         } else {
@@ -341,7 +338,7 @@ public class Board {
         }
 
         // Handle castling rook movement (King moved 2 columns)
-        if (piece instanceof King && Math.abs(to.col() - from.col()) == 2) {
+        if (piece.getType() == Piece.PieceType.KING && Math.abs(to.col() - from.col()) == 2) {
             int rookFromCol, rookToCol;
             if (to.col() < from.col()) {
                 rookFromCol = 0;
@@ -358,7 +355,7 @@ public class Board {
         }
 
         // Handle pawn promotion
-        if (piece instanceof Pawn) {
+        if (piece.getType() == Piece.PieceType.PAWN) {
             int promotionRow = (piece.getColor() == Piece.Color.WHITE) ? 7 : 0;
             if (to.row() == promotionRow) {
                 Piece promoted = promotionHandler.choosePiece(piece.getColor());
@@ -387,7 +384,7 @@ public class Board {
         piece.setPosition(from.row(), from.col());
 
         // Handle undoing passing capture
-        if (piece instanceof Pawn && captured == null && from.col() != to.col()) {
+        if (piece.getType() == Piece.PieceType.PAWN && captured == null && from.col() != to.col()) {
             Piece passingCaptured = pieces[from.row()][to.col()];
             pieces[from.row()][to.col()] = passingCaptured;
             if (passingCaptured != null) {
@@ -400,7 +397,7 @@ public class Board {
         }
 
         // Handle undoing castling rook movement
-        if (piece instanceof King && Math.abs(to.col() - from.col()) == 2) {
+        if (piece.getType() == Piece.PieceType.KING && Math.abs(to.col() - from.col()) == 2) {
             int rookFromCol, rookToCol;
             if (to.col() < from.col()) {
                 rookFromCol = 0;
@@ -418,7 +415,7 @@ public class Board {
         }
 
         // Handle undoing pawn promotion
-        if (piece instanceof Pawn) {
+        if (piece.getType() == Piece.PieceType.PAWN) {
             int promotionRow = (piece.getColor() == Piece.Color.WHITE) ? 7 : 0;
             if (to.row() == promotionRow) {
                 Piece originalPawn = new Pawn(piece.getColor()).setBoard(this);

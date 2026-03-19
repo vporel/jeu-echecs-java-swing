@@ -12,17 +12,13 @@ public class King extends Piece {
     }
 
     @Override
-    public char getLetter() {
-        return 'K';
+    public PieceType getType() {
+        return PieceType.KING;
     }
 
-    private void addIfAccessible(List<Case> cases, int r, int c) {
-        if (Case.isValid(r, c)) {
-            Piece target = board.getPieceAt(r, c);
-            if (target == null || target.getColor() != getColor()) {
-                cases.add(new Case(r, c));
-            }
-        }
+    @Override
+    public char getLetter() {
+        return 'K';
     }
 
     @Override
@@ -54,7 +50,7 @@ public class King extends Piece {
 
         // Queenside castling: King at col 3 → col 1, Rook(0) → col 2
         Piece qRook = board.getPieceAt(row, 0);
-        if (qRook instanceof Rook && qRook.getColor() == getColor() && !qRook.hasMoved()) {
+        if (qRook != null && qRook.getType() == PieceType.ROOK && qRook.getColor() == getColor() && !qRook.hasMoved()) {
             // Path must be clear: cols 1, 2
             if (board.getPieceAt(row, 1) == null && board.getPieceAt(row, 2) == null) {
                 // King must not pass through or land on attacked square: cols 1, 2
@@ -67,7 +63,7 @@ public class King extends Piece {
 
         // Kingside castling: King at col 3 → col 5, Rook(7) → col 4
         Piece kRook = board.getPieceAt(row, 7);
-        if (kRook instanceof Rook && kRook.getColor() == getColor() && !kRook.hasMoved()) {
+        if (kRook != null && kRook.getType() == PieceType.ROOK && kRook.getColor() == getColor() && !kRook.hasMoved()) {
             // Path must be clear: cols 4, 5, 6
             if (board.getPieceAt(row, 4) == null && board.getPieceAt(row, 5) == null
                     && board.getPieceAt(row, 6) == null) {

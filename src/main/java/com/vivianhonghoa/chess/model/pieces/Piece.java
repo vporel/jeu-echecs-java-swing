@@ -47,12 +47,27 @@ public abstract class Piece {
         this.hasMoved = hasMoved;
     }
 
+    public abstract PieceType getType();
+
     public abstract char getLetter();
 
     public abstract List<Case> getAccessibleCases();
 
     public boolean canMoveTo(Case targetCase) {
         return getAccessibleCases().contains(targetCase);
+    }
+
+    /**
+     * Helper for non-sliding pieces (king, knight).
+     * Adds the square if it is on the board and empty or occupied by an opponent.
+     */
+    protected void addIfAccessible(List<Case> cases, int r, int c) {
+        if (Case.isValid(r, c)) {
+            Piece target = board.getPieceAt(r, c);
+            if (target == null || target.getColor() != getColor()) {
+                cases.add(new Case(r, c));
+            }
+        }
     }
 
     /**
@@ -80,15 +95,18 @@ public abstract class Piece {
     }
 
     public String getUnicodeSymbol() {
-        return switch (this) {
-            case King k -> "\u265A";
-            case Queen q -> "\u265B";
-            case Rook r -> "\u265C";
-            case Bishop b -> "\u265D";
-            case Knight k -> "\u265E";
-            case Pawn p -> "\u265F";
-            default -> "";
+        return switch (getType()) {
+            case KING -> "\u265A";
+            case QUEEN -> "\u265B";
+            case ROOK -> "\u265C";
+            case BISHOP -> "\u265D";
+            case KNIGHT -> "\u265E";
+            case PAWN -> "\u265F";
         };
+    }
+
+    public enum PieceType {
+        PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING
     }
 
     public enum Color {

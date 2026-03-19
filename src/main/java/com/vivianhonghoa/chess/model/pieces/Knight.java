@@ -12,17 +12,13 @@ public class Knight extends Piece{
     }
 
     @Override
-    public char getLetter() {
-        return 'N';
+    public PieceType getType() {
+        return PieceType.KNIGHT;
     }
 
-    private void addIfAccessible(List<Case> cases, int r, int c) {
-        if (Case.isValid(r, c)) {
-            Piece target = board.getPieceAt(r, c);
-            if (target == null || target.getColor() != getColor()) {
-                cases.add(new Case(r, c));
-            }
-        }
+    @Override
+    public char getLetter() {
+        return 'N';
     }
 
     @Override

@@ -12,6 +12,11 @@ public class Pawn extends Piece{
     }
 
     @Override
+    public PieceType getType() {
+        return PieceType.PAWN;
+    }
+
+    @Override
     public char getLetter() {
         return 'P';
     }

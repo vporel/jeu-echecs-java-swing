@@ -12,6 +12,11 @@ public class Bishop extends Piece{
     }
 
     @Override
+    public PieceType getType() {
+        return PieceType.BISHOP;
+    }
+
+    @Override
     public char getLetter() {
         return 'B';
     }

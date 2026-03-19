@@ -81,7 +81,7 @@ public class History {
             sb.append(piecePrefix);
 
             // For pawns that capture, add the origin file
-            if (this.piece() instanceof Pawn && this.captured() != null) {
+            if (this.piece().getType() == Piece.PieceType.PAWN && this.captured() != null) {
                 sb.append(colToFile(this.from.col()));
             }
 
@@ -109,13 +109,13 @@ public class History {
         }
 
         private String getPiecePrefix(Piece piece) {
-            return switch (piece) {
-                case King k   -> "K";
-                case Queen q  -> "Q";
-                case Rook r   -> "R";
-                case Bishop b -> "B";
-                case Knight k -> "N";
-                default       -> ""; // Pawn has no prefix
+            return switch (piece.getType()) {
+                case KING -> "K";
+                case QUEEN -> "Q";
+                case ROOK -> "R";
+                case BISHOP -> "B";
+                case KNIGHT -> "N";
+                case PAWN -> "";
             };
         }
     }

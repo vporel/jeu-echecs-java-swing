@@ -12,6 +12,11 @@ public class Queen extends Piece{
     }
 
     @Override
+    public PieceType getType() {
+        return PieceType.QUEEN;
+    }
+
+    @Override
     public char getLetter() {
         return 'Q';
     }

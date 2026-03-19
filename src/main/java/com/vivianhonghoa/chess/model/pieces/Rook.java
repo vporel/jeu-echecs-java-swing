@@ -12,6 +12,11 @@ public class Rook extends Piece{
     }
 
     @Override
+    public PieceType getType() {
+        return PieceType.ROOK;
+    }
+
+    @Override
     public char getLetter() {
         return 'R';
     }

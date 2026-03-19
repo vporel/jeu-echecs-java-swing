@@ -61,7 +61,7 @@ public class HeuristicStrategy implements ComputerStrategy {
         }
 
         // Pawn advancement bonus
-        if (piece instanceof Pawn) {
+        if (piece.getType() == Piece.PieceType.PAWN) {
             int advancement = (piece.getColor() == Piece.Color.WHITE) ? to.row() : (7 - to.row());
             score += advancement * 10;
         }
@@ -73,12 +73,13 @@ public class HeuristicStrategy implements ComputerStrategy {
     }
 
     static int pieceValue(Piece piece) {
-        if (piece instanceof Pawn) return 100;
-        if (piece instanceof Knight) return 320;
-        if (piece instanceof Bishop) return 330;
-        if (piece instanceof Rook) return 500;
-        if (piece instanceof Queen) return 900;
-        if (piece instanceof King) return 20000;
-        return 0;
+        return switch (piece.getType()) {
+            case PAWN -> 100;
+            case KNIGHT -> 320;
+            case BISHOP -> 330;
+            case ROOK -> 500;
+            case QUEEN -> 900;
+            case KING -> 20000;
+        };
     }
 }
