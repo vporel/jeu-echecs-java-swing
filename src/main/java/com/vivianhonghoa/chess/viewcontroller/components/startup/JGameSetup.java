@@ -3,9 +3,11 @@ package com.vivianhonghoa.chess.viewcontroller.components.startup;
 import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.players.ComputerPlayer;
+import com.vivianhonghoa.chess.players.ConsolePlayer;
 import com.vivianhonghoa.chess.players.GraphicalPlayer;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.*;
+import com.vivianhonghoa.chess.viewcontroller.console.JConsoleFrame;
 import com.vivianhonghoa.chess.viewcontroller.helpers.FontHelper;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 import com.vivianhonghoa.chess.viewcontroller.border.RoundedBorder;
@@ -26,9 +28,9 @@ public class JGameSetup extends JSection {
     private boolean isLimitedTimeSelected = true;
     private int selectedTimeLimit = 5; // Default time limit in minutes
 
-    public JGameSetup(GameEngine gameEngine) {
+    public JGameSetup() {
         super();
-        this.gameEngine = gameEngine;
+        this.gameEngine = GameEngine.getInstance();
         build();
     }
 
@@ -74,7 +76,12 @@ public class JGameSetup extends JSection {
     private JPanel getStartButtonsPane() {
         JCustomButtonWithIcon jPlayerVsPlayerButton = new JCustomButtonWithIcon("Player vs Player", new JLabel("\uf0c0"));
         jPlayerVsPlayerButton.addActionListener(e -> {
-            gameEngine.start(new GraphicalPlayer(Piece.Color.WHITE), new GraphicalPlayer(Piece.Color.BLACK), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            ConsolePlayer consolePlayer = new ConsolePlayer(Piece.Color.BLACK);
+            SwingUtilities.invokeLater(() -> {
+                JConsoleFrame consoleFrame = new JConsoleFrame(consolePlayer, 2);
+                consoleFrame.setVisible(true);
+            });
+            gameEngine.start(new GraphicalPlayer(Piece.Color.WHITE), consolePlayer, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         JCustomButtonWithIcon jPlayerVsComputerButton = new JCustomButtonWithIcon("Player vs Computer", new JLabel("\uf2db"));

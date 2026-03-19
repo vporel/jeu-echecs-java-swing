@@ -63,13 +63,13 @@ public class JSquare extends JPanel {
 
     private boolean isMarkedAccessible(){
         Case selectedCase = gameEngine.getBoard().getSelectedCase();
-        Piece selectedPiece = selectedCase != null ? gameEngine.getBoard().getPiece(selectedCase.row(), selectedCase.col()) : null;
+        Piece selectedPiece = selectedCase != null ? gameEngine.getBoard().getPieceAt(selectedCase.row(), selectedCase.col()) : null;
         if (selectedPiece == null) return false;
         return gameEngine.getBoard().getLegalMoves(selectedPiece).stream().anyMatch(c -> c.row() == position.row() && c.col() == position.col());
     }
 
     private Piece getPiece(){
-        return gameEngine.getBoard().getPiece(position.row, position.col);
+        return gameEngine.getBoard().getPieceAt(position.row, position.col);
     }
 
     private boolean isKingInCheck() {

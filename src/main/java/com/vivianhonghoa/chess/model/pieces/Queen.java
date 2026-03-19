@@ -12,6 +12,11 @@ public class Queen extends Piece{
     }
 
     @Override
+    public char getLetter() {
+        return 'Q';
+    }
+
+    @Override
     public List<Case> getAccessibleCases() {
         List<Case> cases = new ArrayList<>();
 

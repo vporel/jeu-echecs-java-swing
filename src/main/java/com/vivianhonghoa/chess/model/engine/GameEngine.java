@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 public final class GameEngine {
+    private static GameEngine INSTANCE;
+
     private final CopyOnWriteArrayList<GameEngineObserver> observers = new CopyOnWriteArrayList<>();
     private final Board board;
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -158,14 +160,14 @@ public final class GameEngine {
         }
 
         // Check if the player is selecting their own piece
-        Piece selectedPiece = board.getPiece(selectedCase.row(), selectedCase.col());
+        Piece selectedPiece = board.getPieceAt(selectedCase.row(), selectedCase.col());
         Piece.Color currentColor = getCurrentPlayerContext().player().getColor();
 
         // If a piece is already selected, try to move it
         if (board.getSelectedCase() != null) {
             Case from = board.getSelectedCase();
-            Piece movingPiece = board.getPiece(from.row(), from.col());
-            Piece capturedPiece = board.getPiece(selectedCase.row(), selectedCase.col());
+            Piece movingPiece = board.getPieceAt(from.row(), from.col());
+            Piece capturedPiece = board.getPieceAt(selectedCase.row(), selectedCase.col());
             boolean moved = board.movePiece(from, selectedCase);
             if (moved) {
                 History currentHistory = getCurrentPlayerContext().history();
@@ -182,6 +184,14 @@ public final class GameEngine {
         if (selectedPiece != null && selectedPiece.getColor() == currentColor) {
             board.setSelectedCase(selectedCase);
         }
+    }
+
+    public boolean makeMove(Case from, Case to){
+        if(board.getPieceAt(from.row(), from.col()) == null) return false; // No piece to move
+        selectCase(from);
+        selectCase(to);
+        //Check if the move was successful by verifying that no piece is selected anymore
+        return board.getPieceAt(from.row(), from.col()) == null;
     }
 
     public Board getBoard() {
@@ -234,5 +244,14 @@ public final class GameEngine {
         for (GameEngineObserver listener : observers) {
             action.accept(listener, event);
         }
+    }
+
+    public static GameEngine getInstance() {
+        synchronized (GameEngine.class) {
+            if (INSTANCE == null) {
+                INSTANCE = new GameEngine();
+            }
+        }
+        return INSTANCE;
     }
 }

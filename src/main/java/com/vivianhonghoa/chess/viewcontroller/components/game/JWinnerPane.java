@@ -13,9 +13,9 @@ public class JWinnerPane extends JPanel {
     private final GameEngine gameEngine;
     private final Runnable onBack;
 
-    public JWinnerPane(GameEngine gameEngine, Runnable onBack) {
+    public JWinnerPane(Runnable onBack) {
         super();
-        this.gameEngine = gameEngine;
+        this.gameEngine = GameEngine.getInstance();
         this.onBack = onBack;
         build();
     }

@@ -21,16 +21,16 @@ public class JHeader extends JPanel {
 
     private final GameEngine gameEngine;
 
-    public JHeader(GameEngine gameEngine) {
+    public JHeader() {
         super();
-        this.gameEngine = gameEngine;
+        this.gameEngine = GameEngine.getInstance();
         build();
     }
 
 
     private void build(){
         JLabel jTitleIconLabel = new JLabel("\u265A");
-        JComponentHelper.setFontSize(jTitleIconLabel, 60);
+        JComponentHelper.setFontSize(jTitleIconLabel, 50);
         jTitleIconLabel.setForeground(Colors.SECONDARY_LIGHT_1);
         JLabelWrapper jTitleIconLabelWrapper = new JLabelWrapper(jTitleIconLabel, false);
         jTitleIconLabelWrapper.setBorder(BorderFactory.createEmptyBorder(0, 0, 40, 0));

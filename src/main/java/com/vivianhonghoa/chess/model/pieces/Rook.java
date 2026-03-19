@@ -12,6 +12,11 @@ public class Rook extends Piece{
     }
 
     @Override
+    public char getLetter() {
+        return 'R';
+    }
+
+    @Override
     public List<Case> getAccessibleCases() {
 
         // Move up
