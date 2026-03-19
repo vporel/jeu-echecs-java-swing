@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
 public final class GameEngine {
     private final CopyOnWriteArrayList<GameEngineObserver> observers = new CopyOnWriteArrayList<>();
     private final Board board;
-    private boolean started = false;
+    private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean paused = new AtomicBoolean(false);
     private final AtomicBoolean ended = new AtomicBoolean(false);
     private boolean isWhiteTurn = true;
@@ -39,7 +39,7 @@ public final class GameEngine {
      */
     public void start(PlayerType player1Type, PlayerType player2Type, Integer timeInSeconds, Piece[][] presetPieces) {
         // Do nothing if the game has already started
-        if(started) return;
+        if(running.get()) return;
 
         board.reset();
         if(presetPieces != null) {
@@ -50,7 +50,7 @@ public final class GameEngine {
         this.player2Type = player2Type;
         this.player1TimeRemaining.set(timeInSeconds == null ? 0 : timeInSeconds);
         this.player2TimeRemaining.set(timeInSeconds == null ? 0 : timeInSeconds);
-        this.started = true;
+        this.running.set(true);
         this.unlimitedTime = timeInSeconds == null;
         this.paused.set(false);
         this.ended.set(false);
@@ -61,7 +61,7 @@ public final class GameEngine {
         if(!unlimitedTime) {
             // Create a timer that ticks every 1 second (1000 ms)
             Runnable task = () -> {
-                if (!started || paused.get() || ended.get()) {
+                if (!running.get() || paused.get() || ended.get()) {
                     return;
                 }
 
@@ -86,7 +86,7 @@ public final class GameEngine {
     }
 
     private void end(int winnerPlayerNumber) {
-        if(!started || ended.get()) return;
+        if(!running.get() || ended.get()) return;
         ended.set(true);
         this.winnerPlayerNumber.set(winnerPlayerNumber);
         if(scheduler != null) {
@@ -96,7 +96,7 @@ public final class GameEngine {
     }
 
     public void undo(int playerNumber) {
-        if(!started || paused.get() || ended.get()) return;
+        if(!running.get() || paused.get() || ended.get()) return;
         if(isPlayerTurn(playerNumber)) {
             return; // Can't undo on your own turn
         }
@@ -117,20 +117,20 @@ public final class GameEngine {
     }
 
     public void pause() {
-        if(!started || paused.get()) return;
+        if(!running.get() || paused.get()) return;
         paused.set(true);
         notifyObservers(GameEngineObserver::onGamePaused);
     }
 
     public void resume() {
-        if(!started || !paused.get()) return;
+        if(!running.get() || !paused.get()) return;
         paused.set(false);
         notifyObservers(GameEngineObserver::onGameResumed);
     }
 
     public void stop() {
-        if(!started) return;
-        started = false;
+        if(!running.get()) return;
+        running.set(false);
         if(scheduler != null) {
             scheduler.shutdown();
         }
@@ -153,8 +153,7 @@ public final class GameEngine {
     }
 
     public void selectCase(Case selectedCase) {
-        // Do nothing if the game has not started or is over
-        if (!started || paused.get() || ended.get()) {
+        if (!running.get() || paused.get() || ended.get()) {
             return;
         }
 
@@ -196,8 +195,8 @@ public final class GameEngine {
         return board;
     }
 
-    public boolean hasStarted() {
-        return started && !ended.get();
+    public boolean isRunning() {
+        return running.get() && !ended.get();
     }
 
     public boolean isPaused() {
@@ -214,14 +213,6 @@ public final class GameEngine {
 
     public boolean isPlayerTurn(int playerNumber) {
         return getCurrentPlayerNumber() == playerNumber;
-    }
-
-    public PlayerType getCurrentPlayer() {
-        if (isWhiteTurn) {
-            return player1Type;
-        } else {
-            return player2Type;
-        }
     }
 
     public int getWinnerPlayerNumber() {

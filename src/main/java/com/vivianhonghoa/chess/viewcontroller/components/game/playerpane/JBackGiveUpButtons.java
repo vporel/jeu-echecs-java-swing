@@ -29,7 +29,7 @@ public class JBackGiveUpButtons extends JCustomPanel {
         jBackLabelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(!gameEngine.hasStarted()) return;
+                if(!gameEngine.isRunning()) return;
                 gameEngine.undo(playerNumber);
             }
         });
@@ -38,7 +38,7 @@ public class JBackGiveUpButtons extends JCustomPanel {
         jGiveUpLabelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(!gameEngine.hasStarted()) return;
+                if(!gameEngine.isRunning()) return;
                 int response = JOptionPane.showConfirmDialog(
                         JBackGiveUpButtons.this,
                         "Are you sure that you want to give up ?",
