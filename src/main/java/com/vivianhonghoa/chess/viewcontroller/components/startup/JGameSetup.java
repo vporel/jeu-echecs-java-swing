@@ -2,6 +2,7 @@ package com.vivianhonghoa.chess.viewcontroller.components.startup;
 
 import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.pieces.Piece;
+import com.vivianhonghoa.chess.model.players.Player;
 import com.vivianhonghoa.chess.model.players.ComputerDifficulty;
 import com.vivianhonghoa.chess.players.ComputerPlayer;
 import com.vivianhonghoa.chess.players.ConsolePlayer;
@@ -77,16 +78,30 @@ public class JGameSetup extends JSection {
     private JPanel getStartButtonsPane() {
         JCustomButtonWithIcon jPlayerVsPlayerButton = new JCustomButtonWithIcon("Player vs Player", new JLabel("\uf0c0"));
         jPlayerVsPlayerButton.addActionListener(e -> {
-            ConsolePlayer consolePlayer = new ConsolePlayer(Piece.Color.BLACK);
-            SwingUtilities.invokeLater(() -> {
-                JConsoleFrame consoleFrame = new JConsoleFrame(consolePlayer, 2);
-                consoleFrame.setVisible(true);
-            });
-            gameEngine.start(new GraphicalPlayer(Piece.Color.WHITE), consolePlayer, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            String player1Name = askPlayerNameInputDialog(1);
+            if(player1Name == null) return;
+            Player player1 = createHumanPlayer(1);
+            if(player1 == null) return;
+            String player2Name = askPlayerNameInputDialog(2);
+            if(player2Name == null) return;
+            Player player2 = createHumanPlayer(2);
+            if(player2 == null) return;
+
+            if(player1 instanceof ConsolePlayer) showConsolePlayerFrame((ConsolePlayer) player1, 1);
+            if(player2 instanceof ConsolePlayer) showConsolePlayerFrame((ConsolePlayer) player2, 2);
+
+            gameEngine.start(player1Name, player1, player2Name, player2, isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         JCustomButtonWithIcon jPlayerVsComputerButton = new JCustomButtonWithIcon("Player vs Computer", new JLabel("\uf2db"));
         jPlayerVsComputerButton.addActionListener(e -> {
+            String player1Name = askPlayerNameInputDialog(1);
+            if(player1Name == null) return;
+            Player player1 = createHumanPlayer(1);
+            if(player1 == null) return;
+
+            if(player1 instanceof ConsolePlayer) showConsolePlayerFrame((ConsolePlayer) player1, 1);
+
             String[] options = {"\u2605 Easy", "\u2605\u2605 Medium", "\u2605\u2605\u2605 Hard"};
             int choice = JOptionPane.showOptionDialog(
                 this, "Select computer difficulty:", "Computer Difficulty",
@@ -98,7 +113,7 @@ public class JGameSetup extends JSection {
                 case 2 -> ComputerDifficulty.HARD;
                 default -> ComputerDifficulty.MEDIUM;
             };
-            gameEngine.start(new GraphicalPlayer(Piece.Color.WHITE), new ComputerPlayer(Piece.Color.BLACK, difficulty), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            gameEngine.start(player1Name, player1, "Computer", new ComputerPlayer(Piece.Color.BLACK, difficulty), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         List<JCustomButtonWithIcon> buttons = List.of(jPlayerVsPlayerButton, jPlayerVsComputerButton);
@@ -124,6 +139,56 @@ public class JGameSetup extends JSection {
         JComponentHelper.setFixedHeight(jWrapper, 100);
 
         return jWrapper;
+    }
+
+    private String askPlayerNameInputDialog(int playerNumber){
+        //Add a default name in the input dialog based on the player number and selected mode
+        String defaultName = "Player " + playerNumber;
+        String name = (String) JOptionPane.showInputDialog(
+                this,
+                "Enter name for Player " + playerNumber + ":",
+                "Player " + playerNumber + ": Name Input",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                defaultName
+        );
+        if(name == null) return null;
+        name = name.trim();
+        return name.isEmpty() ? defaultName : name;
+    }
+
+    private void showConsolePlayerFrame(ConsolePlayer player, int playerNumber){
+        JConsoleFrame consoleFrame = new JConsoleFrame(player, playerNumber);
+        consoleFrame.setVisible(true);
+    }
+
+    private Player createHumanPlayer(int playerNumber){
+        PlayerMovesMode selectedMode = askPlayerModeSelectionDialog(playerNumber);
+        Player player;
+        if(selectedMode == PlayerMovesMode.GRAPHICAL) {
+            player = new GraphicalPlayer(playerNumber == 1 ? Piece.Color.WHITE : Piece.Color.BLACK);
+        } else if (selectedMode == PlayerMovesMode.CONSOLE) {
+            player = new ConsolePlayer(playerNumber == 1 ? Piece.Color.WHITE : Piece.Color.BLACK);
+        }else{
+            return null;
+        }
+        return player;
+    }
+
+    private PlayerMovesMode askPlayerModeSelectionDialog(int playerNumber){
+        String[] options = {"Graphical", "Console"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Select how you want to input your moves:",
+                "Player" + playerNumber + ": Mode Selection",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+        return choice == 0 ? PlayerMovesMode.GRAPHICAL : PlayerMovesMode.CONSOLE;
     }
 
     private JPanel getTimeSelectionPane() {
@@ -230,6 +295,11 @@ public class JGameSetup extends JSection {
         jWrapper.add(jMinLabel);
 
         return jWrapper;
+    }
+
+    private enum PlayerMovesMode {
+        GRAPHICAL,
+        CONSOLE
     }
 
 }

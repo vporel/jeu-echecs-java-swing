@@ -22,7 +22,7 @@ public class JFooter extends JCustomPanel {
     }
 
     private String getPlayerName(int playerNumber) {
-        return "Player " + playerNumber;
+        return gameEngine.getPlayerContext(playerNumber).name();
     }
 
     private void build(){

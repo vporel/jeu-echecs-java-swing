@@ -35,7 +35,7 @@ public final class GameEngine {
      * Start the game with two players and a time limit
      * a time limit of null means unlimited time
      */
-    public void start(Player player1, Player player2, Integer timeInSeconds, Piece[][] presetPieces) {
+    public void start(String player1Name, Player player1, String player2Name, Player player2, Integer timeInSeconds, Piece[][] presetPieces) {
         // Do nothing if the game has already started
         if(running.get()) return;
 
@@ -44,12 +44,14 @@ public final class GameEngine {
         }
 
         this.player1Context = new PlayerContext(
+            player1Name,
             player1.setGameEngine(this),
             new AtomicInteger(timeInSeconds == null ? 0 : timeInSeconds),
             new History()
         );
 
         this.player2Context = new PlayerContext(
+                player2Name,
                 player2.setGameEngine(this),
                 new AtomicInteger(timeInSeconds == null ? 0 : timeInSeconds),
                 new History()
@@ -116,7 +118,7 @@ public final class GameEngine {
         notifyObservers(GameEngineObserver::onPlayerTurnChanged);
     }
 
-    public void giveUp(int playerNumber) {
+    public void resign(int playerNumber) {
         end(playerNumber == 1 ? 2 : 1);
     }
 
@@ -233,6 +235,12 @@ public final class GameEngine {
 
     public int getWinnerPlayerNumber() {
         return winnerPlayerNumber.get();
+    }
+
+    public int getPlayerNumberByColor(Piece.Color color) {
+        if(player1Context.player().getColor() == color) return 1;
+        else if(player2Context.player().getColor() == color) return 2;
+        else throw new IllegalArgumentException("No player has the color: " + color);
     }
 
     public void addObserver(GameEngineObserver observer){

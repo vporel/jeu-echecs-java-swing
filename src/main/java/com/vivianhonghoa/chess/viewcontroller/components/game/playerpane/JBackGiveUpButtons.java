@@ -47,7 +47,7 @@ public class JBackGiveUpButtons extends JCustomPanel {
                         JOptionPane.QUESTION_MESSAGE
                 );
                 if (response == JOptionPane.YES_OPTION) {
-                    gameEngine.giveUp(playerNumber);
+                    gameEngine.resign(playerNumber);
                 }
             }
         });

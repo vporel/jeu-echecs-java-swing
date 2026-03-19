@@ -4,8 +4,6 @@ import com.vivianhonghoa.chess.model.engine.Case;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.model.players.Player;
 
-import java.util.List;
-
 public class ConsolePlayer extends Player {
 
     public ConsolePlayer(Piece.Color color) {
@@ -24,14 +22,38 @@ public class ConsolePlayer extends Player {
      * each part is a position in the format "a1", "b2", etc.
      * Example : to make a move from a1 to b2, the command would be "a1 b2"
      * is a move is not valid (no piece, wrong color, etc.) a CommandException is thrown with an appropriate message
+     *
+     * There are special commands like : back, resign
      */
     public void executeCommand(String command) throws CommandException {
+        command = command.trim().toLowerCase();
+
+        if(command.equals("back")){
+            if(this.isTurn()) {
+                throw new CommandException("Can't go back on your turn.");
+            }
+            gameEngine.undo(getNumber());
+            return;
+        }
+
+        if(command.equals("resign")){
+            if(!this.isTurn()) {
+                throw new CommandException("Can't resign when it's not your turn.");
+            }
+            gameEngine.resign(getNumber());
+            return;
+        }
+
+        if (getNumber() != gameEngine.getCurrentPlayerNumber()) {
+            throw new CommandException("It's not your turn !");
+        }
+
         String[] parts = command.trim().split(" ");
         if (parts.length != 2 || parts[0].length() != 2 || parts[1].length() != 2) {
             throw new CommandException("Invalid command format. Expected format: 'a1 b2'");
         }
-        String from = parts[0].toLowerCase();
-        String to = parts[1].toLowerCase();
+        String from = parts[0];
+        String to = parts[1];
         try {
             int fromRow = Integer.parseInt(String.valueOf(from.charAt(1))) - 1;
             int fromCol = from.charAt(0) - 'a';

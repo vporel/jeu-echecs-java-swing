@@ -15,6 +15,14 @@ public abstract class Player {
         return color;
     }
 
+    public boolean isTurn() {
+        return gameEngine != null && gameEngine.getCurrentPlayerContext().player().color == this.color;
+    }
+
+    public int getNumber() {
+        return gameEngine.getPlayerNumberByColor(color);
+    }
+
     public final Player setGameEngine(GameEngine gameEngine) {
         this.gameEngine = gameEngine;
         return this;

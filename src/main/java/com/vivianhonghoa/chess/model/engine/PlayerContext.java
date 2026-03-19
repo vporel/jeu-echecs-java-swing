@@ -4,5 +4,5 @@ import com.vivianhonghoa.chess.model.players.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public record PlayerContext(Player player, AtomicInteger remainingTime, History history){
+public record PlayerContext(String name, Player player, AtomicInteger remainingTime, History history){
 }

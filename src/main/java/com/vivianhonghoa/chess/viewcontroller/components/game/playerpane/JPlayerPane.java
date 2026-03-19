@@ -53,7 +53,7 @@ public class JPlayerPane extends JPanel {
     }
 
     private JPanel getPlayerNameAndColorPane(){
-        JCustomLabel jPlayerName = new JCustomLabel("Player " + playerNumber, SwingConstants.CENTER);
+        JCustomLabel jPlayerName = new JCustomLabel(gameEngine.getPlayerContext(playerNumber).name(), SwingConstants.CENTER);
         jPlayerName.setShadow(4);
         jPlayerName.setForeground(Colors.SECONDARY);
         JComponentHelper.setFontSize(jPlayerName, 20);

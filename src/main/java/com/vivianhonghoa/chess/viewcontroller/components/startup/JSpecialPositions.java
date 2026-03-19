@@ -81,7 +81,9 @@ public class JSpecialPositions extends JSection {
             JComponentHelper.setFixedSize(jButton, 120, 70);
             jButton.addActionListener(e -> {
                 gameEngine.start(
+                        "Player 1",
                         new GraphicalPlayer(Piece.Color.WHITE),
+                        "Player 2",
                         new GraphicalPlayer(Piece.Color.BLACK),
                         null,
                         entry.getValue()
