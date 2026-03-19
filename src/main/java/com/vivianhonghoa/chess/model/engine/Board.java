@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class Board {
     public static final int SIZE = 8;
@@ -105,6 +106,36 @@ public class Board {
 
     public void setPromotionHandler(PromotionHandler handler) {
         this.promotionHandler = handler;
+    }
+
+    public PromotionHandler getPromotionHandler() {
+        return promotionHandler;
+    }
+
+    public <T> T withSimulatedMove(Case from, Case to, Supplier<T> evaluator) {
+        Piece piece = pieces[from.row()][from.col()];
+        Piece captured = pieces[to.row()][to.col()];
+        pieces[to.row()][to.col()] = piece;
+        pieces[from.row()][from.col()] = null;
+        piece.setPosition(to.row(), to.col());
+
+        Piece passingCapture = null;
+        if (piece instanceof Pawn && captured == null && from.col() != to.col()) {
+            passingCapture = pieces[from.row()][to.col()];
+            pieces[from.row()][to.col()] = null;
+        }
+
+        T result = evaluator.get();
+
+        // Undo
+        pieces[from.row()][from.col()] = piece;
+        pieces[to.row()][to.col()] = captured;
+        piece.setPosition(from.row(), from.col());
+        if (passingCapture != null) {
+            pieces[from.row()][to.col()] = passingCapture;
+        }
+
+        return result;
     }
 
     // ── Check detection ──────────────────────────────────────────────

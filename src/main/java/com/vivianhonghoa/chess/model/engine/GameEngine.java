@@ -76,7 +76,7 @@ public final class GameEngine {
 
                 // If time runs out, the game is over
                 if (snapshotCurrentPlayerContext.remainingTime().decrementAndGet() <= 0) {
-                    this.end(snapshotCurrentPlayerNumber);
+                    this.end(snapshotCurrentPlayerNumber == 1 ? 2 : 1);
                 }
 
                 notifyObservers(GameEngineObserver::onGameTimeUpdated);

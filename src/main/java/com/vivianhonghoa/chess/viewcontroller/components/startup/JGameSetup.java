@@ -2,6 +2,7 @@ package com.vivianhonghoa.chess.viewcontroller.components.startup;
 
 import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.pieces.Piece;
+import com.vivianhonghoa.chess.model.players.ComputerDifficulty;
 import com.vivianhonghoa.chess.players.ComputerPlayer;
 import com.vivianhonghoa.chess.players.GraphicalPlayer;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
@@ -79,7 +80,18 @@ public class JGameSetup extends JSection {
 
         JCustomButtonWithIcon jPlayerVsComputerButton = new JCustomButtonWithIcon("Player vs Computer", new JLabel("\uf2db"));
         jPlayerVsComputerButton.addActionListener(e -> {
-            gameEngine.start(new GraphicalPlayer(Piece.Color.WHITE), new ComputerPlayer(Piece.Color.BLACK), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            String[] options = {"\u2605 Easy", "\u2605\u2605 Medium", "\u2605\u2605\u2605 Hard"};
+            int choice = JOptionPane.showOptionDialog(
+                this, "Select computer difficulty:", "Computer Difficulty",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, options, options[1]);
+            if (choice < 0) return; // User cancelled
+            ComputerDifficulty difficulty = switch (choice) {
+                case 0 -> ComputerDifficulty.EASY;
+                case 2 -> ComputerDifficulty.HARD;
+                default -> ComputerDifficulty.MEDIUM;
+            };
+            gameEngine.start(new GraphicalPlayer(Piece.Color.WHITE), new ComputerPlayer(Piece.Color.BLACK, difficulty), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         List<JCustomButtonWithIcon> buttons = List.of(jPlayerVsPlayerButton, jPlayerVsComputerButton);
