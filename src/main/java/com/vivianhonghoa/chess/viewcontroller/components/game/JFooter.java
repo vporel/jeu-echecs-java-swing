@@ -3,6 +3,8 @@ package com.vivianhonghoa.chess.viewcontroller.components.game;
 import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
+import com.vivianhonghoa.chess.model.pieces.Piece;
+import com.vivianhonghoa.chess.model.players.PlayerContext;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomPanel;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
@@ -21,12 +23,19 @@ public class JFooter extends JCustomPanel {
         build();
     }
 
-    private String getPlayerName(int playerNumber) {
+    public String getPlayerName(int playerNumber){
         return gameEngine.getPlayerContext(playerNumber).name();
     }
 
+    private String getTurnText(int playerNumber) {
+        PlayerContext playerContext = gameEngine.getPlayerContext(playerNumber);
+        String name = playerContext.name();
+        String color = playerContext.player().getColor() == Piece.Color.WHITE ? "White" : "Black";
+        return name + " (" + color + ")";
+    }
+
     private void build(){
-        JLabel jCentralText = new JLabel("Turn : " + getPlayerName(gameEngine.getCurrentPlayerNumber()), SwingConstants.CENTER);
+        JLabel jCentralText = new JLabel(getTurnText(gameEngine.getCurrentPlayerNumber()), SwingConstants.CENTER);
         JComponentHelper.setFontSize(jCentralText, 19);
         jCentralText.setForeground(Colors.WHITE);
 
@@ -34,7 +43,7 @@ public class JFooter extends JCustomPanel {
         jWrapper.setBackground(Colors.PRIMARY_DARK_2);
         jWrapper.setRadius(20);
         int borderRadius = 15;
-        jWrapper.setBorder(BorderFactory.createEmptyBorder(0, borderRadius, borderRadius, borderRadius));
+        jWrapper.setBorder(BorderFactory.createEmptyBorder(5, borderRadius, borderRadius, borderRadius));
 
         jWrapper.add(jCentralText);
 
@@ -46,7 +55,7 @@ public class JFooter extends JCustomPanel {
         gameEngine.addObserver(new GameEngineObserver() {
             @Override
             public void onPlayerTurnChanged(GameEngineEvent event) {
-                jCentralText.setText("Turn : " + getPlayerName(gameEngine.getCurrentPlayerNumber()));
+                jCentralText.setText(getTurnText(gameEngine.getCurrentPlayerNumber()));
             }
 
             @Override

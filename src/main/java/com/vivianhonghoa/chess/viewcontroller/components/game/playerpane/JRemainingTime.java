@@ -9,6 +9,7 @@ import com.vivianhonghoa.chess.viewcontroller.components.lib.JLabelWrapper;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
 import javax.swing.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class JRemainingTime extends JCustomPanel {
     private final int playerNumber;
@@ -48,12 +49,12 @@ public class JRemainingTime extends JCustomPanel {
     }
 
     private String getRemainingTimeStr(){
-        Integer remainingTime = gameEngine.getPlayerContext(playerNumber).remainingTime().get();
+        AtomicInteger remainingTime = gameEngine.getPlayerContext(playerNumber).remainingTime();
         if(remainingTime == null){
             return "∞";
         }
-        int minutes = remainingTime / 60;
-        int seconds = remainingTime % 60;
+        int minutes = remainingTime.get() / 60;
+        int seconds = remainingTime.get() % 60;
         return String.format("%02d:%02d", minutes, seconds);
     }
 }

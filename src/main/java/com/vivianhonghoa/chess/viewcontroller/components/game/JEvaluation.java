@@ -16,7 +16,7 @@ import java.awt.*;
 public class JEvaluation extends JCustomPanel {
     private static final int SIZE = 15;
 
-    private int ballLeftMargin = 255;
+    private int whiteWidth = 255;
 
     public JEvaluation() {
         super();
@@ -59,22 +59,21 @@ public class JEvaluation extends JCustomPanel {
                 jPlayer2Evaluation.setText(String.valueOf(player2Eval));
                 //Get the rating pane width and calculate the left margin for the ball
                 int ratingPaneWidth = jRatingPane.getWidth();
-                ballLeftMargin = (int) ((player2Eval / 100.0) * ratingPaneWidth);
+                whiteWidth = (int) ((player1Eval / 100.0) * ratingPaneWidth);
                 JBorderLayoutHelper.replaceComponent(JEvaluation.this, BorderLayout.CENTER, getRatingPane());
             }
         });
     }
 
     private JPanel getRatingPane(){
-        JCustomPanel jBall = new JCustomPanel();
-        jBall.setRadius(SIZE);
-        jBall.setBackground(Colors.SECONDARY);
-        JComponentHelper.setFixedSize(jBall, SIZE, SIZE);
+        JCustomPanel JWhiteBar = new JCustomPanel();
+        JWhiteBar.setBackground(Colors.WHITE);
+        JComponentHelper.setFixedSize(JWhiteBar, whiteWidth, SIZE);
 
         JCustomPanel jWrapper = new JCustomPanel();
         jWrapper.setLayout(new BoxLayout(jWrapper, BoxLayout.X_AXIS));
-        jWrapper.add(Box.createHorizontalStrut(ballLeftMargin));
-        jWrapper.add(jBall);
+        jWrapper.setBackground(Colors.BLACK);
+        jWrapper.add(JWhiteBar);
         return jWrapper;
     }
 }

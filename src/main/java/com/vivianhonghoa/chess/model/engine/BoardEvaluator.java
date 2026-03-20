@@ -1,5 +1,6 @@
 package com.vivianhonghoa.chess.model.engine;
 
+import com.vivianhonghoa.chess.model.Case;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 
 import java.util.Map;

@@ -1,5 +1,6 @@
 package com.vivianhonghoa.chess.model.engine;
 
+import com.vivianhonghoa.chess.model.Case;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
@@ -49,14 +50,14 @@ public final class GameEngine {
         this.player1Context = new PlayerContext(
             player1Name,
             player1.setGameEngine(this),
-            new AtomicInteger(timeInSeconds == null ? 0 : timeInSeconds),
+                timeInSeconds == null ? null : new AtomicInteger(timeInSeconds),
             new History()
         );
 
         this.player2Context = new PlayerContext(
                 player2Name,
                 player2.setGameEngine(this),
-                new AtomicInteger(timeInSeconds == null ? 0 : timeInSeconds),
+                timeInSeconds == null ? null : new AtomicInteger(timeInSeconds),
                 new History()
         );
         this.winnerPlayerNumber.set(0);

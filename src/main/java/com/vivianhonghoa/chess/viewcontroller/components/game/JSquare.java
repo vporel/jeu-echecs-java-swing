@@ -2,7 +2,7 @@ package com.vivianhonghoa.chess.viewcontroller.components.game;
 
 import com.vivianhonghoa.chess.model.engine.Board;
 import com.vivianhonghoa.chess.model.engine.BoardHelper;
-import com.vivianhonghoa.chess.model.engine.Case;
+import com.vivianhonghoa.chess.model.Case;
 import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.events.BoardEvent;
 import com.vivianhonghoa.chess.model.events.BoardObserver;

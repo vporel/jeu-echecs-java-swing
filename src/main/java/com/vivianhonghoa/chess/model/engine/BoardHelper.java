@@ -1,11 +1,20 @@
 package com.vivianhonghoa.chess.model.engine;
 
+import com.vivianhonghoa.chess.model.Case;
 import com.vivianhonghoa.chess.model.pieces.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BoardHelper {
+
+    public static boolean isValid(int row, int col) {
+        return row >= 0 && row < Board.SIZE && col >= 0 && col < Board.SIZE;
+    }
+
+    public static boolean isValid(Case c) {
+        return isValid(c.row(), c.col());
+    }
 
     public static boolean hasPieceTypeAt(Board board, int row, int col, Piece.Type type) {
         Piece p = board.getPieceAt(row, col);

@@ -1,7 +1,7 @@
 package com.vivianhonghoa.chess.players.computer.strategy;
 
 import com.vivianhonghoa.chess.model.engine.Board;
-import com.vivianhonghoa.chess.model.engine.Case;
+import com.vivianhonghoa.chess.model.Case;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.players.computer.ComputerMove;
 

@@ -1,15 +1,10 @@
-package com.vivianhonghoa.chess.model.engine;
+package com.vivianhonghoa.chess.model;
+
+import com.vivianhonghoa.chess.model.engine.Board;
 
 public record Case(int row,
                    int col
 ){
-    boolean isValid() {
-        return Case.isValid(row, col);
-    }
-
-    public static boolean isValid(int row, int col) {
-        return row >= 0 && row < Board.SIZE && col >= 0 && col < Board.SIZE;
-    }
 
     @Override
     public boolean equals(Object o) {

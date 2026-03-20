@@ -1,5 +1,6 @@
 package com.vivianhonghoa.chess.model.engine;
 
+import com.vivianhonghoa.chess.model.Case;
 import com.vivianhonghoa.chess.model.events.BoardEvent;
 import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
@@ -112,7 +113,7 @@ public class Board {
     }
 
     public Piece getPieceAt(int row, int col) {
-        if (!Case.isValid(row, col)) {
+        if (!BoardHelper.isValid(row, col)) {
             return null;
         }
         return pieces[row][col];

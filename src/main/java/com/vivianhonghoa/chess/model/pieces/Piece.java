@@ -1,7 +1,8 @@
 package com.vivianhonghoa.chess.model.pieces;
 
 import com.vivianhonghoa.chess.model.engine.Board;
-import com.vivianhonghoa.chess.model.engine.Case;
+import com.vivianhonghoa.chess.model.Case;
+import com.vivianhonghoa.chess.model.pieces.accessiblecases.AccessibleCasesCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +13,11 @@ public abstract class Piece {
     protected int row;
     protected int col;
     protected boolean hasMoved = false;
+    protected final AccessibleCasesCalculator accessibleCasesCalculator;
 
-    protected Piece(Color color) {
+    protected Piece(Color color, AccessibleCasesCalculator accessibleCasesCalculator) {
         this.color = color;
+        this.accessibleCasesCalculator = accessibleCasesCalculator;
     }
 
     public Color getColor() {
@@ -24,6 +27,10 @@ public abstract class Piece {
     public Piece setBoard(Board board) {
         this.board = board;
         return this;
+    }
+
+    public Case getPosition(){
+        return new Case(row, col);
     }
 
     public void setPosition(int row, int col) {
@@ -51,47 +58,12 @@ public abstract class Piece {
 
     public abstract char getLetter();
 
-    public abstract List<Case> getAccessibleCases();
+    public List<Case> getAccessibleCases() {
+        return accessibleCasesCalculator.getAccessibleCases(board, this);
+    }
 
     public boolean canMoveTo(Case targetCase) {
         return getAccessibleCases().contains(targetCase);
-    }
-
-    /**
-     * Helper for non-sliding pieces (king, knight).
-     * Adds the square if it is on the board and empty or occupied by an opponent.
-     */
-    protected void addIfAccessible(List<Case> cases, int r, int c) {
-        if (Case.isValid(r, c)) {
-            Piece target = board.getPieceAt(r, c);
-            if (target == null || target.getColor() != getColor()) {
-                cases.add(new Case(r, c));
-            }
-        }
-    }
-
-    /**
-     * Helper for sliding pieces (rook, bishop, queen).
-     * Walks in a direction until leaving the board or hitting a piece.
-     */
-    protected List<Case> getCasesInDirection(int dRow, int dCol) {
-        List<Case> cases = new ArrayList<>();
-        int r = row + dRow;
-        int c = col + dCol;
-        while (Case.isValid(r, c)) {
-            Piece target = board.getPieceAt(r, c);
-            if (target == null) {
-                cases.add(new Case(r, c));
-            } else {
-                if (target.getColor() != this.color) {
-                    cases.add(new Case(r, c));
-                }
-                break;
-            }
-            r += dRow;
-            c += dCol;
-        }
-        return cases;
     }
 
     public String getUnicodeSymbol() {

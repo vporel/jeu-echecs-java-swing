@@ -12,17 +12,16 @@ import com.vivianhonghoa.chess.players.computer.strategy.RandomStrategy;
 import javax.swing.SwingWorker;
 
 public class ComputerPlayer extends Player {
-    private static final int MOVE_DELAY_MS = 400;
+    private static final int MOVE_DELAY_MS = 1000;
     private final ComputerStrategy strategy;
 
     public ComputerPlayer(Piece.Color color, ComputerDifficulty difficulty) {
         super(color);
-        ComputerStrategy baseStrategy = switch (difficulty) {
+        this.strategy = switch (difficulty) {
             case EASY -> new RandomStrategy();
             case MEDIUM -> new HeuristicStrategy();
             case HARD -> new MinimaxStrategy();
         };
-        this.strategy = baseStrategy;
     }
 
     @Override
