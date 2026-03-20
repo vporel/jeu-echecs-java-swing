@@ -30,12 +30,12 @@ public class Pawn extends Piece{
 
             // One square forward
             int nextRow = row + direction;
-            if (BoardHelper.isValid(nextRow, col) && board.getPieceAt(nextRow, col) == null) {
+            if (BoardHelper.isValid(nextRow, col) && BoardHelper.isCaseEmpty(board, nextRow, col)) {
                 cases.add(new Case(nextRow, col));
 
                 // Two squares forward (only from starting position)
                 int twoAheadRow = row + 2 * direction;
-                if (row == startRow && board.getPieceAt(twoAheadRow, col) == null) {
+                if (row == startRow && BoardHelper.isCaseEmpty(board, twoAheadRow, col)) {
                     cases.add(new Case(twoAheadRow, col));
                 }
             }

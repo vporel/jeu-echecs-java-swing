@@ -17,12 +17,12 @@ public class PresetBoardConfig {
      * White pawn on row 6 (one step from promotion on row 7).
      * Both kings are present. Black has minimal pieces.
      */
-    public static Piece[][] pawnReachesPromotion() {
+    public static Piece[][] pawnPromotion() {
         Piece[][] pieces = new Piece[Board.SIZE][Board.SIZE];
 
-        place(pieces, new King(Piece.Color.WHITE), 0, 4);
+        place(pieces, new King(Piece.Color.WHITE), 0, 3);
         place(pieces, new King(Piece.Color.BLACK), 7, 4);
-        place(pieces, new Pawn(Piece.Color.WHITE), 6, 3);
+        place(pieces, new Pawn(Piece.Color.WHITE), 6, 2);
 
         return pieces;
     }
@@ -36,7 +36,7 @@ public class PresetBoardConfig {
     public static Piece[][] checkMate() {
         Piece[][] pieces = new Piece[Board.SIZE][Board.SIZE];
 
-        place(pieces, new King(Piece.Color.WHITE), 0, 4);
+        place(pieces, new King(Piece.Color.WHITE), 0, 3);
         place(pieces, new King(Piece.Color.BLACK), 7, 4);
 
         // Black pawns block all forward escape squares
@@ -64,7 +64,7 @@ public class PresetBoardConfig {
     public static Piece[][] check() {
         Piece[][] pieces = new Piece[Board.SIZE][Board.SIZE];
 
-        place(pieces, new King(Piece.Color.WHITE), 0, 4);
+        place(pieces, new King(Piece.Color.WHITE), 0, 3);
         place(pieces, new Rook(Piece.Color.BLACK), 0, 7);
         place(pieces, new King(Piece.Color.BLACK), 7, 4);
 
@@ -77,7 +77,7 @@ public class PresetBoardConfig {
     public static Piece[][] castling() {
         Piece[][] pieces = new Piece[Board.SIZE][Board.SIZE];
 
-        place(pieces, new King(Piece.Color.WHITE), 0, 4);
+        place(pieces, new King(Piece.Color.WHITE), 0, 3);
         place(pieces, new Rook(Piece.Color.WHITE), 0, 0);
         place(pieces, new Rook(Piece.Color.WHITE), 0, 7);
 
@@ -99,10 +99,10 @@ public class PresetBoardConfig {
         place(pieces, new King(Piece.Color.BLACK), 7, 4);
 
         Pawn whitePawn = new Pawn(Piece.Color.WHITE); whitePawn.setHasMoved(true);
-        place(pieces, whitePawn, 4, 3);
+        place(pieces, whitePawn, 1, 3);
 
         Pawn blackPawn = new Pawn(Piece.Color.BLACK); blackPawn.setHasMoved(true);
-        place(pieces, blackPawn, 4, 4);
+        place(pieces, blackPawn, 3, 4);
 
         return pieces;
     }

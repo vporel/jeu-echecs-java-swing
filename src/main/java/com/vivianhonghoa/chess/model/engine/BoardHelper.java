@@ -16,6 +16,10 @@ public class BoardHelper {
         return isValid(c.row(), c.col());
     }
 
+    public static boolean isCaseEmpty(Board board, int row, int col) {
+        return board.getPieceAt(row, col) == null;
+    }
+
     public static boolean hasPieceTypeAt(Board board, int row, int col, Piece.Type type) {
         Piece p = board.getPieceAt(row, col);
         return p != null && p.getType() == type;

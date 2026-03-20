@@ -51,7 +51,7 @@ public class JSpecialPositions extends JSection {
 
         //Configurations
         Map<String, Piece[][]> presetBoards = new HashMap<>();
-        presetBoards.put(PAWN_PROMOTION, PresetBoardConfig.pawnReachesPromotion());
+        presetBoards.put(PAWN_PROMOTION, PresetBoardConfig.pawnPromotion());
         presetBoards.put(EN_PASSANT, PresetBoardConfig.enPassant());
         presetBoards.put(CASTLING, PresetBoardConfig.castling());
         presetBoards.put(CHECK, PresetBoardConfig.check());

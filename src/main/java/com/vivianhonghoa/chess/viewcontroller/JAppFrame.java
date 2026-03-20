@@ -19,8 +19,7 @@ public class JAppFrame extends JFrame {
         setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame on the screen
-        JStartup jStartup = new JStartup();
-        setContentPane(jStartup);
+        setContentPane(new JStartup());
 
         GameEngine.getInstance().addObserver(new GameEngineObserver() {
             @Override
@@ -30,7 +29,7 @@ public class JAppFrame extends JFrame {
 
             @Override
             public void onGameStopped(GameEngineEvent event) {
-                changeContentPane(jStartup);
+                changeContentPane(new JStartup());
             }
         });
     }
