@@ -47,7 +47,7 @@ public abstract class Piece {
         this.hasMoved = hasMoved;
     }
 
-    public abstract PieceType getType();
+    public abstract Type getType();
 
     public abstract char getLetter();
 
@@ -105,7 +105,7 @@ public abstract class Piece {
         };
     }
 
-    public enum PieceType {
+    public enum Type {
         PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING
     }
 

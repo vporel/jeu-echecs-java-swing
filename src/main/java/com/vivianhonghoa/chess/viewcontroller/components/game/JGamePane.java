@@ -25,15 +25,16 @@ public class JGamePane extends JPanel {
         this.setLayout(new BorderLayout());
         this.setBackground(Colors.PRIMARY_DARK_1);
 
-        JCustomPanel jSquaresContainerWrapper = new JCustomPanel();
-        jSquaresContainerWrapper.setLayout(new GridBagLayout());
-        jSquaresContainerWrapper.add(new JSquaresContainer());
-        jSquaresContainerWrapper.setBackground(Colors.PRIMARY_DARK_1);
+        JCustomPanel jCenterWrapper = new JCustomPanel();
+        jCenterWrapper.setLayout(new BorderLayout());
+        jCenterWrapper.add(new JSquaresContainer(), BorderLayout.CENTER);
+        jCenterWrapper.add(new JEvaluation(), BorderLayout.SOUTH);
+        jCenterWrapper.setBackground(Colors.PRIMARY_DARK_1);
 
 
         this.add(new JHeader(), BorderLayout.NORTH);
         this.add(new JFooter(), BorderLayout.SOUTH);
-        this.add(jSquaresContainerWrapper, BorderLayout.CENTER);
+        this.add(jCenterWrapper, BorderLayout.CENTER);
         this.add(new JPlayerPane(1, "White", gameEngine), BorderLayout.WEST);
         this.add(new JPlayerPane(2, "Black", gameEngine), BorderLayout.EAST);
         this.setBackground(Colors.APP_BACKGROUND);
@@ -56,9 +57,9 @@ public class JGamePane extends JPanel {
             @Override
             public void onGameEnded(GameEngineEvent event) {
                 JWinnerPane jWinnerPane = new JWinnerPane(() -> {
-                    JBorderLayoutHelper.changeComponent(JGamePane.this, BorderLayout.CENTER, jSquaresContainerWrapper);
+                    JBorderLayoutHelper.replaceComponent(JGamePane.this, BorderLayout.CENTER, jCenterWrapper);
                 });
-                JBorderLayoutHelper.changeComponent(JGamePane.this, BorderLayout.CENTER, jWinnerPane);
+                JBorderLayoutHelper.replaceComponent(JGamePane.this, BorderLayout.CENTER, jWinnerPane);
             }
         });
     }

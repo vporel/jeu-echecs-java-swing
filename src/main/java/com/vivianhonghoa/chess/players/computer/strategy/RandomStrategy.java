@@ -1,10 +1,9 @@
-package com.vivianhonghoa.chess.model.players.computer;
+package com.vivianhonghoa.chess.players.computer.strategy;
 
 import com.vivianhonghoa.chess.model.engine.Board;
 import com.vivianhonghoa.chess.model.engine.Case;
 import com.vivianhonghoa.chess.model.pieces.Piece;
-import com.vivianhonghoa.chess.model.players.ComputerMove;
-import com.vivianhonghoa.chess.model.players.ComputerStrategy;
+import com.vivianhonghoa.chess.players.computer.ComputerMove;
 
 import java.util.ArrayList;
 import java.util.List;

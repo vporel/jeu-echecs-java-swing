@@ -81,7 +81,7 @@ public class History {
             sb.append(piecePrefix);
 
             // For pawns that capture, add the origin file
-            if (this.piece().getType() == Piece.PieceType.PAWN && this.captured() != null) {
+            if (this.piece().getType() == Piece.Type.PAWN && this.captured() != null) {
                 sb.append(colToFile(this.from.col()));
             }
 

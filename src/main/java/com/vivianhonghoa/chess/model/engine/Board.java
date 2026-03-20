@@ -36,6 +36,18 @@ public class Board {
         return pieces;
     }
 
+    public List<Piece> getPiecesAsList() {
+        List<Piece> list = new ArrayList<>();
+        for (int r = 0; r < SIZE; r++) {
+            for (int c = 0; c < SIZE; c++) {
+                if (pieces[r][c] != null) {
+                    list.add(pieces[r][c]);
+                }
+            }
+        }
+        return list;
+    }
+
     void setPieces(Piece[][] pieces) {
         Piece[][] copy = new Piece[pieces.length][];
         for (int i = 0; i < pieces.length; i++) {
@@ -124,7 +136,7 @@ public class Board {
         piece.setPosition(to.row(), to.col());
 
         Piece passingCapture = null;
-        if (piece.getType() == Piece.PieceType.PAWN && captured == null && from.col() != to.col()) {
+        if (piece.getType() == Piece.Type.PAWN && captured == null && from.col() != to.col()) {
             passingCapture = pieces[from.row()][to.col()];
             pieces[from.row()][to.col()] = null;
         }
@@ -148,7 +160,7 @@ public class Board {
         for (int r = 0; r < SIZE; r++) {
             for (int c = 0; c < SIZE; c++) {
                 Piece p = pieces[r][c];
-                if (p != null && p.getType() == Piece.PieceType.KING && p.getColor() == color) {
+                if (p != null && p.getType() == Piece.Type.KING && p.getColor() == color) {
                     return new Case(r, c);
                 }
             }
@@ -275,7 +287,7 @@ public class Board {
 
         // Simulate passing capture (pawn moves diagonally to empty square)
         Piece passingCapture = null;
-        if (piece.getType() == Piece.PieceType.PAWN && captured == null && from.col() != to.col()) {
+        if (piece.getType() == Piece.Type.PAWN && captured == null && from.col() != to.col()) {
             passingCapture = pieces[from.row()][to.col()];
             pieces[from.row()][to.col()] = null;
         }
@@ -310,7 +322,7 @@ public class Board {
         Piece captured = getPieceAt(to.row(), to.col());
 
         // Handle passing capture
-        if (piece.getType() == Piece.PieceType.PAWN && captured == null && from.col() != to.col()) {
+        if (piece.getType() == Piece.Type.PAWN && captured == null && from.col() != to.col()) {
             captured = pieces[from.row()][to.col()];
             pieces[from.row()][to.col()] = null;
         }
@@ -330,7 +342,7 @@ public class Board {
         piece.setHasMoved(true);
 
         // Set passing target if pawn moved 2 squares
-        if (piece.getType() == Piece.PieceType.PAWN && Math.abs(to.row() - from.row()) == 2) {
+        if (piece.getType() == Piece.Type.PAWN && Math.abs(to.row() - from.row()) == 2) {
             int epRow = (from.row() + to.row()) / 2;
             passingCaptureTarget = new Case(epRow, to.col());
         } else {
@@ -338,7 +350,7 @@ public class Board {
         }
 
         // Handle castling rook movement (King moved 2 columns)
-        if (piece.getType() == Piece.PieceType.KING && Math.abs(to.col() - from.col()) == 2) {
+        if (piece.getType() == Piece.Type.KING && Math.abs(to.col() - from.col()) == 2) {
             int rookFromCol, rookToCol;
             if (to.col() < from.col()) {
                 rookFromCol = 0;
@@ -355,7 +367,7 @@ public class Board {
         }
 
         // Handle pawn promotion
-        if (piece.getType() == Piece.PieceType.PAWN) {
+        if (piece.getType() == Piece.Type.PAWN) {
             int promotionRow = (piece.getColor() == Piece.Color.WHITE) ? 7 : 0;
             if (to.row() == promotionRow) {
                 Piece promoted = promotionHandler.choosePiece(piece.getColor());
@@ -384,7 +396,7 @@ public class Board {
         piece.setPosition(from.row(), from.col());
 
         // Handle undoing passing capture
-        if (piece.getType() == Piece.PieceType.PAWN && captured == null && from.col() != to.col()) {
+        if (piece.getType() == Piece.Type.PAWN && captured == null && from.col() != to.col()) {
             Piece passingCaptured = pieces[from.row()][to.col()];
             pieces[from.row()][to.col()] = passingCaptured;
             if (passingCaptured != null) {
@@ -397,7 +409,7 @@ public class Board {
         }
 
         // Handle undoing castling rook movement
-        if (piece.getType() == Piece.PieceType.KING && Math.abs(to.col() - from.col()) == 2) {
+        if (piece.getType() == Piece.Type.KING && Math.abs(to.col() - from.col()) == 2) {
             int rookFromCol, rookToCol;
             if (to.col() < from.col()) {
                 rookFromCol = 0;
@@ -415,7 +427,7 @@ public class Board {
         }
 
         // Handle undoing pawn promotion
-        if (piece.getType() == Piece.PieceType.PAWN) {
+        if (piece.getType() == Piece.Type.PAWN) {
             int promotionRow = (piece.getColor() == Piece.Color.WHITE) ? 7 : 0;
             if (to.row() == promotionRow) {
                 Piece originalPawn = new Pawn(piece.getColor()).setBoard(this);

@@ -28,7 +28,6 @@ public class JHeader extends JPanel {
             @Override
             public void onGameStarted(GameEngineEvent event) {
                 jTitleLabel.setText(gameEngine.getPlayerContext(playerNumber).name());
-                System.out.println("Game started. You are player " + playerNumber + " (" + gameEngine.getPlayerContext(playerNumber).name() + ")");
             }
         });
     }

@@ -1,10 +1,12 @@
 package com.vivianhonghoa.chess.viewcontroller.components.startup;
 
 import com.vivianhonghoa.chess.model.engine.GameEngine;
+import com.vivianhonghoa.chess.model.events.GameEngineEvent;
+import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.model.players.Player;
-import com.vivianhonghoa.chess.model.players.ComputerDifficulty;
-import com.vivianhonghoa.chess.players.ComputerPlayer;
+import com.vivianhonghoa.chess.players.computer.ComputerDifficulty;
+import com.vivianhonghoa.chess.players.computer.ComputerPlayer;
 import com.vivianhonghoa.chess.players.ConsolePlayer;
 import com.vivianhonghoa.chess.players.GraphicalPlayer;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
@@ -161,6 +163,14 @@ public class JGameSetup extends JSection {
     private void showConsolePlayerFrame(ConsolePlayer player, int playerNumber){
         JConsoleFrame consoleFrame = new JConsoleFrame(player, playerNumber);
         consoleFrame.setVisible(true);
+        GameEngineObserver observer = new GameEngineObserver() {
+            @Override
+            public void onGameStopped(GameEngineEvent event) {
+                consoleFrame.dispose();
+                gameEngine.removeObserver(this);
+            }
+        };
+        gameEngine.addObserver(observer);
     }
 
     private Player createHumanPlayer(int playerNumber){

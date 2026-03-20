@@ -1,15 +1,13 @@
-package com.vivianhonghoa.chess.players;
+package com.vivianhonghoa.chess.players.computer;
 
 import com.vivianhonghoa.chess.model.engine.Board;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.model.pieces.Queen;
-import com.vivianhonghoa.chess.model.players.ComputerDifficulty;
-import com.vivianhonghoa.chess.model.players.ComputerMove;
-import com.vivianhonghoa.chess.model.players.ComputerStrategy;
+import com.vivianhonghoa.chess.players.computer.strategy.ComputerStrategy;
 import com.vivianhonghoa.chess.model.players.Player;
-import com.vivianhonghoa.chess.model.players.computer.HeuristicStrategy;
-import com.vivianhonghoa.chess.model.players.computer.MinimaxStrategy;
-import com.vivianhonghoa.chess.model.players.computer.RandomStrategy;
+import com.vivianhonghoa.chess.players.computer.strategy.HeuristicStrategy;
+import com.vivianhonghoa.chess.players.computer.strategy.MinimaxStrategy;
+import com.vivianhonghoa.chess.players.computer.strategy.RandomStrategy;
 
 import javax.swing.SwingWorker;
 

@@ -1,10 +1,9 @@
-package com.vivianhonghoa.chess.model.players.computer;
+package com.vivianhonghoa.chess.players.computer.strategy;
 
 import com.vivianhonghoa.chess.model.engine.Board;
 import com.vivianhonghoa.chess.model.engine.Case;
 import com.vivianhonghoa.chess.model.pieces.*;
-import com.vivianhonghoa.chess.model.players.ComputerMove;
-import com.vivianhonghoa.chess.model.players.ComputerStrategy;
+import com.vivianhonghoa.chess.players.computer.ComputerMove;
 
 import java.util.Random;
 
@@ -61,7 +60,7 @@ public class HeuristicStrategy implements ComputerStrategy {
         }
 
         // Pawn advancement bonus
-        if (piece.getType() == Piece.PieceType.PAWN) {
+        if (piece.getType() == Piece.Type.PAWN) {
             int advancement = (piece.getColor() == Piece.Color.WHITE) ? to.row() : (7 - to.row());
             score += advancement * 10;
         }

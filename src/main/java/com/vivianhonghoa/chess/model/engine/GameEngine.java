@@ -4,6 +4,7 @@ import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.model.players.Player;
+import com.vivianhonghoa.chess.model.players.PlayerContext;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
@@ -18,6 +19,7 @@ public final class GameEngine {
 
     private final CopyOnWriteArrayList<GameEngineObserver> observers = new CopyOnWriteArrayList<>();
     private final Board board;
+    private final BoardEvaluator boardEvaluator;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean paused = new AtomicBoolean(false);
     private final AtomicBoolean ended = new AtomicBoolean(false);
@@ -29,6 +31,7 @@ public final class GameEngine {
 
     public GameEngine(){
         board = new Board();
+        boardEvaluator = new BoardEvaluator(board);
     }
 
     /*
@@ -143,11 +146,14 @@ public final class GameEngine {
         notifyObservers(GameEngineObserver::onGameStopped);
     }
 
-    public void nextPlayer() {
+    private void nextPlayer() {
         if(!running.get() || paused.get() || ended.get()) return;
         int newPlayerNumber = getCurrentPlayerNumber() == 1 ? 2 : 1;
         currentPlayerNumber.set(newPlayerNumber);
         getPlayerContext(newPlayerNumber).player().onTurnStart();
+        //Evaluate the positions
+        player1Context.player().setEvaluation(boardEvaluator.evaluate(player1Context.player().getColor()));
+        player2Context.player().setEvaluation(boardEvaluator.evaluate(player2Context.player().getColor()));
         notifyObservers(GameEngineObserver::onPlayerTurnChanged);
     }
 
@@ -245,6 +251,10 @@ public final class GameEngine {
 
     public void addObserver(GameEngineObserver observer){
         observers.add(observer);
+    }
+
+    public void removeObserver(GameEngineObserver observer){
+        observers.remove(observer);
     }
 
     private void notifyObservers(BiConsumer<GameEngineObserver, GameEngineEvent> action){

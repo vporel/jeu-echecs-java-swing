@@ -74,7 +74,7 @@ public class JSquare extends JPanel {
 
     private boolean isKingInCheck() {
         Piece piece = getPiece();
-        if (piece == null || piece.getType() != Piece.PieceType.KING) return false;
+        if (piece == null || piece.getType() != Piece.Type.KING) return false;
         return gameEngine.getBoard().isKingInCheck(piece.getColor());
     }
 

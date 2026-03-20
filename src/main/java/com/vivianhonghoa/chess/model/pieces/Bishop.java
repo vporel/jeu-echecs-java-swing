@@ -12,8 +12,8 @@ public class Bishop extends Piece{
     }
 
     @Override
-    public PieceType getType() {
-        return PieceType.BISHOP;
+    public Type getType() {
+        return Type.BISHOP;
     }
 
     @Override

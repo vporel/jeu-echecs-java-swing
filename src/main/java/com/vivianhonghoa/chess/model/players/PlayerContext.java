@@ -1,6 +1,6 @@
-package com.vivianhonghoa.chess.model.engine;
+package com.vivianhonghoa.chess.model.players;
 
-import com.vivianhonghoa.chess.model.players.Player;
+import com.vivianhonghoa.chess.model.engine.History;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

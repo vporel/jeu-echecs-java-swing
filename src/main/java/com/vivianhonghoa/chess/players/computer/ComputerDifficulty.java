@@ -1,4 +1,4 @@
-package com.vivianhonghoa.chess.model.players;
+package com.vivianhonghoa.chess.players.computer;
 
 public enum ComputerDifficulty {
     EASY,
