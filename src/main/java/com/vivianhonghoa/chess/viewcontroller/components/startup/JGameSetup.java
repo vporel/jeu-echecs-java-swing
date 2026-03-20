@@ -4,7 +4,6 @@ import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.model.players.Player;
 import com.vivianhonghoa.chess.model.players.ComputerDifficulty;
-import com.vivianhonghoa.chess.model.players.LoggingPlayerDecorator;
 import com.vivianhonghoa.chess.players.ComputerPlayer;
 import com.vivianhonghoa.chess.players.ConsolePlayer;
 import com.vivianhonghoa.chess.players.GraphicalPlayer;
@@ -114,7 +113,7 @@ public class JGameSetup extends JSection {
                 case 2 -> ComputerDifficulty.HARD;
                 default -> ComputerDifficulty.MEDIUM;
             };
-            gameEngine.start(player1Name, player1, "Computer", new LoggingPlayerDecorator(new ComputerPlayer(Piece.Color.BLACK, difficulty)), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
+            gameEngine.start(player1Name, player1, "Computer", new ComputerPlayer(Piece.Color.BLACK, difficulty), isLimitedTimeSelected ? selectedTimeLimit * 60 : null, null);
         });
 
         List<JCustomButtonWithIcon> buttons = List.of(jPlayerVsPlayerButton, jPlayerVsComputerButton);

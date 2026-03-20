@@ -7,7 +7,9 @@ import com.vivianhonghoa.chess.model.players.ComputerDifficulty;
 import com.vivianhonghoa.chess.model.players.ComputerMove;
 import com.vivianhonghoa.chess.model.players.ComputerStrategy;
 import com.vivianhonghoa.chess.model.players.Player;
-import com.vivianhonghoa.chess.model.players.computer.*;
+import com.vivianhonghoa.chess.model.players.computer.HeuristicStrategy;
+import com.vivianhonghoa.chess.model.players.computer.MinimaxStrategy;
+import com.vivianhonghoa.chess.model.players.computer.RandomStrategy;
 
 import javax.swing.SwingWorker;
 
@@ -22,7 +24,7 @@ public class ComputerPlayer extends Player {
             case MEDIUM -> new HeuristicStrategy();
             case HARD -> new MinimaxStrategy();
         };
-        this.strategy = new LoggingStrategy(new TimeLimitedStrategy(baseStrategy, 3000));
+        this.strategy = baseStrategy;
     }
 
     @Override
