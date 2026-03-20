@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.viewcontroller.components.game;
 
 import com.vivianhonghoa.chess.model.engine.Board;
+import com.vivianhonghoa.chess.model.engine.BoardHelper;
 import com.vivianhonghoa.chess.model.engine.Case;
 import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.events.BoardEvent;
@@ -75,7 +76,7 @@ public class JSquare extends JPanel {
     private boolean isKingInCheck() {
         Piece piece = getPiece();
         if (piece == null || piece.getType() != Piece.Type.KING) return false;
-        return gameEngine.getBoard().isKingInCheck(piece.getColor());
+        return BoardHelper.isKingInCheck(gameEngine.getBoard(), piece.getColor());
     }
 
     private void updateBackground(boolean isHovered) {

@@ -64,15 +64,17 @@ public class Board {
 
     void reset() {
         pieces = new Piece[SIZE][SIZE];
-        selectedCase = null;
+        // Use the setter so observers are notified about the selection change
+        setSelectedCase(null);
         capturedByWhite.clear();
         capturedByBlack.clear();
         passingCaptureTarget = null;
         initPositions();
         notifyObservers(null, BoardObserver::onPieceMoved);
+        notifyObservers(null, BoardObserver::onPieceCaptured);
     }
 
-    void placePiece(Piece piece, int row, int col) {
+    private void placePiece(Piece piece, int row, int col) {
         pieces[row][col] = piece;
         piece.setPosition(row, col);
     }
@@ -116,6 +118,10 @@ public class Board {
         return pieces[row][col];
     }
 
+    public Piece getPieceAt(Case c) {
+        return getPieceAt(c.row(), c.col());
+    }
+
     public Case getPassingCaptureTarget() {
         return passingCaptureTarget;
     }
@@ -154,116 +160,7 @@ public class Board {
         return result;
     }
 
-    // ── Check detection ──────────────────────────────────────────────
-
-    public Case findKing(Piece.Color color) {
-        for (int r = 0; r < SIZE; r++) {
-            for (int c = 0; c < SIZE; c++) {
-                Piece p = pieces[r][c];
-                if (p != null && p.getType() == Piece.Type.KING && p.getColor() == color) {
-                    return new Case(r, c);
-                }
-            }
-        }
-        return null;
-    }
-
-    public boolean isSquareAttackedBy(int row, int col, Piece.Color attackerColor) {
-        for (int r = 0; r < SIZE; r++) {
-            for (int c = 0; c < SIZE; c++) {
-                Piece p = pieces[r][c];
-                if (p != null && p.getColor() == attackerColor && canPieceAttack(p, r, c, row, col)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean canPieceAttack(Piece piece, int fromRow, int fromCol, int toRow, int toCol) {
-        int dr = toRow - fromRow;
-        int dc = toCol - fromCol;
-        int absDr = Math.abs(dr);
-        int absDc = Math.abs(dc);
-
-        return switch (piece.getType()) {
-            case PAWN -> {
-                int direction = (piece.getColor() == Piece.Color.WHITE) ? 1 : -1;
-                yield dr == direction && absDc == 1;
-            }
-            case KNIGHT -> (absDr == 2 && absDc == 1) || (absDr == 1 && absDc == 2);
-            case KING -> absDr <= 1 && absDc <= 1 && (absDr + absDc > 0);
-            case ROOK -> (dr == 0 || dc == 0) && isPathClear(fromRow, fromCol, toRow, toCol);
-            case BISHOP -> absDr == absDc && absDr > 0 && isPathClear(fromRow, fromCol, toRow, toCol);
-            case QUEEN -> ((dr == 0 || dc == 0) || (absDr == absDc && absDr > 0))
-                    && isPathClear(fromRow, fromCol, toRow, toCol);
-        };
-    }
-
-    private boolean isPathClear(int fromRow, int fromCol, int toRow, int toCol) {
-        int dr = Integer.signum(toRow - fromRow);
-        int dc = Integer.signum(toCol - fromCol);
-        int r = fromRow + dr;
-        int c = fromCol + dc;
-        while (r != toRow || c != toCol) {
-            if (pieces[r][c] != null) return false;
-            r += dr;
-            c += dc;
-        }
-        return true;
-    }
-
-    public boolean isKingInCheck(Piece.Color color) {
-        Case kingCase = findKing(color);
-        if (kingCase == null) return false;
-        Piece.Color opponent = (color == Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
-        return isSquareAttackedBy(kingCase.row(), kingCase.col(), opponent);
-    }
-
-    public boolean isKingInCheckmate(Piece.Color color) {
-        if (!isKingInCheck(color)) return false;
-        Case kingCase = findKing(color);
-        if (kingCase == null) return false;
-        Piece king = pieces[kingCase.row()][kingCase.col()];
-        for (Case move : king.getAccessibleCases()) {
-            if (isMoveLegal(kingCase, move)) {
-                return false; // King can escape
-            }
-        }
-        for (int r = 0; r < SIZE; r++) {
-            for (int c = 0; c < SIZE; c++) {
-                Piece p = pieces[r][c];
-                if (p != null && p.getColor() == color) {
-                    for (Case move : p.getAccessibleCases()) {
-                        if (isMoveLegal(new Case(r, c), move)) {
-                            return false; // A piece can block or capture
-                        }
-                    }
-                }
-            }
-        }
-        return true; // No escape, it's checkmate
-    }
-
-    public boolean isStalemate(Piece.Color color) {
-        if (isKingInCheck(color)) return false;
-        for (int r = 0; r < SIZE; r++) {
-            for (int c = 0; c < SIZE; c++) {
-                Piece p = pieces[r][c];
-                if (p != null && p.getColor() == color) {
-                    for (Case move : p.getAccessibleCases()) {
-                        if (isMoveLegal(new Case(r, c), move)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
     // ── Legal moves (simulation-based filtering) ─────────────────────
-
     public List<Case> getLegalMoves(Piece piece) {
         List<Case> legal = new ArrayList<>();
         Case from = new Case(piece.getRow(), piece.getCol());
@@ -292,7 +189,7 @@ public class Board {
             pieces[from.row()][to.col()] = null;
         }
 
-        boolean inCheck = isKingInCheck(piece.getColor());
+        boolean inCheck = BoardHelper.isKingInCheck(this, piece.getColor());
 
         // Undo the move
         pieces[from.row()][from.col()] = piece;
@@ -303,13 +200,6 @@ public class Board {
         }
 
         return !inCheck;
-    }
-
-    public Piece getSelectedPiece() {
-        if (selectedCase == null) {
-            return null;
-        }
-        return getPieceAt(selectedCase.row(), selectedCase.col());
     }
 
     boolean movePiece(Case from, Case to) {

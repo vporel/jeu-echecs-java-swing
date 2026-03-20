@@ -1,5 +1,6 @@
 package com.vivianhonghoa.chess.model.pieces;
 
+import com.vivianhonghoa.chess.model.engine.BoardHelper;
 import com.vivianhonghoa.chess.model.engine.Case;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class King extends Piece {
         Color opponent = (getColor() == Color.WHITE) ? Color.BLACK : Color.WHITE;
 
         // King must not be in check
-        if (board.isSquareAttackedBy(row, col, opponent)) return;
+        if (BoardHelper.isSquareAttackedBy(board, row, col, opponent)) return;
 
         // Queenside castling: King at col 3 → col 1, Rook(0) → col 2
         Piece qRook = board.getPieceAt(row, 0);
@@ -54,8 +55,8 @@ public class King extends Piece {
             // Path must be clear: cols 1, 2
             if (board.getPieceAt(row, 1) == null && board.getPieceAt(row, 2) == null) {
                 // King must not pass through or land on attacked square: cols 1, 2
-                if (!board.isSquareAttackedBy(row, 1, opponent)
-                        && !board.isSquareAttackedBy(row, 2, opponent)) {
+                if (!BoardHelper.isSquareAttackedBy(board, row, 1, opponent)
+                        && !BoardHelper.isSquareAttackedBy(board, row, 2, opponent)) {
                     cases.add(new Case(row, 1));
                 }
             }
@@ -68,8 +69,8 @@ public class King extends Piece {
             if (board.getPieceAt(row, 4) == null && board.getPieceAt(row, 5) == null
                     && board.getPieceAt(row, 6) == null) {
                 // King must not pass through or land on attacked square: cols 4, 5
-                if (!board.isSquareAttackedBy(row, 4, opponent)
-                        && !board.isSquareAttackedBy(row, 5, opponent)) {
+                if (!BoardHelper.isSquareAttackedBy(board, row, 4, opponent)
+                        && !BoardHelper.isSquareAttackedBy(board, row, 5, opponent)) {
                     cases.add(new Case(row, 5));
                 }
             }

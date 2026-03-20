@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.players.computer.strategy;
 
 import com.vivianhonghoa.chess.model.engine.Board;
+import com.vivianhonghoa.chess.model.engine.BoardHelper;
 import com.vivianhonghoa.chess.model.engine.Case;
 import com.vivianhonghoa.chess.model.pieces.*;
 import com.vivianhonghoa.chess.players.computer.ComputerMove;
@@ -112,7 +113,7 @@ public class MinimaxStrategy implements ComputerStrategy {
         List<ComputerMove> moves = generateAllMoves(board, color);
 
         if (moves.isEmpty()) {
-            if (board.isKingInCheck(color)) {
+            if (BoardHelper.isKingInCheck(board, color)) {
                 return -100000 - depth; // Checkmate: worse the earlier
             }
             return 0; // Stalemate
@@ -156,8 +157,8 @@ public class MinimaxStrategy implements ComputerStrategy {
             }
         }
 
-        if (board.isKingInCheck(opponent)) score += 50;
-        if (board.isKingInCheck(color)) score -= 50;
+        if (BoardHelper.isKingInCheck(board, opponent)) score += 50;
+        if (BoardHelper.isKingInCheck(board, color)) score -= 50;
 
         return score;
     }

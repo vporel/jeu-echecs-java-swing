@@ -181,9 +181,9 @@ public final class GameEngine {
                 History currentHistory = getCurrentPlayerContext().history();
                 currentHistory.add(new History.Entry(movingPiece, from, selectedCase, capturedPiece));
                 board.setSelectedCase(null);
-                if(board.isKingInCheckmate(Piece.Color.WHITE)) end(2);
-                else if(board.isKingInCheckmate(Piece.Color.BLACK)) end(1);
-                else if(board.isStalemate(Piece.Color.WHITE) || board.isStalemate(Piece.Color.BLACK)) end(0);
+                if(BoardHelper.isKingInCheckmate(board, Piece.Color.WHITE)) end(2);
+                else if(BoardHelper.isKingInCheckmate(board, Piece.Color.BLACK)) end(1);
+                else if(BoardHelper.isStalemate(board, Piece.Color.WHITE) || BoardHelper.isStalemate(board, Piece.Color.BLACK)) end(0);
                 nextPlayer();
                 return;
             }

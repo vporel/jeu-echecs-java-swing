@@ -1,6 +1,7 @@
 package com.vivianhonghoa.chess.players.computer.strategy;
 
 import com.vivianhonghoa.chess.model.engine.Board;
+import com.vivianhonghoa.chess.model.engine.BoardHelper;
 import com.vivianhonghoa.chess.model.engine.Case;
 import com.vivianhonghoa.chess.model.pieces.*;
 import com.vivianhonghoa.chess.players.computer.ComputerMove;
@@ -44,7 +45,7 @@ public class HeuristicStrategy implements ComputerStrategy {
         }
 
         // Check bonus
-        boolean givesCheck = board.withSimulatedMove(from, to, () -> board.isKingInCheck(opponent));
+        boolean givesCheck = board.withSimulatedMove(from, to, () -> BoardHelper.isKingInCheck(board, opponent));
         if (givesCheck) {
             score += 500;
         }
@@ -55,7 +56,7 @@ public class HeuristicStrategy implements ComputerStrategy {
         }
 
         // Danger penalty: moving to a square attacked by opponent
-        if (board.isSquareAttackedBy(to.row(), to.col(), opponent)) {
+        if (BoardHelper.isSquareAttackedBy(board, to.row(), to.col(), opponent)) {
             score -= pieceValue(piece) / 2;
         }
 
