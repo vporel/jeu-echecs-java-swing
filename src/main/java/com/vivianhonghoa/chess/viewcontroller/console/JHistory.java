@@ -1,11 +1,8 @@
 package com.vivianhonghoa.chess.viewcontroller.console;
 
 import com.vivianhonghoa.chess.model.engine.GameEngine;
-import com.vivianhonghoa.chess.model.engine.History;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
-import com.vivianhonghoa.chess.model.events.HistoryEvent;
-import com.vivianhonghoa.chess.model.events.HistoryObserver;
 import com.vivianhonghoa.chess.viewcontroller.helpers.JComponentHelper;
 
 import javax.swing.*;
@@ -34,22 +31,16 @@ public class JHistory extends JScrollPane {
 
         gameEngine.addObserver(new GameEngineObserver() {
             @Override
-            public void onGameStarted(GameEngineEvent event) {
-                //History events
-                History history = gameEngine.getPlayerContext(playerNumber).history();
-                history.addObserver(new HistoryObserver() {
-                    @Override
-                    public void onChange(HistoryEvent event) {
-                        String historyText = "";
-                        List<String> moves = history.getFormattedList();
-                        for(int i = 0; i < moves.size(); i++){
-                            String move = (i + 1) + ". " + moves.get(i);
-                            historyText += move + "\n";
-                        }
-                        jHistory.setText(historyText);
-                    }
-                });
-
+            public void onPlayerTurnChanged(GameEngineEvent event) {
+                // Update history display when turn changes (after a move is made)
+                List<String> player1History = gameEngine.getPlayerContext(1).history().getFormattedList();
+                List<String> player2History = gameEngine.getPlayerContext(2).history().getFormattedList();
+                StringBuilder historyText = new StringBuilder();
+                for(int i = 0; i < player1History.size(); i++){
+                    String move = (i + 1) + ". " + player1History.get(i) + "   " + (i < player2History.size() ? player2History.get(i) : "");
+                    historyText.append(move).append("\n");
+                }
+                jHistory.setText(historyText.toString());
             }
         });
     }

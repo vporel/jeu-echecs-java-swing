@@ -9,6 +9,7 @@ import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.pieces.*;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomLabel;
+import com.vivianhonghoa.chess.viewcontroller.utils.PieceRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -106,7 +107,7 @@ public class JSquare extends JPanel {
     }
 
     private String getUnicodeSymbol(Piece piece) {
-        return piece.getUnicodeSymbol();
+        return PieceRenderer.getUnicodeSymbol(piece);
     }
 
     private void handleClick(){

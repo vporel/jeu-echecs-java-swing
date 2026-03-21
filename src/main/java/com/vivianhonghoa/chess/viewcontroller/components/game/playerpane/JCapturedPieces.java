@@ -4,6 +4,7 @@ import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.events.BoardEvent;
 import com.vivianhonghoa.chess.model.events.BoardObserver;
 import com.vivianhonghoa.chess.model.pieces.Piece;
+import com.vivianhonghoa.chess.viewcontroller.utils.PieceRenderer;
 import com.vivianhonghoa.chess.viewcontroller.Colors;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.JCustomPanel;
 import com.vivianhonghoa.chess.viewcontroller.components.lib.JDivider;
@@ -62,7 +63,7 @@ public class JCapturedPieces extends JCustomPanel {
     private void updateCapturedPieces(JPanel panel) {
         panel.removeAll();
         for (Piece piece : getCapturedPieces()) {
-            JLabel label = new JLabel(piece.getUnicodeSymbol());
+            JLabel label = new JLabel(PieceRenderer.getUnicodeSymbol(piece));
             JComponentHelper.setFontSize(label, 30);
             label.setForeground(piece.getColor() == Piece.Color.WHITE ? Colors.WHITE : Colors.BLACK);
             panel.add(label);

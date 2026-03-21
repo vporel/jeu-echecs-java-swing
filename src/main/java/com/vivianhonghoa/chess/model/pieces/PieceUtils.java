@@ -6,7 +6,12 @@ import com.vivianhonghoa.chess.model.engine.BoardHelper;
 
 import java.util.List;
 
-public abstract class PieceUtils {
+public final class PieceUtils {
+
+    private PieceUtils() {
+        // Utility class, prevent instantiation
+    }
+
     /**
      * Helper for non-sliding pieces (king, knight).
      * Adds the square if it is on the board and empty or occupied by an opponent.

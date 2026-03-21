@@ -47,11 +47,10 @@ public class History {
     public List<String> getFormattedList() {
         List<String> formatted = new ArrayList<>();
         for (Entry entry : entries) {
-            formatted.add(entry.format());
+            formatted.add(AlgebraicNotation.format(entry));
         }
         return Collections.unmodifiableList(formatted);
     }
-
 
     public void addObserver(HistoryObserver observer) {
         observers.add(observer);
@@ -72,52 +71,5 @@ public class History {
      * @param to       The square the piece moved to.
      * @param captured The piece that was captured, or null if no capture.
      */
-    public record Entry(Piece piece, Case from, Case to, Piece captured) {
-
-        private String format() {
-            StringBuilder sb = new StringBuilder();
-
-            // Piece letter — omitted for pawns
-            String piecePrefix = getPiecePrefix(this.piece());
-            sb.append(piecePrefix);
-
-            // For pawns that capture, add the origin file
-            if (this.piece().getType() == Piece.Type.PAWN && this.captured() != null) {
-                sb.append(colToFile(this.from.col()));
-            }
-
-            // Capture indicator
-            if (this.captured() != null) {
-                sb.append("x");
-            }
-
-            // Destination square
-            sb.append(colToFile(this.to.col()));
-            sb.append(rowToRank(this.to.row()));
-
-            return sb.toString();
-        }
-
-
-        /** Converts 0-based column index to chess file letter (0 → a, 7 → h). */
-        private char colToFile(int col) {
-            return (char) ('a' + col);
-        }
-
-        /** Converts 0-based row index to chess rank number (0 → 1, 7 → 8). */
-        private int rowToRank(int row) {
-            return row + 1;
-        }
-
-        private String getPiecePrefix(Piece piece) {
-            return switch (piece.getType()) {
-                case KING -> "K";
-                case QUEEN -> "Q";
-                case ROOK -> "R";
-                case BISHOP -> "B";
-                case KNIGHT -> "N";
-                case PAWN -> "";
-            };
-        }
-    }
+    public record Entry(Piece piece, Case from, Case to, Piece captured) {}
 }

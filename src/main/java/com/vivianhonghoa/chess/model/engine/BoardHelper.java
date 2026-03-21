@@ -25,18 +25,6 @@ public class BoardHelper {
         return p != null && p.getType() == type;
     }
 
-    public static List<Case> getCasesWithPieceType(Board board, Piece.Type type) {
-        List<Case> cases = new ArrayList<>();
-        for (int r = 0; r < Board.SIZE; r++) {
-            for (int c = 0; c < Board.SIZE; c++) {
-                if (hasPieceTypeAt(board, r, c, type)) {
-                    cases.add(new Case(r, c));
-                }
-            }
-        }
-        return cases;
-    }
-
     public static List<Case> getCasesWithPieceType(Board board, Piece.Type type, Piece.Color color) {
         List<Case> cases = new ArrayList<>();
         for (int r = 0; r < Board.SIZE; r++) {

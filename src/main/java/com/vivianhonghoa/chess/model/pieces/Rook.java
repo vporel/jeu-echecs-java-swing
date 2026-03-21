@@ -1,6 +1,5 @@
 package com.vivianhonghoa.chess.model.pieces;
 
-import com.vivianhonghoa.chess.model.pieces.accessiblecases.AccessibleCasesCalculator;
 import com.vivianhonghoa.chess.model.pieces.accessiblecases.AccessibleCasesHorizDecorator;
 import com.vivianhonghoa.chess.model.pieces.accessiblecases.AccessibleCasesVertDecorator;
 
@@ -17,8 +16,4 @@ public class Rook extends Piece{
         return Type.ROOK;
     }
 
-    @Override
-    public char getLetter() {
-        return 'R';
-    }
 }

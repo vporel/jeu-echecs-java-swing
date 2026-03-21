@@ -117,7 +117,7 @@ public final class GameEngine {
         }
 
         History.Entry lastEntry = currentHistory.removeLast();
-        board.undoMove(lastEntry.from(), lastEntry.to(), lastEntry.captured());
+        board.getMoveExecutor().undoMove(lastEntry.from(), lastEntry.to(), lastEntry.captured());
         nextPlayer();
         notifyObservers(GameEngineObserver::onPlayerTurnChanged);
     }
@@ -177,14 +177,12 @@ public final class GameEngine {
             Case from = board.getSelectedCase();
             Piece movingPiece = board.getPieceAt(from.row(), from.col());
             Piece capturedPiece = board.getPieceAt(selectedCase.row(), selectedCase.col());
-            boolean moved = board.movePiece(from, selectedCase);
+            boolean moved = board.getMoveExecutor().movePiece(from, selectedCase);
             if (moved) {
                 History currentHistory = getCurrentPlayerContext().history();
                 currentHistory.add(new History.Entry(movingPiece, from, selectedCase, capturedPiece));
                 board.setSelectedCase(null);
-                if(BoardHelper.isKingInCheckmate(board, Piece.Color.WHITE)) end(2);
-                else if(BoardHelper.isKingInCheckmate(board, Piece.Color.BLACK)) end(1);
-                else if(BoardHelper.isStalemate(board, Piece.Color.WHITE) || BoardHelper.isStalemate(board, Piece.Color.BLACK)) end(0);
+                GameStateChecker.getWinner(board).ifPresent(this::end);
                 nextPlayer();
                 return;
             }

@@ -5,6 +5,7 @@ import com.vivianhonghoa.chess.model.engine.GameEngine;
 import com.vivianhonghoa.chess.model.events.GameEngineEvent;
 import com.vivianhonghoa.chess.model.events.GameEngineObserver;
 import com.vivianhonghoa.chess.model.pieces.Piece;
+import com.vivianhonghoa.chess.viewcontroller.utils.PieceRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +50,7 @@ public class JBoardDisplay extends JScrollPane {
             jDisplay.append("    " + (row + 1) + " ");
             for(int col = 0; col < Board.SIZE; col++){
                 Piece piece = board.getPieceAt(row, col);
-                String letter = piece == null ? null : String.valueOf(piece.getLetter());
+                String letter = piece == null ? null : String.valueOf(PieceRenderer.getLetter(piece));
                 String cell = piece == null ? "." : piece.getColor() == Piece.Color.WHITE ? letter.toUpperCase() : letter.toLowerCase();
                 jDisplay.append(cell + " ");
             }

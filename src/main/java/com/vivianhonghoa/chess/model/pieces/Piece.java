@@ -4,7 +4,6 @@ import com.vivianhonghoa.chess.model.engine.Board;
 import com.vivianhonghoa.chess.model.Case;
 import com.vivianhonghoa.chess.model.pieces.accessiblecases.AccessibleCasesCalculator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece {
@@ -56,8 +55,6 @@ public abstract class Piece {
 
     public abstract Type getType();
 
-    public abstract char getLetter();
-
     public List<Case> getAccessibleCases() {
         return accessibleCasesCalculator.getAccessibleCases(board, this);
     }
@@ -66,23 +63,12 @@ public abstract class Piece {
         return getAccessibleCases().contains(targetCase);
     }
 
-    public String getUnicodeSymbol() {
-        return switch (getType()) {
-            case KING -> "\u265A";
-            case QUEEN -> "\u265B";
-            case ROOK -> "\u265C";
-            case BISHOP -> "\u265D";
-            case KNIGHT -> "\u265E";
-            case PAWN -> "\u265F";
-        };
-    }
-
     public enum Type {
         PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING
     }
 
     public enum Color {
         WHITE,
-        BLACK;
+        BLACK
     }
 }

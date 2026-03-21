@@ -22,6 +22,7 @@ public class Board {
     private final List<Piece> capturedByBlack = new ArrayList<>();
     private Case passingCaptureTarget = null;
     private PromotionHandler promotionHandler = Queen::new;
+    private final MoveExecutor moveExecutor = new MoveExecutor(this);
 
     @FunctionalInterface
     public interface PromotionHandler {
@@ -30,11 +31,15 @@ public class Board {
 
     Board() {
         pieces = new Piece[SIZE][SIZE];
-        initPositions();
+        BoardSetup.initialize(this);
     }
 
     public Piece[][] getPieces() {
         return pieces;
+    }
+
+    public void setPassingCaptureTarget(Case target) {
+        this.passingCaptureTarget = target;
     }
 
     public List<Piece> getPiecesAsList() {
@@ -70,47 +75,11 @@ public class Board {
         capturedByWhite.clear();
         capturedByBlack.clear();
         passingCaptureTarget = null;
-        initPositions();
+        BoardSetup.initialize(this);
         notifyObservers(null, BoardObserver::onPieceMoved);
         notifyObservers(null, BoardObserver::onPieceCaptured);
     }
 
-    private void placePiece(Piece piece, int row, int col) {
-        pieces[row][col] = piece;
-        piece.setPosition(row, col);
-    }
-
-    private void initPositions() {
-        // White pawns (row 2, index 1)
-        for (int col = 0; col < SIZE; col++) {
-            placePiece(new Pawn(Piece.Color.WHITE).setBoard(this), 1, col);
-        }
-
-        // Black pawns (row 7, index 6)
-        for (int col = 0; col < SIZE; col++) {
-            placePiece(new Pawn(Piece.Color.BLACK).setBoard(this), 6, col);
-        }
-
-        // White pieces (row 1, index 0)
-        placePiece(new Rook(Piece.Color.WHITE).setBoard(this), 0, 0);
-        placePiece(new Knight(Piece.Color.WHITE).setBoard(this), 0, 1);
-        placePiece(new Bishop(Piece.Color.WHITE).setBoard(this), 0, 2);
-        placePiece(new King(Piece.Color.WHITE).setBoard(this), 0, 3);
-        placePiece(new Queen(Piece.Color.WHITE).setBoard(this), 0, 4);
-        placePiece(new Bishop(Piece.Color.WHITE).setBoard(this), 0, 5);
-        placePiece(new Knight(Piece.Color.WHITE).setBoard(this), 0, 6);
-        placePiece(new Rook(Piece.Color.WHITE).setBoard(this), 0, 7);
-
-        // Black pieces (row 8, index 7)
-        placePiece(new Rook(Piece.Color.BLACK).setBoard(this), 7, 0);
-        placePiece(new Knight(Piece.Color.BLACK).setBoard(this), 7, 1);
-        placePiece(new Bishop(Piece.Color.BLACK).setBoard(this), 7, 2);
-        placePiece(new King(Piece.Color.BLACK).setBoard(this), 7, 3);
-        placePiece(new Queen(Piece.Color.BLACK).setBoard(this), 7, 4);
-        placePiece(new Bishop(Piece.Color.BLACK).setBoard(this), 7, 5);
-        placePiece(new Knight(Piece.Color.BLACK).setBoard(this), 7, 6);
-        placePiece(new Rook(Piece.Color.BLACK).setBoard(this), 7, 7);
-    }
 
     public Piece getPieceAt(int row, int col) {
         if (!BoardHelper.isValid(row, col)) {
@@ -176,159 +145,12 @@ public class Board {
     boolean isMoveLegal(Case from, Case to) {
         if (from == null || to == null) return false;
         Piece piece = getPieceAt(from.row(), from.col());
-        if(piece == null) return false;
-        // Simulate the move
-        Piece captured = pieces[to.row()][to.col()];
-        pieces[to.row()][to.col()] = piece;
-        pieces[from.row()][from.col()] = null;
-        piece.setPosition(to.row(), to.col());
-
-        // Simulate passing capture (pawn moves diagonally to empty square)
-        Piece passingCapture = null;
-        if (piece.getType() == Piece.Type.PAWN && captured == null && from.col() != to.col()) {
-            passingCapture = pieces[from.row()][to.col()];
-            pieces[from.row()][to.col()] = null;
-        }
-
-        boolean inCheck = BoardHelper.isKingInCheck(this, piece.getColor());
-
-        // Undo the move
-        pieces[from.row()][from.col()] = piece;
-        pieces[to.row()][to.col()] = captured;
-        piece.setPosition(from.row(), from.col());
-        if (passingCapture != null) {
-            pieces[from.row()][to.col()] = passingCapture;
-        }
-
-        return !inCheck;
+        if (piece == null) return false;
+        return withSimulatedMove(from, to, () -> !BoardHelper.isKingInCheck(this, piece.getColor()));
     }
 
-    boolean movePiece(Case from, Case to) {
-        if (from == null || to == null) return false;
-        Piece piece = getPieceAt(from.row(), from.col());
-        if(piece == null || !piece.canMoveTo(to)) return false;
-        if(!isMoveLegal(from, to)) return false;
-
-        // Check for capture
-        Piece captured = getPieceAt(to.row(), to.col());
-
-        // Handle passing capture
-        if (piece.getType() == Piece.Type.PAWN && captured == null && from.col() != to.col()) {
-            captured = pieces[from.row()][to.col()];
-            pieces[from.row()][to.col()] = null;
-        }
-
-        if (captured != null) {
-            if (piece.getColor() == Piece.Color.WHITE) {
-                capturedByWhite.add(captured);
-            } else {
-                capturedByBlack.add(captured);
-            }
-        }
-
-        // Move the piece
-        pieces[to.row()][to.col()] = piece;
-        pieces[from.row()][from.col()] = null;
-        piece.setPosition(to.row(), to.col());
-        piece.setHasMoved(true);
-
-        // Set passing target if pawn moved 2 squares
-        if (piece.getType() == Piece.Type.PAWN && Math.abs(to.row() - from.row()) == 2) {
-            int epRow = (from.row() + to.row()) / 2;
-            passingCaptureTarget = new Case(epRow, to.col());
-        } else {
-            passingCaptureTarget = null;
-        }
-
-        // Handle castling rook movement (King moved 2 columns)
-        if (piece.getType() == Piece.Type.KING && Math.abs(to.col() - from.col()) == 2) {
-            int rookFromCol, rookToCol;
-            if (to.col() < from.col()) {
-                rookFromCol = 0;
-                rookToCol = 2;
-            } else {
-                rookFromCol = 7;
-                rookToCol = 4;
-            }
-            Piece rook = pieces[from.row()][rookFromCol];
-            pieces[from.row()][rookToCol] = rook;
-            pieces[from.row()][rookFromCol] = null;
-            rook.setPosition(from.row(), rookToCol);
-            rook.setHasMoved(true);
-        }
-
-        // Handle pawn promotion
-        if (piece.getType() == Piece.Type.PAWN) {
-            int promotionRow = (piece.getColor() == Piece.Color.WHITE) ? 7 : 0;
-            if (to.row() == promotionRow) {
-                Piece promoted = promotionHandler.choosePiece(piece.getColor());
-                promoted.setBoard(this);
-                pieces[to.row()][to.col()] = promoted;
-                promoted.setPosition(to.row(), to.col());
-                promoted.setHasMoved(true);
-            }
-        }
-
-        // Notify observers of the move
-        notifyObservers(to, BoardObserver::onPieceMoved);
-        if (captured != null) {
-            notifyObservers(to, BoardObserver::onPieceCaptured);
-        }
-        return true;
-    }
-
-    public void undoMove(Case from, Case to, Piece captured) {
-        Piece piece = getPieceAt(to.row(), to.col());
-        if (piece == null) return;
-
-        // Move the piece back
-        pieces[from.row()][from.col()] = piece;
-        pieces[to.row()][to.col()] = captured;
-        piece.setPosition(from.row(), from.col());
-
-        // Handle undoing passing capture
-        if (piece.getType() == Piece.Type.PAWN && captured == null && from.col() != to.col()) {
-            Piece passingCaptured = pieces[from.row()][to.col()];
-            pieces[from.row()][to.col()] = passingCaptured;
-            if (passingCaptured != null) {
-                if (piece.getColor() == Piece.Color.WHITE) {
-                    capturedByWhite.remove(passingCaptured);
-                } else {
-                    capturedByBlack.remove(passingCaptured);
-                }
-            }
-        }
-
-        // Handle undoing castling rook movement
-        if (piece.getType() == Piece.Type.KING && Math.abs(to.col() - from.col()) == 2) {
-            int rookFromCol, rookToCol;
-            if (to.col() < from.col()) {
-                rookFromCol = 0;
-                rookToCol = 2;
-            } else {
-                rookFromCol = 7;
-                rookToCol = 4;
-            }
-            Piece rook = pieces[from.row()][rookToCol];
-            pieces[from.row()][rookFromCol] = rook;
-            pieces[from.row()][rookToCol] = null;
-            if (rook != null) {
-                rook.setPosition(from.row(), rookFromCol);
-            }
-        }
-
-        // Handle undoing pawn promotion
-        if (piece.getType() == Piece.Type.PAWN) {
-            int promotionRow = (piece.getColor() == Piece.Color.WHITE) ? 7 : 0;
-            if (to.row() == promotionRow) {
-                Piece originalPawn = new Pawn(piece.getColor()).setBoard(this);
-                pieces[to.row()][to.col()] = originalPawn;
-                originalPawn.setPosition(to.row(), to.col());
-            }
-        }
-
-        // Notify observers of the undo
-        notifyObservers(from, BoardObserver::onPieceMoved);
+    MoveExecutor getMoveExecutor() {
+        return moveExecutor;
     }
 
     public Case getSelectedCase() {
@@ -356,7 +178,7 @@ public class Board {
         observers.add(observer);
     }
 
-    private void notifyObservers(Case relatedCase, BiConsumer<BoardObserver, BoardEvent> action){
+    void notifyObservers(Case relatedCase, BiConsumer<BoardObserver, BoardEvent> action){
         BoardEvent event = new BoardEvent(relatedCase);
         for (BoardObserver listener : observers) {
             action.accept(listener, event);
