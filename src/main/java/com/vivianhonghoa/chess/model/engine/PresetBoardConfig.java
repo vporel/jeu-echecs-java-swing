@@ -89,6 +89,21 @@ public class PresetBoardConfig {
     }
 
     /**
+     * Stalemate scenario: it is a white turn, the queen will move to (6,1) and stalemate the black king.
+     * Black king at (7,0), white queen at (4,1) and white king at (5,2).
+     * The black king is not in check at the start of this preset.
+     */
+    public static Piece[][] stalemate() {
+        Piece[][] pieces = new Piece[Board.SIZE][Board.SIZE];
+
+        place(pieces, new King(Piece.Color.WHITE), 5, 2);
+        place(pieces, new Queen(Piece.Color.WHITE), 4, 1);
+        place(pieces, new King(Piece.Color.BLACK), 7, 0);
+
+        return pieces;
+    }
+
+    /**
      * En passant scenario: a black pawn has just moved two squares and is
      * sitting next to a white pawn, which can capture it en passant.
      */
