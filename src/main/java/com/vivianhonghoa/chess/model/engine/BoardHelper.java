@@ -134,6 +134,41 @@ public class BoardHelper {
         return true;
     }
 
+    /**
+     * Returns a canonical string representation of a board position,
+     * encoding piece positions, castling rights (hasMoved), en passant target, and whose turn it is.
+     */
+    public static String snapshotPosition(Board board, int currentPlayerNumber) {
+        StringBuilder sb = new StringBuilder(Board.SIZE * Board.SIZE * 3 + 4);
+        for (int r = 0; r < Board.SIZE; r++) {
+            for (int c = 0; c < Board.SIZE; c++) {
+                Piece p = board.getPieceAt(r, c);
+                if (p == null) {
+                    sb.append('.');
+                } else {
+                    sb.append(pieceChar(p.getType()));
+                    sb.append(p.getColor() == Piece.Color.WHITE ? 'W' : 'B');
+                    sb.append(p.hasMoved() ? '1' : '0');
+                }
+            }
+        }
+        sb.append(currentPlayerNumber);
+        Case ep = board.getPassingCaptureTarget();
+        sb.append(ep != null ? ep.row() + "" + ep.col() : "--");
+        return sb.toString();
+    }
+
+    private static char pieceChar(Piece.Type type) {
+        return switch (type) {
+            case PAWN -> 'P';
+            case ROOK -> 'R';
+            case KNIGHT -> 'N';
+            case BISHOP -> 'B';
+            case QUEEN -> 'Q';
+            case KING -> 'K';
+        };
+    }
+
     public static boolean isStalemate(Board board, Piece.Color color) {
         if (BoardHelper.isKingInCheck(board, color)) return false;
         for (int r = 0; r < Board.SIZE; r++) {

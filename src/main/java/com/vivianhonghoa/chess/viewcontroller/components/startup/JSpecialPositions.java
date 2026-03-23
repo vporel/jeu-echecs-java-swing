@@ -26,6 +26,7 @@ public class JSpecialPositions extends JSection {
     private static final String CHECK = "Check";
     private static final String CHECKMATE = "Checkmate in 1";
     private static final String STALEMATE = "Stalemate";
+    private static final String THREEFOLD_REPETITION = "Threefold Rep.";
 
     private final GameEngine gameEngine;
 
@@ -58,6 +59,7 @@ public class JSpecialPositions extends JSection {
         presetBoards.put(CHECK, PresetBoardConfig.check());
         presetBoards.put(CHECKMATE, PresetBoardConfig.checkMate());
         presetBoards.put(STALEMATE, PresetBoardConfig.stalemate());
+        presetBoards.put(THREEFOLD_REPETITION, PresetBoardConfig.threefoldRepetition());
 
         Map<String, String> fontAwesomeIconsCodes = Map.of(
             PAWN_PROMOTION, "\uf443",
@@ -65,7 +67,8 @@ public class JSpecialPositions extends JSection {
             CASTLING, "\uf337",
             CHECK, "\uf06a",
             CHECKMATE, "\uf43f",
-            STALEMATE, "\uf256"
+            STALEMATE, "\uf256",
+            THREEFOLD_REPETITION, "\uf01e"
         );
 
         for (Map.Entry<String, Piece[][]> entry : presetBoards.entrySet()) {

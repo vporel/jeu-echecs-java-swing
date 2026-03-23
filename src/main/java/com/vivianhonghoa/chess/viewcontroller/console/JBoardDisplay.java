@@ -46,7 +46,7 @@ public class JBoardDisplay extends JScrollPane {
             jDisplay.append(colLetter + " ");
         }
         jDisplay.append("\n");
-        for(int row = 0; row < Board.SIZE; row++){
+        for(int row = Board.SIZE - 1; row >= 0; row--){
             jDisplay.append("    " + (row + 1) + " ");
             for(int col = 0; col < Board.SIZE; col++){
                 Piece piece = board.getPieceAt(row, col);

@@ -43,7 +43,7 @@ public class JSquaresContainer extends JCustomPanel {
         JCustomPanel jCenterPanel = new JCustomPanel();
         jCenterPanel.setBorder(new RoundedBorder(Colors.SECONDARY, 3, 0));
         jCenterPanel.setLayout(new GridLayout(Board.SIZE, Board.SIZE));
-        for(int row = 0; row < Board.SIZE; row++){
+        for(int row = Board.SIZE - 1; row >= 0; row--){
             for(int col = 0; col < Board.SIZE; col++) {
                 JSquare jSquare = new JSquare(row, col, gameEngine);
                 jCenterPanel.add(jSquare);
@@ -106,7 +106,7 @@ public class JSquaresContainer extends JCustomPanel {
         leftPanel.setPreferredSize(new Dimension(EDGE_BANDS_SIZE, 0));
         //Add the numbers
         leftPanel.setLayout(new GridLayout(Board.SIZE, 1));
-        for(int i = 1; i <= Board.SIZE; i++){
+        for(int i = Board.SIZE; i >= 1; i--){
             JLabel jLabel = new JLabel(String.valueOf(i), SwingConstants.CENTER);
             jLabel.setFont(new Font("Serif", Font.PLAIN, 17));
             jLabel.setForeground(Colors.SECONDARY_LIGHT_1);
@@ -121,7 +121,7 @@ public class JSquaresContainer extends JCustomPanel {
         rightPanel.setPreferredSize(new Dimension(EDGE_BANDS_SIZE, 0));
         //Add the numbers
         rightPanel.setLayout(new GridLayout(Board.SIZE, 1));
-        for(int i = 1; i <= Board.SIZE; i++){
+        for(int i = Board.SIZE; i >= 1; i--){
             JLabel jLabel = new JLabel(String.valueOf(i), SwingConstants.CENTER);
             jLabel.setFont(new Font("Serif", Font.PLAIN, 17));
             jLabel.setForeground(Colors.SECONDARY_LIGHT_1);

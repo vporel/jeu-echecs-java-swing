@@ -104,6 +104,27 @@ public class PresetBoardConfig {
     }
 
     /**
+     * Threefold repetition demo: white king + rook vs black king.
+     * Move the white rook back and forth (col 0 ↔ col 7) while the black king
+     * shuttles between e8 (7,4) and f8 (7,5). After 8 half-moves the initial
+     * position will have occurred three times, triggering an automatic draw.
+     */
+    public static Piece[][] threefoldRepetition() {
+        Piece[][] pieces = new Piece[Board.SIZE][Board.SIZE];
+
+        King wk = new King(Piece.Color.WHITE); wk.setHasMoved(true);
+        place(pieces, wk, 0, 4);
+
+        Rook wr = new Rook(Piece.Color.WHITE); wr.setHasMoved(true);
+        place(pieces, wr, 4, 0);
+
+        King bk = new King(Piece.Color.BLACK); bk.setHasMoved(true);
+        place(pieces, bk, 7, 4);
+
+        return pieces;
+    }
+
+    /**
      * En passant scenario: a black pawn has just moved two squares and is
      * sitting next to a white pawn, which can capture it en passant.
      */

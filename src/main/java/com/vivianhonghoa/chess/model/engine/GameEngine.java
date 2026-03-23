@@ -7,6 +7,8 @@ import com.vivianhonghoa.chess.model.pieces.Piece;
 import com.vivianhonghoa.chess.model.players.Player;
 import com.vivianhonghoa.chess.model.players.PlayerContext;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,6 +29,7 @@ public final class GameEngine {
     private final AtomicInteger currentPlayerNumber = new AtomicInteger(1); // 1 for white, 2 for black
     private PlayerContext player1Context;
     private PlayerContext player2Context;
+    private final Map<String, Integer> positionHistory = new HashMap<>();
     private final AtomicInteger winnerPlayerNumber = new AtomicInteger(0);
     private ScheduledExecutorService scheduler;
 
@@ -70,6 +73,8 @@ public final class GameEngine {
         if(presetPieces != null) {
             board.setPieces(presetPieces);
         }
+        positionHistory.clear();
+        positionHistory.put(BoardHelper.snapshotPosition(board, currentPlayerNumber.get()), 1);
 
         boolean unlimitedTime = timeInSeconds == null;
 
@@ -117,6 +122,8 @@ public final class GameEngine {
         }
 
         History.Entry lastEntry = currentHistory.removeLast();
+        String snapshot = BoardHelper.snapshotPosition(board, currentPlayerNumber.get());
+        positionHistory.merge(snapshot, -1, Integer::sum);
         board.getMoveExecutor().undoMove(lastEntry.from(), lastEntry.to(), lastEntry.captured());
         nextPlayer();
         notifyObservers(GameEngineObserver::onPlayerTurnChanged);
@@ -141,6 +148,7 @@ public final class GameEngine {
     public void stop() {
         if(!running.get()) return;
         running.set(false);
+        board.reset();
         if(scheduler != null) {
             scheduler.shutdown();
         }
@@ -182,7 +190,10 @@ public final class GameEngine {
                 History currentHistory = getCurrentPlayerContext().history();
                 currentHistory.add(new History.Entry(movingPiece, from, selectedCase, capturedPiece));
                 board.setSelectedCase(null);
-                GameStateChecker.getWinner(board).ifPresent(this::end);
+                int nextPlayerNumber = currentPlayerNumber.get() == 1 ? 2 : 1;
+                String snapshot = BoardHelper.snapshotPosition(board, nextPlayerNumber);
+                positionHistory.merge(snapshot, 1, Integer::sum);
+                GameStateChecker.getWinner(board, positionHistory).ifPresent(this::end);
                 nextPlayer();
                 return;
             }
