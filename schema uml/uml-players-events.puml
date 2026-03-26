@@ -1,0 +1,100 @@
+@startuml uml-players-events
+title Joueurs, historique & événements
+
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 13
+skinparam classFontSize 14
+skinparam dpi 100
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+package "model.players" {
+    abstract class Player {
+        # color : Piece.Color
+        - evaluation : int
+        --
+        + getColor() : Piece.Color
+        + isTurn() : boolean
+        + getEvaluation() : int
+        + {abstract} onTurnStart()
+    }
+
+    class PlayerContext <<record>> {
+        + name : String
+        + player : Player
+        + remainingTime : AtomicInteger
+        + history : History
+    }
+}
+
+package "model.engine" {
+    class GameEngine <<singleton>>
+
+    class History {
+        - entries : List<Entry>
+        --
+        + add(entry)
+        + removeLast() : Entry
+        + getFormattedList() : List<String>
+        + isEmpty() : boolean
+        + clear()
+    }
+
+    class "History.Entry" as HistoryEntry <<record>> {
+        + piece : Piece
+        + from : Case
+        + to : Case
+        + captured : Piece
+    }
+}
+
+package "model.events" {
+    interface BoardObserver {
+        + onCaseSelected(e : BoardEvent)
+        + onPieceMoved(e : BoardEvent)
+        + onPieceCaptured(e : BoardEvent)
+    }
+    class BoardEvent {
+        + relatedCase : Case
+    }
+
+    interface GameEngineObserver {
+        + onGameStarted(e)
+        + onGamePaused(e)
+        + onGameResumed(e)
+        + onGameStopped(e)
+        + onGameEnded(e)
+        + onPlayerTurnChanged(e)
+        + onGameTimeUpdated(e)
+    }
+    class GameEngineEvent
+
+    interface HistoryObserver {
+        + onChange(e : HistoryEvent)
+    }
+    class HistoryEvent
+}
+
+' Relations joueurs
+GameEngine "1" *-- "2" PlayerContext
+PlayerContext --> Player
+PlayerContext --> History
+
+' History
+History "1" *-- "*" HistoryEntry
+History --> "*" HistoryObserver : notifies >
+HistoryObserver ..> HistoryEvent : <<use>>
+
+' Observateurs Board / GameEngine
+GameEngine --> "*" GameEngineObserver : notifies >
+GameEngineObserver ..> GameEngineEvent : <<use>>
+
+BoardObserver ..> BoardEvent : <<use>>
+
+@enduml

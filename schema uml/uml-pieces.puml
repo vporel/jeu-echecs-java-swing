@@ -1,0 +1,95 @@
+@startuml uml-pieces
+title Pièces & calcul des cases accessibles
+
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 13
+skinparam classFontSize 14
+skinparam dpi 100
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+package "model" {
+    class Case <<record>> {
+        + row : int
+        + col : int
+    }
+}
+
+package "model.pieces" {
+    abstract class Piece {
+        - color : Color
+        # row : int
+        # col : int
+        # hasMoved : boolean
+        --
+        + getColor() : Color
+        + getType() : Type
+        + hasMoved() : boolean
+        + getAccessibleCases() : List<Case>
+        + canMoveTo(target : Case) : boolean
+        --
+        <<enum>> Type
+        <<enum>> Color
+    }
+
+    class Pawn
+    class Rook
+    class Knight
+    class Bishop
+    class Queen
+    class King
+}
+
+package "model.pieces.accessiblecases" {
+    interface AccessibleCasesCalculator {
+        + getAccessibleCases(board, piece) : List<Case>
+    }
+
+    class BaseAccessibleCasesCalculator
+
+    abstract class AccessibleCasesDecorator {
+        # decorated : AccessibleCasesCalculator
+        --
+        + getAccessibleCases(board, piece) : List<Case>
+        # getCasesInDirection(board, pos, dRow, dCol) : List<Case>
+    }
+
+    class AccessibleCasesHorizDecorator
+    class AccessibleCasesVertDecorator
+    class AccessibleCasesDiagDecorator
+
+    class PawnAccessibleCasesCalculator
+    class KnightAccessibleCasesCalculator
+    class KingAccessibleCasesCalculator
+}
+
+' Hiérarchie des pièces
+Piece <|-- Pawn
+Piece <|-- Rook
+Piece <|-- Knight
+Piece <|-- Bishop
+Piece <|-- Queen
+Piece <|-- King
+
+' Pattern Decorator
+AccessibleCasesCalculator <|.. BaseAccessibleCasesCalculator
+AccessibleCasesCalculator <|.. AccessibleCasesDecorator
+AccessibleCasesDecorator o-- AccessibleCasesCalculator : decorates >
+AccessibleCasesDecorator <|-- AccessibleCasesHorizDecorator
+AccessibleCasesDecorator <|-- AccessibleCasesVertDecorator
+AccessibleCasesDecorator <|-- AccessibleCasesDiagDecorator
+AccessibleCasesCalculator <|.. PawnAccessibleCasesCalculator
+AccessibleCasesCalculator <|.. KnightAccessibleCasesCalculator
+AccessibleCasesCalculator <|.. KingAccessibleCasesCalculator
+
+' Piece utilise le calculateur
+Piece --> AccessibleCasesCalculator : uses >
+Piece ..> Case : <<use>>
+
+@enduml

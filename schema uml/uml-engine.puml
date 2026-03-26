@@ -1,0 +1,124 @@
+@startuml uml-engine
+title Moteur de jeu
+
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 13
+skinparam classFontSize 14
+skinparam dpi 100
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+package "model" {
+    class Case <<record>> {
+        + row : int
+        + col : int
+    }
+}
+
+package "model.engine" {
+    class GameEngine <<singleton>> {
+        - currentPlayerNumber : AtomicInteger
+        - running : AtomicBoolean
+        - paused : AtomicBoolean
+        - ended : AtomicBoolean
+        - positionHistory : Map<String, Integer>
+        --
+        + start(p1Name, p1, p2Name, p2, time, preset)
+        + stop() / pause() / resume()
+        + selectCase(c : Case)
+        + undo(playerNumber)
+        + resign(playerNumber)
+        + makeMove(from, to) : boolean
+        + {static} getInstance() : GameEngine
+    }
+
+    class Board {
+        - pieces : Piece[][]
+        - selectedCase : Case
+        - passingCaptureTarget : Case
+        - capturedByWhite : List<Piece>
+        - capturedByBlack : List<Piece>
+        --
+        + getPieceAt(row, col) : Piece
+        + getLegalMoves(piece) : List<Case>
+        + isMoveLegal(from, to) : boolean
+        + withSimulatedMove(from, to, evaluator) : T
+        + reset()
+    }
+
+    class MoveExecutor <<package-private>> {
+        + movePiece(from, to) : boolean
+        + undoMove(from, to, captured)
+    }
+
+    class BoardHelper <<utility>> {
+        + {static} isKingInCheck(board, color) : boolean
+        + {static} isKingInCheckmate(board, color) : boolean
+        + {static} isStalemate(board, color) : boolean
+        + {static} isSquareAttackedBy(board, row, col, color) : boolean
+        + {static} snapshotPosition(board, currentPlayer) : String
+    }
+
+    class GameStateChecker <<utility>> {
+        + {static} getWinner(board, positionHistory) : OptionalInt
+    }
+
+    class BoardEvaluator {
+        + evaluate(color) : int
+    }
+
+    class BoardSetup <<utility>> {
+        + {static} initialize(board)
+    }
+
+    class AlgebraicNotation <<utility>> {
+        + {static} format(entry) : String
+    }
+
+    class PresetBoardConfig <<utility>> {
+        + {static} pawnPromotion() : Piece[][]
+        + {static} checkMate() : Piece[][]
+        + {static} check() : Piece[][]
+        + {static} castling() : Piece[][]
+        + {static} stalemate() : Piece[][]
+        + {static} enPassant() : Piece[][]
+        + {static} threefoldRepetition() : Piece[][]
+    }
+}
+
+package "model.engine.specialmoves" {
+    class CastlingHandler {
+        + applies(piece, from, to) : boolean
+        + apply(piece, from, to, pieces)
+        + undo(piece, from, to, pieces)
+    }
+    class EnPassantHandler {
+        + resolveCapture(...) : Piece
+        + updateTarget(piece, from, to)
+        + undoCapture(...)
+    }
+    class PawnPromotionHandler {
+        + apply(piece, to, pieces)
+        + undo(piece, from, to, pieces)
+    }
+}
+
+' Relations engine
+GameEngine "1" *-- "1" Board
+GameEngine ..> BoardHelper : <<use>>
+GameEngine ..> GameStateChecker : <<use>>
+Board "1" *-- "1" MoveExecutor
+Board ..> BoardSetup : <<use>>
+Board ..> Case : <<use>>
+MoveExecutor --> CastlingHandler
+MoveExecutor --> EnPassantHandler
+MoveExecutor --> PawnPromotionHandler
+BoardEvaluator --> Board
+
+@enduml
